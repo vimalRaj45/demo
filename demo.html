@@ -4,331 +4,679 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>College Bus Attendance System</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- AOS CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            width: auto;
+            color: #2c3e50;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #3498db;
+            color: white;
+        }
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            background-color: white;
+        }
+        .success {
+            color: #27ae60;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .qr-scanner {
+            margin: 20px 0;
+            text-align: center;
+        }
+        #reader {
+            width: 100%;
+            margin: 0 auto;
+        }
+        #reader__dashboard_section {
+            text-align: left;
+        }
+        .scan-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .scan-toggle {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .scan-toggle:hover {
+            background-color: #2980b9;
+        }
+        .or-divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .or-divider::before, .or-divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+        .or-divider span {
+            padding: 0 10px;
+            color: #777;
+        }
+        .scanner-container {
+            position: relative;
+            margin: 20px auto;
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            overflow: hidden;
+        }
+        .scanner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            box-sizing: border-box;
+            border: 2px dashed rgba(52, 152, 219, 0.5);
+        }
+        .scanner-guide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: rgba(52, 152, 219, 0.8);
+            animation: scan 1.5s infinite linear;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.8);
+        }
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+        .format-selector {
+            margin: 10px 0;
+            text-align: center;
+        }
+        .format-selector label {
+            display: inline-block;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+        #scanStatus {
+            margin: 10px 0;
+            font-weight: bold;
+            min-height: 20px;
+        }
+        .scanned-list {
+            margin-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .scanned-item {
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .scanned-item:last-child {
+            border-bottom: none;
+        }
+        .batch-submit {
+            margin-top: 10px;
+        }
+        #qrReader {
+            width: 100%;
+            height: 100%;
+        }
+        #qrReader video {
+            width: 100% !important;
+            height: auto !important;
+        }
+    </style>
+    <!-- Include the QR/Barcode scanner library -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
-<body class="bg-light">
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="text-center mb-5" data-aos="fade-down">
-                    <h1 class="display-4 text-primary"><i class="fas fa-bus me-2"></i>College Bus Attendance System</h1>
-                    <p class="lead">Efficient attendance tracking for college transportation</p>
+<body>
+    <h1>🎓 College Bus Attendance System</h1>
+    
+    <div class="tab">
+        <button class="tablinks active" onclick="openTab(event, 'Attendance')">🚌 Mark Attendance</button>
+        <button class="tablinks" onclick="openTab(event, 'Registration')">🧾 Admin Registration</button>
+        <button class="tablinks" onclick="openTab(event, 'BatchScan')">📑 Batch Scanning</button>
+    </div>
+
+    <!-- Attendance Tab -->
+    <div id="Attendance" class="tabcontent" style="display: block;">
+        <div class="container">
+            <h2>🚌 Student Attendance</h2>
+            
+            <div class="scan-section">
+                <button id="scanToggle" class="scan-toggle">📷 Scan QR/Barcode</button>
+                
+                <div class="format-selector">
+                    <label><input type="radio" name="scanFormat" value="all" checked> Auto-detect</label>
+                    <label><input type="radio" name="scanFormat" value="qr"> QR Code</label>
+                    <label><input type="radio" name="scanFormat" value="barcode"> Barcode</label>
                 </div>
-
-                <ul class="nav nav-tabs mb-4" id="attendanceTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance" type="button" role="tab">
-                            <i class="fas fa-user-check me-2"></i>Mark Attendance
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="registration-tab" data-bs-toggle="tab" data-bs-target="#registration" type="button" role="tab">
-                            <i class="fas fa-user-plus me-2"></i>Admin Registration
-                        </button>
-                    </li>
-                </ul>
-
-                <div class="tab-content bg-white p-4 rounded-bottom shadow-sm" id="attendanceTabsContent">
-                    <!-- Attendance Tab -->
-                    <div class="tab-pane fade show active" id="attendance" role="tabpanel">
-                        <div class="text-center mb-4" data-aos="fade-up">
-                            <h3 class="text-primary"><i class="fas fa-qrcode me-2"></i>Scan Your ID</h3>
-                            <p class="text-muted">Position your QR code or barcode in the frame below</p>
-                        </div>
-
-                        <div class="card mb-4" data-aos="zoom-in">
-                            <div class="card-body p-2">
-                                <div class="scanner-container position-relative" id="scannerContainer" style="display: none;">
-                                    <div id="qrReader" class="w-100"></div>
-                                    <div class="scanner-overlay position-absolute top-0 start-0 w-100 h-100 border border-primary border-3"></div>
-                                    <div class="scanner-guide position-absolute top-0 start-50 translate-middle-x w-75 bg-primary bg-opacity-50" style="height: 2px;"></div>
-                                </div>
-
-                                <div class="text-center mt-3">
-                                    <button id="scanToggle" class="btn btn-primary btn-lg">
-                                        <i class="fas fa-camera me-2"></i>Start Scanning
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex align-items-center my-4" data-aos="fade-up">
-                            <hr class="flex-grow-1">
-                            <span class="px-3 text-muted">OR</span>
-                            <hr class="flex-grow-1">
-                        </div>
-
-                        <div data-aos="fade-up">
-                            <h4 class="text-center mb-3"><i class="fas fa-keyboard me-2"></i>Manual Entry</h4>
-                            <form id="attendanceForm" action="https://script.google.com/macros/s/AKfycbxJtHBq2nk2LTb_-cBIEXMMUzKIb1TZSbbk2GJVqsdCyCYhsdbtCaMXk7nQF8hWDfOWYA/exec" method="POST" target="_blank">
-                                <input type="hidden" name="action" value="attendance">
-                                
-                                <div class="mb-3">
-                                    <label for="regNo" class="form-label">Registration Number</label>
-                                    <input type="text" class="form-control form-control-lg" id="regNo" name="regNo" required placeholder="Enter your registration number">
-                                </div>
-                                
-                                <button type="submit" id="markAttendanceBtn" class="btn btn-success btn-lg w-100">
-                                    <i class="fas fa-check-circle me-2"></i>Mark Attendance
-                                </button>
-                            </form>
-                        </div>
-
-                        <div id="attendanceResult" class="mt-3 text-center"></div>
-                    </div>
-
-                    <!-- Registration Tab -->
-                    <div class="tab-pane fade" id="registration" role="tabpanel">
-                        <div data-aos="fade-up">
-                            <h3 class="text-center text-primary mb-4"><i class="fas fa-user-graduate me-2"></i>Student Registration</h3>
-                            
-                            <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbxJtHBq2nk2LTb_-cBIEXMMUzKIb1TZSbbk2GJVqsdCyCYhsdbtCaMXk7nQF8hWDfOWYA/exec" method="POST" target="_blank">
-                                <input type="hidden" name="action" value="register">
-                                
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="adminRegNo" class="form-label">Registration Number</label>
-                                        <input type="text" class="form-control" id="adminRegNo" name="regNo" required placeholder="Student's ID">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="name" class="form-label">Full Name</label>
-                                        <input type="text" class="form-control" id="name" name="name" required placeholder="Student's full name">
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="dept" class="form-label">Department</label>
-                                        <input type="text" class="form-control" id="dept" name="dept" required placeholder="e.g., CSE, ECE, MECH">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="year" class="form-label">Year</label>
-                                        <select class="form-select" id="year" name="year" required>
-                                            <option value="">Select Year</option>
-                                            <option value="1">1st Year</option>
-                                            <option value="2">2nd Year</option>
-                                            <option value="3">3rd Year</option>
-                                            <option value="4">4th Year</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="busStop" class="form-label">Bus Stop</label>
-                                    <input type="text" class="form-control" id="busStop" name="busStop" required placeholder="Nearest bus stop name">
-                                </div>
-                                
-                                <button type="submit" class="btn btn-primary btn-lg w-100">
-                                    <i class="fas fa-save me-2"></i>Register Student
-                                </button>
-                            </form>
-                            
-                            <div id="registrationResult" class="mt-3 text-center"></div>
-                        </div>
+                
+                <div id="scannerContainer" class="scanner-container" style="display: none;">
+                    <div id="qrReader"></div>
+                    <div class="scanner-overlay">
+                        <div class="scanner-guide"></div>
                     </div>
                 </div>
+                <div id="scanStatus"></div>
             </div>
+            
+            <div class="or-divider">
+                <span>OR</span>
+            </div>
+            
+            <p>Enter your registration number to mark your bus attendance:</p>
+            
+            <form id="attendanceForm" action="https://script.google.com/macros/s/AKfycbxJtHBq2nk2LTb_-cBIEXMMUzKIb1TZSbbk2GJVqsdCyCYhsdbtCaMXk7nQF8hWDfOWYA/exec" method="POST" target="_blank">
+                <input type="hidden" name="action" value="attendance">
+                
+                <div class="form-group">
+                    <label for="regNo">Registration Number:</label>
+                    <input type="text" id="regNo" name="regNo" required placeholder="Enter your registration number">
+                </div>
+                
+                <button type="submit" id="markAttendanceBtn">✅ Mark Attendance</button>
+            </form>
+            
+            <div id="attendanceResult" style="margin-top: 20px;"></div>
         </div>
     </div>
 
-    <!-- QR/Barcode Scanner Library -->
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <!-- Bootstrap 5 JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
-    <script>
-        // Initialize AOS animation
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
+    <!-- Registration Tab -->
+    <div id="Registration" class="tabcontent">
+        <div class="container">
+            <h2>🧾 Admin Student Registration</h2>
+            <p>Register new students for bus attendance tracking:</p>
+            
+            <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbxJtHBq2nk2LTb_-cBIEXMMUzKIb1TZSbbk2GJVqsdCyCYhsdbtCaMXk7nQF8hWDfOWYA/exec" method="POST" target="_blank">
+                <input type="hidden" name="action" value="register">
+                
+                <div class="form-group">
+                    <label for="adminRegNo">Registration Number:</label>
+                    <input type="text" id="adminRegNo" name="regNo" required placeholder="Student's registration number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" name="name" required placeholder="Student's full name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="dept">Department:</label>
+                    <input type="text" id="dept" name="dept" required placeholder="e.g., CSE, ECE, MECH">
+                </div>
+                
+                <div class="form-group">
+                    <label for="year">Year:</label>
+                    <select id="year" name="year" required>
+                        <option value="">Select Year</option>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="busStop">Bus Stop:</label>
+                    <input type="text" id="busStop" name="busStop" required placeholder="Nearest bus stop name">
+                </div>
+                
+                <button type="submit">📝 Register Student</button>
+            </form>
+            
+            <div id="registrationResult" style="margin-top: 20px;"></div>
+        </div>
+    </div>
 
-        // Scanner variables
-        let currentScanner = null;
-        let scannerActive = false;
-        let lastScannedTime = 0;
-        const scanDelay = 2000; // 2 seconds between scans
+    <!-- Batch Scan Tab -->
+    <div id="BatchScan" class="tabcontent">
+        <div class="container">
+            <h2>📑 Batch Student Scanning</h2>
+            <p>Scan multiple students quickly for bus attendance:</p>
+            
+            <div class="scan-section">
+                <button id="batchScanToggle" class="scan-toggle">📷 Start Batch Scan</button>
+                
+                <div id="batchScannerContainer" class="scanner-container" style="display: none;">
+                    <div id="batchQrReader"></div>
+                    <div class="scanner-overlay">
+                        <div class="scanner-guide"></div>
+                    </div>
+                </div>
+                <div id="batchScanStatus"></div>
+                
+                <div class="scanned-list" id="scannedStudents">
+                    <p>No students scanned yet</p>
+                </div>
+                
+                <button id="submitBatch" class="batch-submit" style="display: none;">📤 Submit All Scanned Students</button>
+            </div>
+            
+            <div id="batchScanResult" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching function
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+            
+            // Stop scanners when switching tabs
+            if (window.currentScanner && tabName !== 'Attendance' && tabName !== 'BatchScan') {
+                stopScanner();
+            }
+            if (window.batchScanner && tabName !== 'BatchScan') {
+                stopBatchScanner();
+            }
+        }
 
         // Scanner management functions
+        let currentScanner = null;
+        let scannerActive = false;
+        let batchScanner = null;
+        let batchScannerActive = false;
+        let scannedStudents = [];
+        
         function stopScanner() {
             if (currentScanner) {
                 currentScanner.stop().then(() => {
                     console.log("Scanner stopped");
                     document.getElementById('scannerContainer').style.display = 'none';
-                    document.getElementById('scanToggle').innerHTML = '<i class="fas fa-camera me-2"></i>Start Scanning';
+                    document.getElementById('scanToggle').textContent = '📷 Scan QR/Barcode';
                     scannerActive = false;
                     currentScanner = null;
+                    document.getElementById('scanStatus').textContent = '';
                 }).catch(err => {
                     console.error("Failed to stop scanner", err);
-                    showError("Failed to stop scanner. Please refresh the page.");
                 });
             }
         }
         
-        async function startScanner() {
+        function stopBatchScanner() {
+            if (batchScanner) {
+                batchScanner.stop().then(() => {
+                    console.log("Batch scanner stopped");
+                    document.getElementById('batchScannerContainer').style.display = 'none';
+                    document.getElementById('batchScanToggle').textContent = '📷 Start Batch Scan';
+                    batchScannerActive = false;
+                    batchScanner = null;
+                    document.getElementById('batchScanStatus').textContent = '';
+                }).catch(err => {
+                    console.error("Failed to stop batch scanner", err);
+                });
+            }
+        }
+        
+        function startScanner(format) {
             const scannerContainer = document.getElementById('scannerContainer');
             const qrReader = document.getElementById('qrReader');
             
-            // First check camera permissions
-            try {
-                // This will trigger the browser's permission dialog
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: {
-                        facingMode: "environment",
-                        focusMode: "continuous"
-                    } 
-                });
+            scannerContainer.style.display = 'block';
+            qrReader.innerHTML = '';
+            document.getElementById('scanToggle').textContent = '🛑 Stop Scanning';
+            scannerActive = true;
+            
+            function onScanSuccess(decodedText, decodedResult) {
+                console.log(`Scanned: ${decodedText}`, decodedResult);
+                document.getElementById('scanStatus').textContent = '✅ Code detected! Processing...';
+                document.getElementById('scanStatus').style.color = '#27ae60';
                 
-                // Stop the stream immediately (we just needed permission)
-                stream.getTracks().forEach(track => track.stop());
-                
-                // Now start the scanner
-                scannerContainer.style.display = 'block';
-                qrReader.innerHTML = '';
-                document.getElementById('scanToggle').innerHTML = '<i class="fas fa-stop-circle me-2"></i>Stop Scanning';
-                scannerActive = true;
-                
-                function onScanSuccess(decodedText, decodedResult) {
-                    const currentTime = new Date().getTime();
+                // Validate the scanned code looks like a registration number
+                if (isValidRegistrationNumber(decodedText)) {
+                    stopScanner();
                     
-                    // Prevent multiple scans in quick succession
-                    if (currentTime - lastScannedTime < scanDelay) {
-                        return;
-                    }
-                    lastScannedTime = currentTime;
+                    // Auto-fill the registration number field
+                    document.getElementById('regNo').value = decodedText;
                     
-                    console.log(`Scanned: ${decodedText}`, decodedResult);
+                    // Auto-submit the form
+                    setTimeout(() => {
+                        document.getElementById('markAttendanceBtn').click();
+                    }, 300);
                     
-                    // Validate the scanned code looks like a registration number
-                    if (isValidRegistrationNumber(decodedText)) {
-                        // Auto-fill the registration number field
-                        document.getElementById('regNo').value = decodedText;
-                        
-                        // Show scanning success feedback
-                        showSuccess("Scanned successfully! Registration number detected.");
-                        
-                        // Auto-submit the form after a brief delay
-                        setTimeout(() => {
-                            document.getElementById('markAttendanceBtn').click();
-                        }, 500);
-                    } else {
-                        // Show error message but keep scanning
-                        showWarning("Invalid code! Please scan a valid registration number.");
-                    }
+                    // Show success message
+                    const resultDiv = document.getElementById('attendanceResult');
+                    resultDiv.className = "success";
+                    resultDiv.innerHTML = "✅ Scanned successfully! Submitting attendance...";
+                } else {
+                    // Show error message but keep scanning
+                    document.getElementById('scanStatus').textContent = '⚠️ Invalid code format. Keep scanning...';
+                    document.getElementById('scanStatus').style.color = '#e74c3c';
                 }
-                
-                function onScanFailure(error) {
-                    console.warn(`Scan error: ${error}`);
-                }
-                
-                // Scanner configuration with enhanced detection
-                const config = {
-                    fps: 15,
-                    qrbox: { width: 250, height: 250 },
-                    aspectRatio: 1.0,
-                    disableFlip: false,
-                    focusMode: "continuous", // Auto-focus enabled
-                    supportedScanTypes: [
-                        Html5QrcodeScanType.SCAN_TYPE_CAMERA,
-                        Html5QrcodeScanType.SCAN_TYPE_FILE
-                    ],
-                    formatsToSupport: [
-                        Html5QrcodeSupportedFormats.QR_CODE,
-                        Html5QrcodeSupportedFormats.UPC_A,
-                        Html5QrcodeSupportedFormats.UPC_E,
-                        Html5QrcodeSupportedFormats.UPC_EAN_EXTENSION,
-                        Html5QrcodeSupportedFormats.CODE_39,
-                        Html5QrcodeSupportedFormats.CODE_128,
-                        Html5QrcodeSupportedFormats.EAN_8,
-                        Html5QrcodeSupportedFormats.EAN_13,
-                        Html5QrcodeSupportedFormats.CODABAR,
-                        Html5QrcodeSupportedFormats.ITF,
-                        Html5QrcodeSupportedFormats.AZTEC
-                    ]
-                };
-                
-                currentScanner = new Html5Qrcode("qrReader");
-                currentScanner.start(
-                    { 
-                        facingMode: "environment",
-                        focusMode: "continuous" // Force continuous focus
-                    }, 
-                    config,
-                    onScanSuccess,
-                    onScanFailure
-                ).catch(err => {
-                    console.error("Failed to start scanner", err);
-                    scannerContainer.style.display = 'none';
-                    document.getElementById('scanToggle').innerHTML = '<i class="fas fa-camera me-2"></i>Start Scanning';
-                    scannerActive = false;
-                    currentScanner = null;
-                    
-                    showError(`Scanner error! ${err.message || 'Please ensure camera access is allowed and try again.'}`);
-                });
-                
-            } catch (err) {
-                console.error("Camera permission error:", err);
-                let errorMessage = "Camera access is required for scanning.";
-                
-                if (err.name === 'NotAllowedError') {
-                    errorMessage = "Camera permission was denied. Please allow camera access in your browser settings.";
-                } else if (err.name === 'NotFoundError') {
-                    errorMessage = "No camera found. Please check your device has a camera.";
-                } else if (err.name === 'NotReadableError') {
-                    errorMessage = "Camera is already in use by another application.";
-                }
-                
-                showError(errorMessage);
-                document.getElementById('scanToggle').innerHTML = '<i class="fas fa-camera me-2"></i>Start Scanning';
-                scannerActive = false;
             }
+            
+            function onScanFailure(error) {
+                console.warn(`Scan error: ${error}`);
+                document.getElementById('scanStatus').textContent = '🔍 Scanning...';
+                document.getElementById('scanStatus').style.color = '#3498db';
+            }
+            
+            // Enhanced scanner configuration for high-speed scanning
+            const config = {
+                fps: 30, // Higher frame rate for faster detection
+                qrbox: null, // Set to null for full-window scanning
+                aspectRatio: 1.0, // Square aspect ratio
+                disableFlip: true, // Slightly faster processing
+                rememberLastUsedCamera: true, // Faster initialization
+                supportedScanTypes: [
+                    Html5QrcodeScanType.SCAN_TYPE_CAMERA,
+                    Html5QrcodeScanType.SCAN_TYPE_FILE
+                ]
+            };
+            
+            // Additional formats for barcode scanning
+            const formatsToSupport = [
+                Html5QrcodeSupportedFormats.QR_CODE,
+                Html5QrcodeSupportedFormats.UPC_A,
+                Html5QrcodeSupportedFormats.UPC_E,
+                Html5QrcodeSupportedFormats.UPC_EAN_EXTENSION,
+                Html5QrcodeSupportedFormats.CODE_39,
+                Html5QrcodeSupportedFormats.CODE_93,
+                Html5QrcodeSupportedFormats.CODE_128,
+                Html5QrcodeSupportedFormats.EAN_8,
+                Html5QrcodeSupportedFormats.EAN_13,
+                Html5QrcodeSupportedFormats.ITF
+            ];
+            
+            currentScanner = new Html5Qrcode("qrReader", {
+                formatsToSupport: formatsToSupport,
+                verbose: false // Disable verbose logging for better performance
+            });
+            
+            currentScanner.start(
+                { 
+                    facingMode: "environment",
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
+                },
+                config,
+                onScanSuccess,
+                onScanFailure
+            ).catch(err => {
+                console.error("Failed to start scanner", err);
+                scannerContainer.style.display = 'none';
+                document.getElementById('scanToggle').textContent = '📷 Scan QR/Barcode';
+                scannerActive = false;
+                currentScanner = null;
+                
+                // Show error message
+                const resultDiv = document.getElementById('attendanceResult');
+                resultDiv.className = "error";
+                resultDiv.innerHTML = "❌ Failed to start scanner. Please ensure camera access is allowed and try again.";
+            });
+        }
+        
+        function startBatchScanner() {
+            const scannerContainer = document.getElementById('batchScannerContainer');
+            const qrReader = document.getElementById('batchQrReader');
+            
+            scannerContainer.style.display = 'block';
+            qrReader.innerHTML = '';
+            document.getElementById('batchScanToggle').textContent = '🛑 Stop Batch Scan';
+            batchScannerActive = true;
+            document.getElementById('submitBatch').style.display = 'none';
+            
+            function onScanSuccess(decodedText, decodedResult) {
+                console.log(`Batch Scanned: ${decodedText}`, decodedResult);
+                document.getElementById('batchScanStatus').textContent = '✅ Code detected!';
+                document.getElementById('batchScanStatus').style.color = '#27ae60';
+                
+                // Validate the scanned code looks like a registration number
+                if (isValidRegistrationNumber(decodedText)) {
+                    // Add to scanned students list if not already there
+                    if (!scannedStudents.includes(decodedText)) {
+                        scannedStudents.push(decodedText);
+                        updateScannedList();
+                    }
+                    
+                    // Continue scanning
+                    document.getElementById('batchScanStatus').textContent = '✅ Added! Keep scanning...';
+                    document.getElementById('batchScanStatus').style.color = '#27ae60';
+                    
+                    // Show submit button if we have scans
+                    if (scannedStudents.length > 0) {
+                        document.getElementById('submitBatch').style.display = 'block';
+                    }
+                } else {
+                    // Show error message but keep scanning
+                    document.getElementById('batchScanStatus').textContent = '⚠️ Invalid code format. Keep scanning...';
+                    document.getElementById('batchScanStatus').style.color = '#e74c3c';
+                }
+            }
+            
+            function onScanFailure(error) {
+                console.warn(`Batch Scan error: ${error}`);
+                document.getElementById('batchScanStatus').textContent = '🔍 Scanning...';
+                document.getElementById('batchScanStatus').style.color = '#3498db';
+            }
+            
+            // Enhanced scanner configuration for batch scanning
+            const config = {
+                fps: 30,
+                qrbox: null, // Full window scanning
+                aspectRatio: 1.0,
+                disableFlip: true,
+                rememberLastUsedCamera: true,
+                supportedScanTypes: [
+                    Html5QrcodeScanType.SCAN_TYPE_CAMERA,
+                    Html5QrcodeScanType.SCAN_TYPE_FILE
+                ]
+            };
+            
+            batchScanner = new Html5Qrcode("batchQrReader", {
+                formatsToSupport: [
+                    Html5QrcodeSupportedFormats.QR_CODE,
+                    Html5QrcodeSupportedFormats.UPC_A,
+                    Html5QrcodeSupportedFormats.UPC_E,
+                    Html5QrcodeSupportedFormats.UPC_EAN_EXTENSION,
+                    Html5QrcodeSupportedFormats.CODE_39,
+                    Html5QrcodeSupportedFormats.CODE_93,
+                    Html5QrcodeSupportedFormats.CODE_128,
+                    Html5QrcodeSupportedFormats.EAN_8,
+                    Html5QrcodeSupportedFormats.EAN_13,
+                    Html5QrcodeSupportedFormats.ITF
+                ],
+                verbose: false
+            });
+            
+            batchScanner.start(
+                { 
+                    facingMode: "environment",
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
+                },
+                config,
+                onScanSuccess,
+                onScanFailure
+            ).catch(err => {
+                console.error("Failed to start batch scanner", err);
+                scannerContainer.style.display = 'none';
+                document.getElementById('batchScanToggle').textContent = '📷 Start Batch Scan';
+                batchScannerActive = false;
+                batchScanner = null;
+                
+                // Show error message
+                const resultDiv = document.getElementById('batchScanResult');
+                resultDiv.className = "error";
+                resultDiv.innerHTML = "❌ Failed to start scanner. Please ensure camera access is allowed and try again.";
+            });
+        }
+        
+        function updateScannedList() {
+            const listElement = document.getElementById('scannedStudents');
+            
+            if (scannedStudents.length === 0) {
+                listElement.innerHTML = '<p>No students scanned yet</p>';
+                document.getElementById('submitBatch').style.display = 'none';
+                return;
+            }
+            
+            listElement.innerHTML = '';
+            scannedStudents.forEach((student, index) => {
+                const item = document.createElement('div');
+                item.className = 'scanned-item';
+                item.innerHTML = `${index + 1}. ${student} <button onclick="removeScannedStudent(${index})" style="float: right; padding: 2px 5px; font-size: 12px;">❌</button>`;
+                listElement.appendChild(item);
+            });
+            
+            document.getElementById('submitBatch').style.display = 'block';
+        }
+        
+        function removeScannedStudent(index) {
+            scannedStudents.splice(index, 1);
+            updateScannedList();
+        }
+        
+        function submitBatchAttendance() {
+            if (scannedStudents.length === 0) {
+                alert('No students to submit!');
+                return;
+            }
+            
+            // Create a form dynamically
+            const form = document.createElement('form');
+            form.action = 'https://script.google.com/macros/s/AKfycbxJtHBq2nk2LTb_-cBIEXMMUzKIb1TZSbbk2GJVqsdCyCYhsdbtCaMXk7nQF8hWDfOWYA/exec';
+            form.method = 'POST';
+            form.target = '_blank';
+            
+            // Add action field
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'batch_attendance';
+            form.appendChild(actionInput);
+            
+            // Add all scanned students
+            scannedStudents.forEach((student, index) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = `students[${index}]`;
+                input.value = student;
+                form.appendChild(input);
+            });
+            
+            // Submit the form
+            document.body.appendChild(form);
+            form.submit();
+            
+            // Show success message
+            const resultDiv = document.getElementById('batchScanResult');
+            resultDiv.className = "success";
+            resultDiv.innerHTML = `✅ Submitted attendance for ${scannedStudents.length} students!`;
+            
+            // Reset the scanner and list
+            scannedStudents = [];
+            updateScannedList();
+            stopBatchScanner();
         }
         
         function isValidRegistrationNumber(text) {
             // Basic validation - adjust according to your registration number format
             return text && text.trim().length >= 5 && /^[a-zA-Z0-9]+$/.test(text);
-        }
-        
-        // Helper functions for showing messages
-        function showSuccess(message) {
-            const resultDiv = document.getElementById('attendanceResult');
-            resultDiv.innerHTML = `
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>
-                    <strong>${message}</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-        }
-        
-        function showWarning(message) {
-            const resultDiv = document.getElementById('attendanceResult');
-            resultDiv.innerHTML = `
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <strong>${message}</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-        }
-        
-        function showError(message) {
-            const resultDiv = document.getElementById('attendanceResult');
-            resultDiv.innerHTML = `
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    <strong>${message}</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
         }
 
         // Initialize the page
@@ -337,78 +685,61 @@
             const result = urlParams.get('result');
             const action = urlParams.get('action');
             
-            // Handle results from form submission
             if (result && action) {
                 const resultDiv = action === 'attendance' 
                     ? document.getElementById('attendanceResult')
                     : document.getElementById('registrationResult');
                 
                 if (result.includes("✅") || result.toLowerCase().includes("success")) {
-                    resultDiv.innerHTML = `
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle me-2"></i>
-                            ${result}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    `;
+                    resultDiv.className = "success";
                 } else {
-                    resultDiv.innerHTML = `
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            ${result}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    `;
+                    resultDiv.className = "error";
                 }
+                resultDiv.innerHTML = result;
                 
                 // Scroll to the result
                 resultDiv.scrollIntoView({ behavior: 'smooth' });
             }
             
-            // Scanner toggle functionality
+            // QR/Barcode Scanner functionality
             const scanToggle = document.getElementById('scanToggle');
+            
             scanToggle.addEventListener('click', function() {
                 if (scannerActive) {
                     stopScanner();
                 } else {
-                    startScanner();
+                    const selectedFormat = document.querySelector('input[name="scanFormat"]:checked').value;
+                    startScanner(selectedFormat);
                 }
             });
             
-            // Stop scanner when switching tabs
-            document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-                tab.addEventListener('shown.bs.tab', function(e) {
-                    if (e.target.id !== 'attendance-tab' && scannerActive) {
-                        stopScanner();
-                    }
-                });
+            // Batch Scanner functionality
+            const batchScanToggle = document.getElementById('batchScanToggle');
+            
+            batchScanToggle.addEventListener('click', function() {
+                if (batchScannerActive) {
+                    stopBatchScanner();
+                } else {
+                    startBatchScanner();
+                }
             });
+            
+            // Batch submit button
+            document.getElementById('submitBatch').addEventListener('click', submitBatchAttendance);
             
             // Manual form submission handler
             document.getElementById('attendanceForm').addEventListener('submit', function(e) {
                 const regNo = document.getElementById('regNo').value.trim();
                 if (!isValidRegistrationNumber(regNo)) {
                     e.preventDefault();
-                    showError("Invalid registration number! Please enter a valid ID.");
+                    const resultDiv = document.getElementById('attendanceResult');
+                    resultDiv.className = "error";
+                    resultDiv.innerHTML = "❌ Please enter a valid registration number";
                     return false;
                 }
                 return true;
             });
         });
-
-        // Scanner animation
-        document.head.insertAdjacentHTML('beforeend', `
-            <style>
-                @keyframes scan {
-                    0% { top: 10%; opacity: 0.5; }
-                    50% { opacity: 1; }
-                    100% { top: 90%; opacity: 0.5; }
-                }
-                .scanner-guide {
-                    animation: scan 2s infinite linear;
-                }
-            </style>
-        `);
     </script>
 </body>
 </html>
