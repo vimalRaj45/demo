@@ -3,227 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sona Campus Navigation</title>
-    <!-- UIkit CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.16.27/dist/css/uikit.min.css" />
-    <link rel="preload" href="https://i.ibb.co/HWc5gt6/1740682334151.jpg" as="image">
-    <!-- UIkit JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.27/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.27/dist/js/uikit-icons.min.js"></script>
-    
+    <title>College Bus Attendance System</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f9;
-            padding: 20px;
-        }
-        h2 { color: #333; }
-        #status { font-size: 14px; color: #555; margin: 20px 0; }
-        #alertbtn {
-            font-size: 12px;
-            padding: 4px 8px;
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-        }
-        table {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
             margin: 0 auto;
-            width: 80%;
+            padding: 20px;
+            background-color: #f5f5f5;
         }
-        /* Pop-up container */
-        #location-popup {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background-color: #448AB9;
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
             color: white;
-            padding: 5px 6px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            width: auto;
+            color: #2c3e50;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #3498db;
+            color: white;
+        }
+        .tabcontent {
             display: none;
-            z-index: 1000;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            background-color: white;
+        }
+        .success {
+            color: #27ae60;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .qr-scanner {
+            margin: 20px 0;
+            text-align: center;
+        }
+        #reader {
+            width: 100%;
+            margin: 0 auto;
         }
     </style>
 </head>
 <body>
-    <h2 class="uk-heading-line uk-text-primary"><span>Sona Campus Navigation</span></h2>
-    <h5 style="font-weight:400">Make Sure location is on</h5>
-    <!-- Location Pop-up -->
-    <div id="location-popup">
-        <span id="popup-text" style="font-size: 12px">Location found!</span>
+    <h1>🎓 College Bus Attendance System</h1>
+    
+    <div class="tab">
+        <button class="tablinks active" onclick="openTab(event, 'Attendance')">🚌 Mark Attendance</button>
+        <button class="tablinks" onclick="openTab(event, 'Registration')">🧾 Admin Registration</button>
     </div>
-    <div id="loader" uk-spinner="ratio: 2" style="display: none; margin-bottom: 20px;"></div>
-    <p id="status"></p>
-    <p id="address" style="display: none"></p>
-    <!-- Refresh Location Button -->
-    <button id="refresh-btn" class="uk-button uk-button-secondary uk-button-small" onclick="getLocation()">Refresh Location</button>
-    <!-- "Accidentally Clicked" Button -->
-    <button id="alertbtn" class="uk-button uk-button-danger uk-button-small" style="display: none;" onclick="UIkit.modal('#reset-permissions-modal').show()">Accidentally Clicked "Never Allow"</button>
 
-    <!-- Table for Event Halls -->
-    <table class="uk-table uk-table-divider uk-table-hover uk-table-middle uk-margin-large-top">
-        <thead>
-            <tr>
-                <th>Hall No</th>
-                <th>Route</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Hall 1</td>
-                <td><button class="uk-button uk-button-primary uk-button-small" onclick="routeToHall('11.677865,78.126028')">Route</button></td>
-            </tr>
-            <tr>
-                <td>Hall 2</td>
-                <td><button class="uk-button uk-button-primary uk-button-small" onclick="routeToHall('11.678500,78.126500')">Route</button></td>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- UIkit Modal for Error Messages -->
-    <div id="error-modal" uk-modal>
-        <div class="uk-modal-dialog uk-modal-body">
-            <h2 class="uk-modal-title" id="modal-title">Error</h2>
-            <hr>
-            <p id="modal-message">An error occurred.</p>
-            <hr>
-            <p class="uk-text-right">
-                <button class="uk-button uk-button-default uk-modal-close" type="button">Okay</button>
-            </p>
+    <!-- Attendance Tab -->
+    <div id="Attendance" class="tabcontent" style="display: block;">
+        <div class="container">
+            <h2>🚌 Student Attendance</h2>
+            <p>Enter your registration number to mark your bus attendance:</p>
+            
+            <div class="qr-scanner">
+                <button onclick="startScanner()">📷 Scan QR Code</button>
+                <div id="reader" style="display: none;"></div>
+            </div>
+            
+            <form id="attendanceForm" action="https://script.google.com/macros/s/AKfycbwv4eIZlNuDAsP82A4o8lOEiH19jJB0aJ5CjUBlluMfagNV0LzAHLakGylEfJiAQZHi-w/exec" method="POST">
+                <input type="hidden" name="action" value="attendance">
+                
+                <div class="form-group">
+                    <label for="regNo">Registration Number:</label>
+                    <input type="text" id="regNo" name="regNo" required placeholder="Enter your registration number">
+                </div>
+                
+                <button type="submit">✅ Mark Attendance</button>
+            </form>
+            
+            <div id="attendanceResult"></div>
         </div>
     </div>
 
-    <!-- UIkit Modal for Reset Permissions -->
-    <div id="reset-permissions-modal" uk-modal>
-        <div class="uk-modal-dialog uk-modal-body">
-            <h2 class="uk-modal-title">Reset Location Permissions</h2>
-            <hr>
-            <p>To reset location permissions:</p>
-            <ol>
-                <li>Open your browser settings.</li>
-                <li>Go to Site Settings > Location.</li>
-                <li>Find this site and reset or allow location permissions.</li>
-                <li>Reload the page and try again.</li>
-            </ol>
-            <hr>
-            <p class="uk-text-right">
-                <button class="uk-button uk-button-default uk-modal-close" type="button">Okay</button>
-            </p>
+    <!-- Registration Tab -->
+    <div id="Registration" class="tabcontent">
+        <div class="container">
+            <h2>🧾 Admin Student Registration</h2>
+            <p>Register new students for bus attendance tracking:</p>
+            
+            <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbwv4eIZlNuDAsP82A4o8lOEiH19jJB0aJ5CjUBlluMfagNV0LzAHLakGylEfJiAQZHi-w/exec" method="POST">
+                <input type="hidden" name="action" value="register">
+                
+                <div class="form-group">
+                    <label for="regNo">Registration Number:</label>
+                    <input type="text" id="adminRegNo" name="regNo" required placeholder="Student's registration number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" name="name" required placeholder="Student's full name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="dept">Department:</label>
+                    <input type="text" id="dept" name="dept" required placeholder="e.g., CSE, ECE, MECH">
+                </div>
+                
+                <div class="form-group">
+                    <label for="year">Year:</label>
+                    <select id="year" name="year" required>
+                        <option value="">Select Year</option>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="busStop">Bus Stop:</label>
+                    <input type="text" id="busStop" name="busStop" required placeholder="Nearest bus stop name">
+                </div>
+                
+                <button type="submit">📝 Register Student</button>
+            </form>
+            
+            <div id="registrationResult"></div>
         </div>
     </div>
 
+    <!-- Include QR Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
+    
     <script>
-
-       let userCoords = ""; // Store user's location globally
-
-// Function to get the user's location
-function getLocation() {
-    document.getElementById("status").innerText = "It may take a few moments... Getting your location.";
-    document.getElementById("loader").style.display = "block";
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                // Success: store the user's coordinates
-                userCoords = `${position.coords.latitude},${position.coords.longitude}`;
-                document.getElementById("status").innerText = "";
-                document.getElementById("loader").style.display = "none";
-                document.getElementById("address").innerText = "Your location is detected. You can now click the 'Route' buttons.";
-                document.getElementById("address").style.display = "block";
-
-                // Show pop-up
-                document.getElementById("location-popup").style.display = "block";
-                document.getElementById("popup-text").innerText = `Location found!`;
-                setTimeout(() => {
-                    document.getElementById("location-popup").style.display = "none";
-                }, 600);
-            },
-            (error) => {
-                showError(error);
+        // Tab switching function
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
             }
-        );
-    } else {
-        showError({ code: "UNSUPPORTED", message: "Geolocation is not supported by this browser." });
-    }
-}
-
-// Function to generate route to a selected hall
-function routeToHall(destinationCoords) {
-    if (!userCoords) {
-        showModal("Location Error", "Your location is not detected yet. Please click 'Refresh Location' and try again.");
-        return;
-    }
-
-    let countdown = 5;
-    const modal = UIkit.modal.dialog(`
-        <div class="uk-modal-body">
-            <button class="uk-modal-close-default" type="button" uk-close></button>
-            <img src="https://i.ibb.co/HWc5gt6/1740682334151.jpg" 
-                 style="width:100%; max-width: 400px;" 
-                 alt="Navigation Image" 
-                 loading="lazy">
-            <p>Please Click Start in Google Maps. You will be automatically redirected in 
-                <span id="countdown" style="color: #007bff; font-weight: bold;">
-                    ${countdown}
-                </span> 
-                seconds.
-            </p>
-        </div>
-    `);
-
-    const countdownElement = document.getElementById("countdown");
-    const interval = setInterval(() => {
-        countdown--;
-        countdownElement.textContent = countdown;
-
-        if (countdown <= 0) {
-            clearInterval(interval);
-            modal.hide();
-            let googleMapsURL = `https://www.google.com/maps/dir/?api=1&origin=${userCoords}&destination=${destinationCoords}&travelmode=walking&maptype=satellite`;
-            window.location.href = googleMapsURL;
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
         }
-    }, 1000);
-}
 
-// Function to show error messages
-function showError(error) {
-    let msg;
-    switch (error.code) {
-        case error.PERMISSION_DENIED:
-            msg = "You denied the request for location services. Please enable location and try again.";
-            document.getElementById("alertbtn").style.display = "block";
-            break;
-        case error.POSITION_UNAVAILABLE:
-            msg = "Your location is currently unavailable. Please try again later.";
-            break;
-        case error.TIMEOUT:
-            msg = "Location request timed out. Please try again.";
-            break;
-        case error.UNKNOWN_ERROR:
-            msg = "An unknown error occurred. Please try again.";
-            break;
-        default:
-            msg = "Geolocation is not supported by your browser.";
-            break;
-    }
-    document.getElementById("status").innerText = msg;
-    document.getElementById("loader").style.display = "none";
-    showModal("Location Error", msg);
-}
+        // QR Code Scanner
+        let html5QrcodeScanner;
+        
+        function startScanner() {
+            const reader = document.getElementById("reader");
+            reader.style.display = "block";
+            
+            html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", { fps: 10, qrbox: 250 });
+                
+            function onScanSuccess(decodedText) {
+                document.getElementById("regNo").value = decodedText;
+                reader.style.display = "none";
+                html5QrcodeScanner.clear();
+            }
+            
+            html5QrcodeScanner.render(onScanSuccess);
+        }
 
-// Function to show modal with title and message
-function showModal(title, message) {
-    document.getElementById("modal-title").innerText = title;
-    document.getElementById("modal-message").innerText = message;
-    UIkit.modal("#error-modal").show();
-}
-
-// Automatically get location on page load
-window.onload = function () {
-    getLocation();
-};
-
+        // Form submission handling
+        document.getElementById("attendanceForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            submitForm(this, "attendanceResult");
+        });
+        
+        document.getElementById("registrationForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            submitForm(this, "registrationResult");
+        });
+        
+        function submitForm(form, resultDivId) {
+            const formData = new FormData(form);
+            const resultDiv = document.getElementById(resultDivId);
+            resultDiv.innerHTML = "⏳ Processing...";
+            
+            fetch(form.action, {
+                method: "POST",
+                body: new URLSearchParams(formData)
+            })
+            .then(response => response.text())
+            .then(text => {
+                if (text.includes("✅")) {
+                    resultDiv.className = "success";
+                    form.reset();
+                } else {
+                    resultDiv.className = "error";
+                }
+                resultDiv.innerHTML = text;
+            })
+            .catch(error => {
+                resultDiv.className = "error";
+                resultDiv.innerHTML = "❌ Error: " + error.message;
+            });
+        }
     </script>
 </body>
 </html>
