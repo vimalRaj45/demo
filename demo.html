@@ -152,8 +152,6 @@
             margin: 20px auto;
             width: 100%;
             max-width: 500px;
-            height: 400px;
-            overflow: hidden;
         }
         .scanner-overlay {
             position: absolute;
@@ -162,22 +160,22 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
+            border: 2px solid #3498db;
             box-sizing: border-box;
-            border: 2px dashed rgba(52, 152, 219, 0.5);
         }
         .scanner-guide {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background-color: rgba(52, 152, 219, 0.8);
-            animation: scan 1.5s infinite linear;
-            box-shadow: 0 0 10px rgba(52, 152, 219, 0.8);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 2px;
+            background-color: rgba(52, 152, 219, 0.5);
+            animation: scan 2s infinite linear;
         }
         @keyframes scan {
-            0% { top: 0%; }
-            100% { top: 100%; }
+            0% { top: 10%; }
+            100% { top: 90%; }
         }
         .format-selector {
             margin: 10px 0;
@@ -188,40 +186,11 @@
             margin: 0 10px;
             cursor: pointer;
         }
-        #scanStatus {
-            margin: 10px 0;
-            font-weight: bold;
-            min-height: 20px;
-        }
-        .scanned-list {
-            margin-top: 20px;
-            max-height: 150px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 4px;
-        }
-        .scanned-item {
-            padding: 5px;
-            border-bottom: 1px solid #eee;
-        }
-        .scanned-item:last-child {
-            border-bottom: none;
-        }
-        .batch-submit {
-            margin-top: 10px;
-        }
-        #qrReader {
-            width: 100%;
-            height: 100%;
-        }
-        #qrReader video {
-            width: 100% !important;
-            height: auto !important;
-        }
     </style>
     <!-- Include the QR/Barcode scanner library -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <!-- Include Barcode detector polyfill for broader support -->
+    <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@1.0.0-beta.1/dist/quagga.min.js"></script>
 </head>
 <body>
     <h1>🎓 College Bus Attendance System</h1>
@@ -229,7 +198,6 @@
     <div class="tab">
         <button class="tablinks active" onclick="openTab(event, 'Attendance')">🚌 Mark Attendance</button>
         <button class="tablinks" onclick="openTab(event, 'Registration')">🧾 Admin Registration</button>
-        <button class="tablinks" onclick="openTab(event, 'BatchScan')">📑 Batch Scanning</button>
     </div>
 
     <!-- Attendance Tab -->
@@ -252,7 +220,6 @@
                         <div class="scanner-guide"></div>
                     </div>
                 </div>
-                <div id="scanStatus"></div>
             </div>
             
             <div class="or-divider">
@@ -323,34 +290,6 @@
         </div>
     </div>
 
-    <!-- Batch Scan Tab -->
-    <div id="BatchScan" class="tabcontent">
-        <div class="container">
-            <h2>📑 Batch Student Scanning</h2>
-            <p>Scan multiple students quickly for bus attendance:</p>
-            
-            <div class="scan-section">
-                <button id="batchScanToggle" class="scan-toggle">📷 Start Batch Scan</button>
-                
-                <div id="batchScannerContainer" class="scanner-container" style="display: none;">
-                    <div id="batchQrReader"></div>
-                    <div class="scanner-overlay">
-                        <div class="scanner-guide"></div>
-                    </div>
-                </div>
-                <div id="batchScanStatus"></div>
-                
-                <div class="scanned-list" id="scannedStudents">
-                    <p>No students scanned yet</p>
-                </div>
-                
-                <button id="submitBatch" class="batch-submit" style="display: none;">📤 Submit All Scanned Students</button>
-            </div>
-            
-            <div id="batchScanResult" style="margin-top: 20px;"></div>
-        </div>
-    </div>
-
     <script>
         // Tab switching function
         function openTab(evt, tabName) {
@@ -366,21 +305,15 @@
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
             
-            // Stop scanners when switching tabs
-            if (window.currentScanner && tabName !== 'Attendance' && tabName !== 'BatchScan') {
+            // Stop scanner when switching tabs
+            if (window.currentScanner && tabName !== 'Attendance') {
                 stopScanner();
-            }
-            if (window.batchScanner && tabName !== 'BatchScan') {
-                stopBatchScanner();
             }
         }
 
         // Scanner management functions
         let currentScanner = null;
         let scannerActive = false;
-        let batchScanner = null;
-        let batchScannerActive = false;
-        let scannedStudents = [];
         
         function stopScanner() {
             if (currentScanner) {
@@ -390,289 +323,96 @@
                     document.getElementById('scanToggle').textContent = '📷 Scan QR/Barcode';
                     scannerActive = false;
                     currentScanner = null;
-                    document.getElementById('scanStatus').textContent = '';
                 }).catch(err => {
                     console.error("Failed to stop scanner", err);
                 });
             }
         }
         
-        function stopBatchScanner() {
-            if (batchScanner) {
-                batchScanner.stop().then(() => {
-                    console.log("Batch scanner stopped");
-                    document.getElementById('batchScannerContainer').style.display = 'none';
-                    document.getElementById('batchScanToggle').textContent = '📷 Start Batch Scan';
-                    batchScannerActive = false;
-                    batchScanner = null;
-                    document.getElementById('batchScanStatus').textContent = '';
-                }).catch(err => {
-                    console.error("Failed to stop batch scanner", err);
-                });
-            }
-        }
-        
         function startScanner(format) {
-            const scannerContainer = document.getElementById('scannerContainer');
-            const qrReader = document.getElementById('qrReader');
-            
-            scannerContainer.style.display = 'block';
-            qrReader.innerHTML = '';
-            document.getElementById('scanToggle').textContent = '🛑 Stop Scanning';
-            scannerActive = true;
-            
-            function onScanSuccess(decodedText, decodedResult) {
-                console.log(`Scanned: ${decodedText}`, decodedResult);
-                document.getElementById('scanStatus').textContent = '✅ Code detected! Processing...';
-                document.getElementById('scanStatus').style.color = '#27ae60';
-                
-                // Validate the scanned code looks like a registration number
-                if (isValidRegistrationNumber(decodedText)) {
-                    stopScanner();
-                    
-                    // Auto-fill the registration number field
-                    document.getElementById('regNo').value = decodedText;
-                    
-                    // Auto-submit the form
-                    setTimeout(() => {
-                        document.getElementById('markAttendanceBtn').click();
-                    }, 300);
-                    
-                    // Show success message
-                    const resultDiv = document.getElementById('attendanceResult');
-                    resultDiv.className = "success";
-                    resultDiv.innerHTML = "✅ Scanned successfully! Submitting attendance...";
-                } else {
-                    // Show error message but keep scanning
-                    document.getElementById('scanStatus').textContent = '⚠️ Invalid code format. Keep scanning...';
-                    document.getElementById('scanStatus').style.color = '#e74c3c';
-                }
-            }
-            
-            function onScanFailure(error) {
-                console.warn(`Scan error: ${error}`);
-                document.getElementById('scanStatus').textContent = '🔍 Scanning...';
-                document.getElementById('scanStatus').style.color = '#3498db';
-            }
-            
-            // Enhanced scanner configuration for high-speed scanning
-            const config = {
-                fps: 30, // Higher frame rate for faster detection
-                qrbox: null, // Set to null for full-window scanning
-                aspectRatio: 1.0, // Square aspect ratio
-                disableFlip: true, // Slightly faster processing
-                rememberLastUsedCamera: true, // Faster initialization
-                supportedScanTypes: [
-                    Html5QrcodeScanType.SCAN_TYPE_CAMERA,
-                    Html5QrcodeScanType.SCAN_TYPE_FILE
-                ]
-            };
-            
-            // Additional formats for barcode scanning
-            const formatsToSupport = [
-                Html5QrcodeSupportedFormats.QR_CODE,
-                Html5QrcodeSupportedFormats.UPC_A,
-                Html5QrcodeSupportedFormats.UPC_E,
-                Html5QrcodeSupportedFormats.UPC_EAN_EXTENSION,
-                Html5QrcodeSupportedFormats.CODE_39,
-                Html5QrcodeSupportedFormats.CODE_93,
-                Html5QrcodeSupportedFormats.CODE_128,
-                Html5QrcodeSupportedFormats.EAN_8,
-                Html5QrcodeSupportedFormats.EAN_13,
-                Html5QrcodeSupportedFormats.ITF
-            ];
-            
-            currentScanner = new Html5Qrcode("qrReader", {
-                formatsToSupport: formatsToSupport,
-                verbose: false // Disable verbose logging for better performance
-            });
-            
-            currentScanner.start(
-                { 
-                    facingMode: "environment",
-                    width: { ideal: 1920 },
-                    height: { ideal: 1080 }
-                },
-                config,
-                onScanSuccess,
-                onScanFailure
-            ).catch(err => {
-                console.error("Failed to start scanner", err);
-                scannerContainer.style.display = 'none';
-                document.getElementById('scanToggle').textContent = '📷 Scan QR/Barcode';
-                scannerActive = false;
-                currentScanner = null;
-                
-                // Show error message
-                const resultDiv = document.getElementById('attendanceResult');
-                resultDiv.className = "error";
-                resultDiv.innerHTML = "❌ Failed to start scanner. Please ensure camera access is allowed and try again.";
-            });
-        }
-        
-        function startBatchScanner() {
-            const scannerContainer = document.getElementById('batchScannerContainer');
-            const qrReader = document.getElementById('batchQrReader');
-            
-            scannerContainer.style.display = 'block';
-            qrReader.innerHTML = '';
-            document.getElementById('batchScanToggle').textContent = '🛑 Stop Batch Scan';
-            batchScannerActive = true;
-            document.getElementById('submitBatch').style.display = 'none';
-            
-            function onScanSuccess(decodedText, decodedResult) {
-                console.log(`Batch Scanned: ${decodedText}`, decodedResult);
-                document.getElementById('batchScanStatus').textContent = '✅ Code detected!';
-                document.getElementById('batchScanStatus').style.color = '#27ae60';
-                
-                // Validate the scanned code looks like a registration number
-                if (isValidRegistrationNumber(decodedText)) {
-                    // Add to scanned students list if not already there
-                    if (!scannedStudents.includes(decodedText)) {
-                        scannedStudents.push(decodedText);
-                        updateScannedList();
-                    }
-                    
-                    // Continue scanning
-                    document.getElementById('batchScanStatus').textContent = '✅ Added! Keep scanning...';
-                    document.getElementById('batchScanStatus').style.color = '#27ae60';
-                    
-                    // Show submit button if we have scans
-                    if (scannedStudents.length > 0) {
-                        document.getElementById('submitBatch').style.display = 'block';
-                    }
-                } else {
-                    // Show error message but keep scanning
-                    document.getElementById('batchScanStatus').textContent = '⚠️ Invalid code format. Keep scanning...';
-                    document.getElementById('batchScanStatus').style.color = '#e74c3c';
-                }
-            }
-            
-            function onScanFailure(error) {
-                console.warn(`Batch Scan error: ${error}`);
-                document.getElementById('batchScanStatus').textContent = '🔍 Scanning...';
-                document.getElementById('batchScanStatus').style.color = '#3498db';
-            }
-            
-            // Enhanced scanner configuration for batch scanning
-            const config = {
-                fps: 30,
-                qrbox: null, // Full window scanning
-                aspectRatio: 1.0,
-                disableFlip: true,
-                rememberLastUsedCamera: true,
-                supportedScanTypes: [
-                    Html5QrcodeScanType.SCAN_TYPE_CAMERA,
-                    Html5QrcodeScanType.SCAN_TYPE_FILE
-                ]
-            };
-            
-            batchScanner = new Html5Qrcode("batchQrReader", {
-                formatsToSupport: [
-                    Html5QrcodeSupportedFormats.QR_CODE,
-                    Html5QrcodeSupportedFormats.UPC_A,
-                    Html5QrcodeSupportedFormats.UPC_E,
-                    Html5QrcodeSupportedFormats.UPC_EAN_EXTENSION,
-                    Html5QrcodeSupportedFormats.CODE_39,
-                    Html5QrcodeSupportedFormats.CODE_93,
-                    Html5QrcodeSupportedFormats.CODE_128,
-                    Html5QrcodeSupportedFormats.EAN_8,
-                    Html5QrcodeSupportedFormats.EAN_13,
-                    Html5QrcodeSupportedFormats.ITF
-                ],
-                verbose: false
-            });
-            
-            batchScanner.start(
-                { 
-                    facingMode: "environment",
-                    width: { ideal: 1920 },
-                    height: { ideal: 1080 }
-                },
-                config,
-                onScanSuccess,
-                onScanFailure
-            ).catch(err => {
-                console.error("Failed to start batch scanner", err);
-                scannerContainer.style.display = 'none';
-                document.getElementById('batchScanToggle').textContent = '📷 Start Batch Scan';
-                batchScannerActive = false;
-                batchScanner = null;
-                
-                // Show error message
-                const resultDiv = document.getElementById('batchScanResult');
-                resultDiv.className = "error";
-                resultDiv.innerHTML = "❌ Failed to start scanner. Please ensure camera access is allowed and try again.";
-            });
-        }
-        
-        function updateScannedList() {
-            const listElement = document.getElementById('scannedStudents');
-            
-            if (scannedStudents.length === 0) {
-                listElement.innerHTML = '<p>No students scanned yet</p>';
-                document.getElementById('submitBatch').style.display = 'none';
-                return;
-            }
-            
-            listElement.innerHTML = '';
-            scannedStudents.forEach((student, index) => {
-                const item = document.createElement('div');
-                item.className = 'scanned-item';
-                item.innerHTML = `${index + 1}. ${student} <button onclick="removeScannedStudent(${index})" style="float: right; padding: 2px 5px; font-size: 12px;">❌</button>`;
-                listElement.appendChild(item);
-            });
-            
-            document.getElementById('submitBatch').style.display = 'block';
-        }
-        
-        function removeScannedStudent(index) {
-            scannedStudents.splice(index, 1);
-            updateScannedList();
-        }
-        
-        function submitBatchAttendance() {
-            if (scannedStudents.length === 0) {
-                alert('No students to submit!');
-                return;
-            }
-            
-            // Create a form dynamically
-            const form = document.createElement('form');
-            form.action = 'https://script.google.com/macros/s/AKfycbxJtHBq2nk2LTb_-cBIEXMMUzKIb1TZSbbk2GJVqsdCyCYhsdbtCaMXk7nQF8hWDfOWYA/exec';
-            form.method = 'POST';
-            form.target = '_blank';
-            
-            // Add action field
-            const actionInput = document.createElement('input');
-            actionInput.type = 'hidden';
-            actionInput.name = 'action';
-            actionInput.value = 'batch_attendance';
-            form.appendChild(actionInput);
-            
-            // Add all scanned students
-            scannedStudents.forEach((student, index) => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = `students[${index}]`;
-                input.value = student;
-                form.appendChild(input);
-            });
-            
-            // Submit the form
-            document.body.appendChild(form);
-            form.submit();
-            
-            // Show success message
-            const resultDiv = document.getElementById('batchScanResult');
+    const scannerContainer = document.getElementById('scannerContainer');
+    const qrReader = document.getElementById('qrReader');
+    
+    scannerContainer.style.display = 'block';
+    qrReader.innerHTML = '';
+    document.getElementById('scanToggle').textContent = '🛑 Stop Scanning';
+    scannerActive = true;
+
+    // Supported formats by html5-qrcode enum
+    const allFormats = [
+      Html5QrcodeSupportedFormats.QR_CODE,
+      Html5QrcodeSupportedFormats.CODE_128,
+      Html5QrcodeSupportedFormats.CODE_39,
+      Html5QrcodeSupportedFormats.EAN_13,
+      Html5QrcodeSupportedFormats.EAN_8,
+      Html5QrcodeSupportedFormats.UPC_A,
+      Html5QrcodeSupportedFormats.UPC_E,
+      Html5QrcodeSupportedFormats.ITF,
+      Html5QrcodeSupportedFormats.CODABAR,
+      Html5QrcodeSupportedFormats.DATA_MATRIX
+    ];
+
+    let formatsToSupport = [];
+    if (format === 'qr') {
+      formatsToSupport = [Html5QrcodeSupportedFormats.QR_CODE];
+    } else if (format === 'barcode') {
+      formatsToSupport = allFormats.filter(f => f !== Html5QrcodeSupportedFormats.QR_CODE);
+    } else {
+      formatsToSupport = allFormats;
+    }
+
+    const config = {
+        fps: 20,                      // Increase FPS for smoother scanning
+        qrbox: { width: 400, height: 400 },  // Larger scanning box for easier positioning
+        formatsToSupport: formatsToSupport    // Limit to selected formats
+    };
+
+    function onScanSuccess(decodedText, decodedResult) {
+        console.log(`Scanned: ${decodedText}`, decodedResult);
+
+        if (isValidRegistrationNumber(decodedText)) {
+            stopScanner();
+
+            document.getElementById('regNo').value = decodedText.trim();
+
+            setTimeout(() => {
+                document.getElementById('markAttendanceBtn').click();
+            }, 300);
+
+            const resultDiv = document.getElementById('attendanceResult');
             resultDiv.className = "success";
-            resultDiv.innerHTML = `✅ Submitted attendance for ${scannedStudents.length} students!`;
-            
-            // Reset the scanner and list
-            scannedStudents = [];
-            updateScannedList();
-            stopBatchScanner();
+            resultDiv.innerHTML = "✅ Scanned successfully! Submitting attendance...";
+        } else {
+            const resultDiv = document.getElementById('attendanceResult');
+            resultDiv.className = "error";
+            resultDiv.innerHTML = "⚠️ Scanned code doesn't appear to be a valid registration number. Please try again.";
         }
+    }
+
+    function onScanFailure(error) {
+        // Uncomment for debugging: console.warn(`Scan error: ${error}`);
+    }
+
+    currentScanner = new Html5Qrcode("qrReader");
+    currentScanner.start(
+        { facingMode: "environment" },
+        config,
+        onScanSuccess,
+        onScanFailure
+    ).catch(err => {
+        console.error("Failed to start scanner", err);
+        scannerContainer.style.display = 'none';
+        document.getElementById('scanToggle').textContent = '📷 Scan QR/Barcode';
+        scannerActive = false;
+        currentScanner = null;
+
+        const resultDiv = document.getElementById('attendanceResult');
+        resultDiv.className = "error";
+        resultDiv.innerHTML = "❌ Failed to start scanner. Please ensure camera access is allowed and try again.";
+    });
+}
+
+        
         
         function isValidRegistrationNumber(text) {
             // Basic validation - adjust according to your registration number format
@@ -712,20 +452,6 @@
                     startScanner(selectedFormat);
                 }
             });
-            
-            // Batch Scanner functionality
-            const batchScanToggle = document.getElementById('batchScanToggle');
-            
-            batchScanToggle.addEventListener('click', function() {
-                if (batchScannerActive) {
-                    stopBatchScanner();
-                } else {
-                    startBatchScanner();
-                }
-            });
-            
-            // Batch submit button
-            document.getElementById('submitBatch').addEventListener('click', submitBatchAttendance);
             
             // Manual form submission handler
             document.getElementById('attendanceForm').addEventListener('submit', function(e) {
