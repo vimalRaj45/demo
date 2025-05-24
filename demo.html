@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>College Bus Attendance System</title>
-    <style>
+   <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             max-width: 800px;
@@ -127,12 +127,7 @@
             <h2>🚌 Student Attendance</h2>
             <p>Enter your registration number to mark your bus attendance:</p>
             
-            <div class="qr-scanner">
-                <button onclick="startScanner()">📷 Scan QR Code</button>
-                <div id="reader" style="display: none;"></div>
-            </div>
-            
-            <form id="attendanceForm" action="https://script.google.com/macros/s/AKfycbwv4eIZlNuDAsP82A4o8lOEiH19jJB0aJ5CjUBlluMfagNV0LzAHLakGylEfJiAQZHi-w/exec" method="POST">
+            <form id="attendanceForm" action="https://script.google.com/macros/s/AKfycbxJtHBq2nk2LTb_-cBIEXMMUzKIb1TZSbbk2GJVqsdCyCYhsdbtCaMXk7nQF8hWDfOWYA/exec" method="POST" target="_blank">
                 <input type="hidden" name="action" value="attendance">
                 
                 <div class="form-group">
@@ -143,7 +138,7 @@
                 <button type="submit">✅ Mark Attendance</button>
             </form>
             
-            <div id="attendanceResult"></div>
+            <div id="attendanceResult" style="margin-top: 20px;"></div>
         </div>
     </div>
 
@@ -153,11 +148,11 @@
             <h2>🧾 Admin Student Registration</h2>
             <p>Register new students for bus attendance tracking:</p>
             
-            <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbwv4eIZlNuDAsP82A4o8lOEiH19jJB0aJ5CjUBlluMfagNV0LzAHLakGylEfJiAQZHi-w/exec" method="POST">
+            <form id="registrationForm" action="https://script.google.com/macros/s/AKfycbxJtHBq2nk2LTb_-cBIEXMMUzKIb1TZSbbk2GJVqsdCyCYhsdbtCaMXk7nQF8hWDfOWYA/exec" method="POST" target="_blank">
                 <input type="hidden" name="action" value="register">
                 
                 <div class="form-group">
-                    <label for="regNo">Registration Number:</label>
+                    <label for="adminRegNo">Registration Number:</label>
                     <input type="text" id="adminRegNo" name="regNo" required placeholder="Student's registration number">
                 </div>
                 
@@ -190,13 +185,10 @@
                 <button type="submit">📝 Register Student</button>
             </form>
             
-            <div id="registrationResult"></div>
+            <div id="registrationResult" style="margin-top: 20px;"></div>
         </div>
     </div>
 
-    <!-- Include QR Scanner Library -->
-    <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
-    
     <script>
         // Tab switching function
         function openTab(evt, tabName) {
@@ -213,60 +205,28 @@
             evt.currentTarget.className += " active";
         }
 
-        // QR Code Scanner
-        let html5QrcodeScanner;
-        
-        function startScanner() {
-            const reader = document.getElementById("reader");
-            reader.style.display = "block";
+        // Simple form handling to show results
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const result = urlParams.get('result');
+            const action = urlParams.get('action');
             
-            html5QrcodeScanner = new Html5QrcodeScanner(
-                "reader", { fps: 10, qrbox: 250 });
+            if (result && action) {
+                const resultDiv = action === 'attendance' 
+                    ? document.getElementById('attendanceResult')
+                    : document.getElementById('registrationResult');
                 
-            function onScanSuccess(decodedText) {
-                document.getElementById("regNo").value = decodedText;
-                reader.style.display = "none";
-                html5QrcodeScanner.clear();
-            }
-            
-            html5QrcodeScanner.render(onScanSuccess);
-        }
-
-        // Form submission handling
-        document.getElementById("attendanceForm").addEventListener("submit", function(e) {
-            e.preventDefault();
-            submitForm(this, "attendanceResult");
-        });
-        
-        document.getElementById("registrationForm").addEventListener("submit", function(e) {
-            e.preventDefault();
-            submitForm(this, "registrationResult");
-        });
-        
-        function submitForm(form, resultDivId) {
-            const formData = new FormData(form);
-            const resultDiv = document.getElementById(resultDivId);
-            resultDiv.innerHTML = "⏳ Processing...";
-            
-            fetch(form.action, {
-                method: "POST",
-                body: new URLSearchParams(formData)
-            })
-            .then(response => response.text())
-            .then(text => {
-                if (text.includes("✅")) {
+                if (result.includes("✅")) {
                     resultDiv.className = "success";
-                    form.reset();
                 } else {
                     resultDiv.className = "error";
                 }
-                resultDiv.innerHTML = text;
-            })
-            .catch(error => {
-                resultDiv.className = "error";
-                resultDiv.innerHTML = "❌ Error: " + error.message;
-            });
-        }
+                resultDiv.innerHTML = result;
+                
+                // Scroll to the result
+                resultDiv.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
     </script>
 </body>
 </html>
