@@ -46,7 +46,7 @@
                                 <div class="scanner-container position-relative" id="scannerContainer" style="display: none;">
                                     <div id="qrReader" class="w-100"></div>
                                     <div class="scanner-overlay position-absolute top-0 start-0 w-100 h-100 border border-primary border-3"></div>
-                                    <div class="scanner-guide position-absolute top-0 start-50 translate-middle-x w-75 bg-primary bg-opacity-50" style="height: 2px; animation: scan 2s infinite linear;"></div>
+                                    <div class="scanner-guide position-absolute top-0 start-50 translate-middle-x w-75 bg-primary bg-opacity-50" style="height: 2px;"></div>
                                 </div>
 
                                 <div class="text-center mt-3">
@@ -168,123 +168,167 @@
                     currentScanner = null;
                 }).catch(err => {
                     console.error("Failed to stop scanner", err);
+                    showError("Failed to stop scanner. Please refresh the page.");
                 });
             }
         }
         
-        function startScanner() {
+        async function startScanner() {
             const scannerContainer = document.getElementById('scannerContainer');
             const qrReader = document.getElementById('qrReader');
             
-            scannerContainer.style.display = 'block';
-            qrReader.innerHTML = '';
-            document.getElementById('scanToggle').innerHTML = '<i class="fas fa-stop-circle me-2"></i>Stop Scanning';
-            scannerActive = true;
-            
-            function onScanSuccess(decodedText, decodedResult) {
-                const currentTime = new Date().getTime();
+            // First check camera permissions
+            try {
+                // This will trigger the browser's permission dialog
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: {
+                        facingMode: "environment",
+                        focusMode: "continuous"
+                    } 
+                });
                 
-                // Prevent multiple scans in quick succession
-                if (currentTime - lastScannedTime < scanDelay) {
-                    return;
-                }
-                lastScannedTime = currentTime;
+                // Stop the stream immediately (we just needed permission)
+                stream.getTracks().forEach(track => track.stop());
                 
-                console.log(`Scanned: ${decodedText}`, decodedResult);
+                // Now start the scanner
+                scannerContainer.style.display = 'block';
+                qrReader.innerHTML = '';
+                document.getElementById('scanToggle').innerHTML = '<i class="fas fa-stop-circle me-2"></i>Stop Scanning';
+                scannerActive = true;
                 
-                // Validate the scanned code looks like a registration number
-                if (isValidRegistrationNumber(decodedText)) {
-                    // Auto-fill the registration number field
-                    document.getElementById('regNo').value = decodedText;
+                function onScanSuccess(decodedText, decodedResult) {
+                    const currentTime = new Date().getTime();
                     
-                    // Show scanning success feedback
-                    const resultDiv = document.getElementById('attendanceResult');
-                    resultDiv.innerHTML = `
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle me-2"></i>
-                            <strong>Scanned successfully!</strong> Registration number detected.
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    `;
+                    // Prevent multiple scans in quick succession
+                    if (currentTime - lastScannedTime < scanDelay) {
+                        return;
+                    }
+                    lastScannedTime = currentTime;
                     
-                    // Auto-submit the form after a brief delay
-                    setTimeout(() => {
-                        document.getElementById('markAttendanceBtn').click();
-                    }, 500);
-                } else {
-                    // Show error message but keep scanning
-                    const resultDiv = document.getElementById('attendanceResult');
-                    resultDiv.innerHTML = `
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <strong>Invalid code!</strong> Please scan a valid registration number.
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    `;
+                    console.log(`Scanned: ${decodedText}`, decodedResult);
+                    
+                    // Validate the scanned code looks like a registration number
+                    if (isValidRegistrationNumber(decodedText)) {
+                        // Auto-fill the registration number field
+                        document.getElementById('regNo').value = decodedText;
+                        
+                        // Show scanning success feedback
+                        showSuccess("Scanned successfully! Registration number detected.");
+                        
+                        // Auto-submit the form after a brief delay
+                        setTimeout(() => {
+                            document.getElementById('markAttendanceBtn').click();
+                        }, 500);
+                    } else {
+                        // Show error message but keep scanning
+                        showWarning("Invalid code! Please scan a valid registration number.");
+                    }
                 }
-            }
-            
-            function onScanFailure(error) {
-                console.warn(`Scan error: ${error}`);
-            }
-            
-            // Scanner configuration with enhanced detection
-            const config = {
-                fps: 15,
-                qrbox: { width: 250, height: 250 },
-                aspectRatio: 1.0,
-                disableFlip: false,
-                focusMode: "continuous", // Auto-focus enabled
-                supportedScanTypes: [
-                    Html5QrcodeScanType.SCAN_TYPE_CAMERA,
-                    Html5QrcodeScanType.SCAN_TYPE_FILE
-                ],
-                formatsToSupport: [
-                    Html5QrcodeSupportedFormats.QR_CODE,
-                    Html5QrcodeSupportedFormats.UPC_A,
-                    Html5QrcodeSupportedFormats.UPC_E,
-                    Html5QrcodeSupportedFormats.UPC_EAN_EXTENSION,
-                    Html5QrcodeSupportedFormats.CODE_39,
-                    Html5QrcodeSupportedFormats.CODE_128,
-                    Html5QrcodeSupportedFormats.EAN_8,
-                    Html5QrcodeSupportedFormats.EAN_13,
-                    Html5QrcodeSupportedFormats.CODABAR,
-                    Html5QrcodeSupportedFormats.ITF,
-                    Html5QrcodeSupportedFormats.AZTEC
-                ]
-            };
-            
-            currentScanner = new Html5Qrcode("qrReader");
-            currentScanner.start(
-                { 
-                    facingMode: "environment",
-                    focusMode: "continuous" // Force continuous focus
-                }, 
-                config,
-                onScanSuccess,
-                onScanFailure
-            ).catch(err => {
-                console.error("Failed to start scanner", err);
-                scannerContainer.style.display = 'none';
+                
+                function onScanFailure(error) {
+                    console.warn(`Scan error: ${error}`);
+                }
+                
+                // Scanner configuration with enhanced detection
+                const config = {
+                    fps: 15,
+                    qrbox: { width: 250, height: 250 },
+                    aspectRatio: 1.0,
+                    disableFlip: false,
+                    focusMode: "continuous", // Auto-focus enabled
+                    supportedScanTypes: [
+                        Html5QrcodeScanType.SCAN_TYPE_CAMERA,
+                        Html5QrcodeScanType.SCAN_TYPE_FILE
+                    ],
+                    formatsToSupport: [
+                        Html5QrcodeSupportedFormats.QR_CODE,
+                        Html5QrcodeSupportedFormats.UPC_A,
+                        Html5QrcodeSupportedFormats.UPC_E,
+                        Html5QrcodeSupportedFormats.UPC_EAN_EXTENSION,
+                        Html5QrcodeSupportedFormats.CODE_39,
+                        Html5QrcodeSupportedFormats.CODE_128,
+                        Html5QrcodeSupportedFormats.EAN_8,
+                        Html5QrcodeSupportedFormats.EAN_13,
+                        Html5QrcodeSupportedFormats.CODABAR,
+                        Html5QrcodeSupportedFormats.ITF,
+                        Html5QrcodeSupportedFormats.AZTEC
+                    ]
+                };
+                
+                currentScanner = new Html5Qrcode("qrReader");
+                currentScanner.start(
+                    { 
+                        facingMode: "environment",
+                        focusMode: "continuous" // Force continuous focus
+                    }, 
+                    config,
+                    onScanSuccess,
+                    onScanFailure
+                ).catch(err => {
+                    console.error("Failed to start scanner", err);
+                    scannerContainer.style.display = 'none';
+                    document.getElementById('scanToggle').innerHTML = '<i class="fas fa-camera me-2"></i>Start Scanning';
+                    scannerActive = false;
+                    currentScanner = null;
+                    
+                    showError(`Scanner error! ${err.message || 'Please ensure camera access is allowed and try again.'}`);
+                });
+                
+            } catch (err) {
+                console.error("Camera permission error:", err);
+                let errorMessage = "Camera access is required for scanning.";
+                
+                if (err.name === 'NotAllowedError') {
+                    errorMessage = "Camera permission was denied. Please allow camera access in your browser settings.";
+                } else if (err.name === 'NotFoundError') {
+                    errorMessage = "No camera found. Please check your device has a camera.";
+                } else if (err.name === 'NotReadableError') {
+                    errorMessage = "Camera is already in use by another application.";
+                }
+                
+                showError(errorMessage);
                 document.getElementById('scanToggle').innerHTML = '<i class="fas fa-camera me-2"></i>Start Scanning';
                 scannerActive = false;
-                currentScanner = null;
-                
-                // Show error message
-                const resultDiv = document.getElementById('attendanceResult');
-                resultDiv.innerHTML = `
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fas fa-exclamation-circle me-2"></i>
-                        <strong>Scanner error!</strong> ${err.message || 'Please ensure camera access is allowed and try again.'}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                `;
-            });
+            }
         }
         
         function isValidRegistrationNumber(text) {
             // Basic validation - adjust according to your registration number format
             return text && text.trim().length >= 5 && /^[a-zA-Z0-9]+$/.test(text);
+        }
+        
+        // Helper functions for showing messages
+        function showSuccess(message) {
+            const resultDiv = document.getElementById('attendanceResult');
+            resultDiv.innerHTML = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>${message}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+        }
+        
+        function showWarning(message) {
+            const resultDiv = document.getElementById('attendanceResult');
+            resultDiv.innerHTML = `
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>${message}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+        }
+        
+        function showError(message) {
+            const resultDiv = document.getElementById('attendanceResult');
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>${message}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
         }
 
         // Initialize the page
@@ -345,14 +389,7 @@
                 const regNo = document.getElementById('regNo').value.trim();
                 if (!isValidRegistrationNumber(regNo)) {
                     e.preventDefault();
-                    const resultDiv = document.getElementById('attendanceResult');
-                    resultDiv.innerHTML = `
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            <strong>Invalid registration number!</strong> Please enter a valid ID.
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    `;
+                    showError("Invalid registration number! Please enter a valid ID.");
                     return false;
                 }
                 return true;
