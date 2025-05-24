@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>College Bus Attendance System</title>
-   <style>
+    <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             max-width: 800px;
@@ -111,7 +111,45 @@
             width: 100%;
             margin: 0 auto;
         }
+        #reader__dashboard_section {
+            text-align: left;
+        }
+        .scan-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .scan-toggle {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .scan-toggle:hover {
+            background-color: #2980b9;
+        }
+        .or-divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .or-divider::before, .or-divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+        .or-divider span {
+            padding: 0 10px;
+            color: #777;
+        }
     </style>
+    <!-- Include the QR scanner library -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
 <body>
     <h1>🎓 College Bus Attendance System</h1>
@@ -125,6 +163,16 @@
     <div id="Attendance" class="tabcontent" style="display: block;">
         <div class="container">
             <h2>🚌 Student Attendance</h2>
+            
+            <div class="scan-section">
+                <button id="scanToggle" class="scan-toggle">📷 Scan QR Code</button>
+                <div id="qrReader" style="display: none;"></div>
+            </div>
+            
+            <div class="or-divider">
+                <span>OR</span>
+            </div>
+            
             <p>Enter your registration number to mark your bus attendance:</p>
             
             <form id="attendanceForm" action="https://script.google.com/macros/s/AKfycbxJtHBq2nk2LTb_-cBIEXMMUzKIb1TZSbbk2GJVqsdCyCYhsdbtCaMXk7nQF8hWDfOWYA/exec" method="POST" target="_blank">
@@ -203,6 +251,17 @@
             }
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
+            
+            // Stop scanner when switching tabs
+            if (window.html5QrCodeScanner && tabName !== 'Attendance') {
+                window.html5QrCodeScanner.stop().then(() => {
+                    document.getElementById('qrReader').innerHTML = '';
+                    document.getElementById('qrReader').style.display = 'none';
+                    document.getElementById('scanToggle').textContent = '📷 Scan QR Code';
+                }).catch(err => {
+                    console.error("Failed to stop scanner", err);
+                });
+            }
         }
 
         // Simple form handling to show results
@@ -226,6 +285,82 @@
                 // Scroll to the result
                 resultDiv.scrollIntoView({ behavior: 'smooth' });
             }
+            
+            // QR Code Scanner functionality
+            const scanToggle = document.getElementById('scanToggle');
+            const qrReader = document.getElementById('qrReader');
+            let scannerActive = false;
+            
+            scanToggle.addEventListener('click', function() {
+                if (scannerActive) {
+                    // Stop scanner
+                    window.html5QrCodeScanner.stop().then(() => {
+                        qrReader.innerHTML = '';
+                        qrReader.style.display = 'none';
+                        scanToggle.textContent = '📷 Scan QR Code';
+                        scannerActive = false;
+                    }).catch(err => {
+                        console.error("Failed to stop scanner", err);
+                    });
+                } else {
+                    // Start scanner
+                    qrReader.style.display = 'block';
+                    scanToggle.textContent = '🛑 Stop Scanning';
+                    scannerActive = true;
+                    
+                    function onScanSuccess(decodedText, decodedResult) {
+                        // Handle the scanned code
+                        console.log(`Code matched = ${decodedText}`, decodedResult);
+                        
+                        // Stop the scanner
+                        window.html5QrCodeScanner.stop().then(() => {
+                            qrReader.innerHTML = '';
+                            qrReader.style.display = 'none';
+                            scanToggle.textContent = '📷 Scan QR Code';
+                            scannerActive = false;
+                            
+                            // Auto-fill the registration number field
+                            document.getElementById('regNo').value = decodedText;
+                            
+                            // Show success message
+                            const resultDiv = document.getElementById('attendanceResult');
+                            resultDiv.className = "success";
+                            resultDiv.innerHTML = "✅ QR Code scanned successfully! Registration number filled. Click 'Mark Attendance' to submit.";
+                            
+                            // Scroll to the form
+                            document.getElementById('regNo').scrollIntoView({ behavior: 'smooth' });
+                        }).catch(err => {
+                            console.error("Failed to stop scanner", err);
+                        });
+                    }
+                    
+                    function onScanFailure(error) {
+                        // Handle scan failure
+                        console.warn(`Code scan error = ${error}`);
+                    }
+                    
+                    window.html5QrCodeScanner = new Html5Qrcode("qrReader");
+                    window.html5QrCodeScanner.start(
+                        { facingMode: "environment" }, 
+                        {
+                            fps: 10,
+                            qrbox: { width: 250, height: 250 }
+                        },
+                        onScanSuccess,
+                        onScanFailure
+                    ).catch(err => {
+                        console.error("Failed to start scanner", err);
+                        qrReader.style.display = 'none';
+                        scanToggle.textContent = '📷 Scan QR Code';
+                        scannerActive = false;
+                        
+                        // Show error message
+                        const resultDiv = document.getElementById('attendanceResult');
+                        resultDiv.className = "error";
+                        resultDiv.innerHTML = "❌ Failed to start QR scanner. Please ensure camera access is allowed and try again.";
+                    });
+                }
+            });
         });
     </script>
 </body>
