@@ -329,7 +329,7 @@
             }
         }
         
-        function startScanner(format) {
+       function startScanner(format) {
     const scannerContainer = document.getElementById('scannerContainer');
     const qrReader = document.getElementById('qrReader');
     
@@ -364,7 +364,15 @@
     const config = {
         fps: 20,                      // Increase FPS for smoother scanning
         qrbox: { width: 400, height: 400 },  // Larger scanning box for easier positioning
-        formatsToSupport: formatsToSupport    // Limit to selected formats
+        formatsToSupport: formatsToSupport,    // Limit to selected formats
+        
+        // Request very high resolution camera feed (4K UHD ideal)
+        videoConstraints: {
+            facingMode: "environment",
+            width: { ideal: 3840 },
+            height: { ideal: 2160 },
+            aspectRatio: { ideal: 16/9 }
+        }
     };
 
     function onScanSuccess(decodedText, decodedResult) {
@@ -395,7 +403,7 @@
 
     currentScanner = new Html5Qrcode("qrReader");
     currentScanner.start(
-        { facingMode: "environment" },
+        { facingMode: "environment" }, // will be overridden by videoConstraints inside config
         config,
         onScanSuccess,
         onScanFailure
