@@ -5,47 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>College Bus Attendance System</title>
     <style>
-        :root {
-            --primary-color: #3498db;
-            --primary-dark: #2980b9;
-            --success-color: #27ae60;
-            --error-color: #e74c3c;
-            --text-dark: #2c3e50;
-            --text-medium: #34495e;
-            --text-light: #7f8c8d;
-            --bg-light: #f5f5f5;
-            --bg-white: #ffffff;
-            --border-color: #ddd;
-            --shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background-color: var(--bg-light);
-            line-height: 1.6;
+            background-color: #f5f5f5;
         }
         .container {
-            background-color: var(--bg-white);
+            background-color: white;
             border-radius: 10px;
             padding: 25px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             margin-bottom: 30px;
         }
         h1 {
-            color: var(--text-dark);
+            color: #2c3e50;
             text-align: center;
             margin-bottom: 30px;
-            font-size: 2.2rem;
         }
         h2 {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
             padding-bottom: 8px;
             margin-top: 30px;
-            font-size: 1.5rem;
         }
         .form-group {
             margin-bottom: 20px;
@@ -54,40 +37,29 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: var(--text-medium);
+            color: #34495e;
         }
         input, select {
             width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
+            padding: 10px;
+            border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 16px;
             box-sizing: border-box;
-            transition: border-color 0.3s;
-        }
-        input:focus, select:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
         }
         button {
-            background-color: var(--primary-color);
+            background-color: #3498db;
             color: white;
             border: none;
-            padding: 14px 20px;
+            padding: 12px 20px;
             font-size: 16px;
-            font-weight: 600;
             border-radius: 4px;
             cursor: pointer;
             width: 100%;
-            transition: all 0.3s;
+            transition: background-color 0.3s;
         }
         button:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-        button:active {
-            transform: translateY(0);
+            background-color: #2980b9;
         }
         .tab {
             overflow: hidden;
@@ -104,14 +76,13 @@
             padding: 14px 16px;
             transition: 0.3s;
             width: auto;
-            color: var(--text-dark);
-            font-weight: 600;
+            color: #2c3e50;
         }
         .tab button:hover {
             background-color: #ddd;
         }
         .tab button.active {
-            background-color: var(--primary-color);
+            background-color: #3498db;
             color: white;
         }
         .tabcontent {
@@ -121,27 +92,16 @@
             border-top: none;
             border-radius: 0 0 5px 5px;
             background-color: white;
-            animation: fadeIn 0.3s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
         .success {
-            color: var(--success-color);
+            color: #27ae60;
             font-weight: bold;
             margin-top: 15px;
-            padding: 10px;
-            border-radius: 4px;
-            background-color: rgba(39, 174, 96, 0.1);
         }
         .error {
-            color: var(--error-color);
+            color: #e74c3c;
             font-weight: bold;
             margin-top: 15px;
-            padding: 10px;
-            border-radius: 4px;
-            background-color: rgba(231, 76, 60, 0.1);
         }
         .qr-scanner {
             margin: 20px 0;
@@ -150,7 +110,6 @@
         #reader {
             width: 100%;
             margin: 0 auto;
-            position: relative;
         }
         #reader__dashboard_section {
             text-align: left;
@@ -163,46 +122,36 @@
             text-align: center;
         }
         .scan-toggle {
-            background-color: var(--primary-color);
+            background-color: #3498db;
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 10px 15px;
             border-radius: 4px;
             cursor: pointer;
             margin-bottom: 15px;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
         }
         .scan-toggle:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-        .scan-toggle:active {
-            transform: translateY(0);
+            background-color: #2980b9;
         }
         .or-divider {
             display: flex;
             align-items: center;
             margin: 20px 0;
-            color: var(--text-light);
         }
         .or-divider::before, .or-divider::after {
             content: "";
             flex: 1;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #ddd;
         }
         .or-divider span {
             padding: 0 10px;
+            color: #777;
         }
         .scanner-container {
             position: relative;
             margin: 20px auto;
             width: 100%;
             max-width: 500px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .scanner-overlay {
             position: absolute;
@@ -211,9 +160,8 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            border: 4px solid var(--primary-color);
+            border: 2px solid #3498db;
             box-sizing: border-box;
-            border-radius: 8px;
         }
         .scanner-guide {
             position: absolute;
@@ -221,88 +169,28 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 80%;
-            height: 3px;
-            background-color: rgba(52, 152, 219, 0.7);
-            animation: scan 1.5s infinite ease-in-out;
-            box-shadow: 0 0 10px rgba(52, 152, 219, 0.7);
+            height: 2px;
+            background-color: rgba(52, 152, 219, 0.5);
+            animation: scan 2s infinite linear;
         }
         @keyframes scan {
             0% { top: 10%; }
             100% { top: 90%; }
         }
         .format-selector {
-            margin: 15px 0;
+            margin: 10px 0;
             text-align: center;
         }
         .format-selector label {
-            display: inline-flex;
-            align-items: center;
+            display: inline-block;
             margin: 0 10px;
             cursor: pointer;
-            font-weight: normal;
-            color: var(--text-medium);
-        }
-        .format-selector input[type="radio"] {
-            width: auto;
-            margin-right: 6px;
-        }
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-            margin-left: 8px;
-            vertical-align: middle;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .speed-indicator {
-            font-size: 14px;
-            color: var(--text-light);
-            margin-top: 10px;
-        }
-        .speed-value {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        .screen-capture-container {
-            display: none;
-            margin-top: 20px;
-            text-align: center;
-        }
-        .screen-capture-preview {
-            max-width: 100%;
-            border: 2px solid var(--primary-color);
-            border-radius: 8px;
-            margin: 10px 0;
-        }
-        .screen-capture-btn {
-            background-color: #2ecc71;
-            margin: 5px;
-        }
-        .screen-capture-btn:hover {
-            background-color: #27ae60;
-        }
-        .screen-capture-cancel {
-            background-color: #e74c3c;
-        }
-        .screen-capture-cancel:hover {
-            background-color: #c0392b;
-        }
-        /* Performance optimizations */
-        .performance-optimized {
-            will-change: transform, opacity;
-            backface-visibility: hidden;
         }
     </style>
-    <!-- Include the optimized QR/Barcode scanner library -->
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/dist/html5-qrcode.min.js"></script>
-    <!-- Include ZXing for high-performance barcode scanning -->
-    <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1"></script>
+    <!-- Include the QR/Barcode scanner library -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <!-- Include Barcode detector polyfill for broader support -->
+    <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@1.0.0-beta.1/dist/quagga.min.js"></script>
 </head>
 <body>
     <h1>🎓 College Bus Attendance System</h1>
@@ -317,15 +205,8 @@
         <div class="container">
             <h2>🚌 Student Attendance</h2>
             
-            <div class="scan-section performance-optimized">
-                <button id="scanToggle" class="scan-toggle">
-                    <span id="scanToggleText">📷 Scan QR/Barcode</span>
-                    <span id="scanLoading" class="loading-spinner" style="display: none;"></span>
-                </button>
-                
-                <button id="screenCaptureToggle" class="scan-toggle screen-capture-btn">
-                    🖥️ Scan from Screen
-                </button>
+            <div class="scan-section">
+                <button id="scanToggle" class="scan-toggle">📷 Scan QR/Barcode</button>
                 
                 <div class="format-selector">
                     <label><input type="radio" name="scanFormat" value="all" checked> Auto-detect</label>
@@ -333,22 +214,11 @@
                     <label><input type="radio" name="scanFormat" value="barcode"> Barcode</label>
                 </div>
                 
-                <div class="speed-indicator">
-                    Scan speed: <span class="speed-value" id="scanSpeed">0</span> scans/second
-                </div>
-                
                 <div id="scannerContainer" class="scanner-container" style="display: none;">
                     <div id="qrReader"></div>
                     <div class="scanner-overlay">
                         <div class="scanner-guide"></div>
                     </div>
-                </div>
-                
-                <div id="screenCaptureContainer" class="screen-capture-container">
-                    <p>Select an area of your screen containing the QR/barcode:</p>
-                    <img id="screenCapturePreview" class="screen-capture-preview" style="display: none;">
-                    <button id="captureScreenBtn" class="screen-capture-btn">Select Screen Area</button>
-                    <button id="cancelScreenCaptureBtn" class="screen-capture-btn screen-capture-cancel">Cancel</button>
                 </div>
             </div>
             
@@ -363,12 +233,10 @@
                 
                 <div class="form-group">
                     <label for="regNo">Registration Number:</label>
-                    <input type="text" id="regNo" name="regNo" required placeholder="Enter your registration number" autocomplete="off">
+                    <input type="text" id="regNo" name="regNo" required placeholder="Enter your registration number">
                 </div>
                 
-                <button type="submit" id="markAttendanceBtn" class="performance-optimized">
-                    ✅ Mark Attendance
-                </button>
+                <button type="submit" id="markAttendanceBtn">✅ Mark Attendance</button>
             </form>
             
             <div id="attendanceResult" style="margin-top: 20px;"></div>
@@ -386,7 +254,7 @@
                 
                 <div class="form-group">
                     <label for="adminRegNo">Registration Number:</label>
-                    <input type="text" id="adminRegNo" name="regNo" required placeholder="Student's registration number" autocomplete="off">
+                    <input type="text" id="adminRegNo" name="regNo" required placeholder="Student's registration number">
                 </div>
                 
                 <div class="form-group">
@@ -423,19 +291,6 @@
     </div>
 
     <script>
-        // Performance tracking variables
-        let scanStartTime = 0;
-        let scanCount = 0;
-        let lastScanTime = 0;
-        let scansPerSecond = 0;
-        let scanSpeedUpdateInterval;
-        
-        // Scanner management variables
-        let currentScanner = null;
-        let scannerActive = false;
-        let zxingScanner = null;
-        let screenCaptureStream = null;
-        
         // Tab switching function
         function openTab(evt, tabName) {
             var i, tabcontent, tablinks;
@@ -451,363 +306,121 @@
             evt.currentTarget.className += " active";
             
             // Stop scanner when switching tabs
-            if (scannerActive) {
+            if (window.currentScanner && tabName !== 'Attendance') {
                 stopScanner();
-            }
-            if (document.getElementById('screenCaptureContainer').style.display === 'block') {
-                cancelScreenCapture();
             }
         }
 
         // Scanner management functions
-        async function stopScanner() {
-            if (scannerActive) {
-                document.getElementById('scanLoading').style.display = 'inline-block';
-                document.getElementById('scanToggleText').textContent = 'Stopping...';
-                
-                try {
-                    if (currentScanner) {
-                        await currentScanner.stop();
-                    }
-                    if (zxingScanner) {
-                        zxingScanner.stop();
-                    }
-                    
-                    console.log("Scanner stopped successfully");
+        let currentScanner = null;
+        let scannerActive = false;
+        
+        function stopScanner() {
+            if (currentScanner) {
+                currentScanner.stop().then(() => {
+                    console.log("Scanner stopped");
                     document.getElementById('scannerContainer').style.display = 'none';
-                    document.getElementById('scanToggleText').textContent = '📷 Scan QR/Barcode';
+                    document.getElementById('scanToggle').textContent = '📷 Scan QR/Barcode';
                     scannerActive = false;
                     currentScanner = null;
-                    zxingScanner = null;
-                    
-                    // Clear speed tracking
-                    clearInterval(scanSpeedUpdateInterval);
-                    document.getElementById('scanSpeed').textContent = '0';
-                } catch (err) {
-                    console.error("Failed to stop scanner:", err);
-                } finally {
-                    document.getElementById('scanLoading').style.display = 'none';
-                }
-            }
-        }
-        
-        async function startScanner(format) {
-            const scannerContainer = document.getElementById('scannerContainer');
-            const qrReader = document.getElementById('qrReader');
-            
-            // Hide screen capture if active
-            cancelScreenCapture();
-            
-            scannerContainer.style.display = 'block';
-            qrReader.innerHTML = '';
-            document.getElementById('scanToggleText').textContent = '🛑 Stop Scanning';
-            document.getElementById('scanLoading').style.display = 'inline-block';
-            scannerActive = true;
-            
-            // Initialize performance tracking
-            scanStartTime = performance.now();
-            scanCount = 0;
-            lastScanTime = scanStartTime;
-            scansPerSecond = 0;
-            
-            // Update scan speed display every second
-            scanSpeedUpdateInterval = setInterval(() => {
-                document.getElementById('scanSpeed').textContent = scansPerSecond.toFixed(1);
-            }, 200);
-            
-            function onScanSuccess(decodedText, decodedResult) {
-                const now = performance.now();
-                scanCount++;
-                
-                // Calculate instantaneous scan rate
-                const timeSinceLastScan = now - lastScanTime;
-                lastScanTime = now;
-                
-                // Exponential moving average for smooth display
-                const instantaneousRate = 1000 / timeSinceLastScan;
-                scansPerSecond = scansPerSecond * 0.7 + instantaneousRate * 0.3;
-                
-                console.log(`Scanned in ${timeSinceLastScan.toFixed(1)}ms: ${decodedText}`);
-                
-                // Validate the scanned code looks like a registration number
-                if (isValidRegistrationNumber(decodedText)) {
-                    stopScanner();
-                    
-                    // Auto-fill the registration number field
-                    document.getElementById('regNo').value = decodedText;
-                    
-                    // Auto-submit the form after a brief delay
-                    setTimeout(() => {
-                        document.getElementById('markAttendanceBtn').click();
-                    }, 300);
-                    
-                    // Show success message
-                    const resultDiv = document.getElementById('attendanceResult');
-                    resultDiv.className = "success";
-                    resultDiv.innerHTML = "✅ Scanned successfully! Submitting attendance...";
-                } else {
-                    // Show error message but keep scanning
-                    const resultDiv = document.getElementById('attendanceResult');
-                    resultDiv.className = "error";
-                    resultDiv.innerHTML = "⚠️ Scanned code doesn't appear to be a valid registration number. Please try again.";
-                }
-            }
-            
-            function onScanFailure(error) {
-                console.warn(`Scan error: ${error}`);
-            }
-            
-            try {
-                // Use ZXing for barcode scanning (faster than html5-qrcode)
-                if (format === 'barcode' || format === 'all') {
-                    const codeReader = new ZXing.BrowserMultiFormatReader();
-                    zxingScanner = codeReader;
-                    
-                    codeReader.decodeFromVideoDevice(undefined, 'qrReader', (result, error) => {
-                        if (result) {
-                            onScanSuccess(result.text, result);
-                        }
-                        if (error && !(error instanceof ZXing.NotFoundException)) {
-                            onScanFailure(error);
-                        }
-                    }).then(() => {
-                        console.log("ZXing scanner started successfully");
-                        document.getElementById('scanLoading').style.display = 'none';
-                    }).catch(err => {
-                        console.error("ZXing scanner failed:", err);
-                        fallbackToHtml5Qrcode(format);
-                    });
-                } else {
-                    // Use html5-qrcode for QR codes
-                    fallbackToHtml5Qrcode(format);
-                }
-            } catch (err) {
-                console.error("Scanner initialization failed:", err);
-                fallbackToHtml5Qrcode(format);
-            }
-        }
-        
-        function fallbackToHtml5Qrcode(format) {
-            console.log("Falling back to html5-qrcode");
-            const qrReader = document.getElementById('qrReader');
-            qrReader.innerHTML = '';
-            
-            // Configure based on selected format
-            const config = {
-                fps: 30, // Increased frame rate
-                qrbox: { width: 250, height: 250 },
-                supportedScanTypes: [],
-                rememberLastUsedCamera: true,
-                showTorchButtonIfSupported: true
-            };
-            
-            if (format === 'all' || format === 'qr') {
-                config.supportedScanTypes.push(Html5QrcodeScanType.SCAN_TYPE_CAMERA);
-            }
-            if (format === 'all' || format === 'barcode') {
-                config.supportedScanTypes.push(Html5QrcodeScanType.SCAN_TYPE_CAMERA);
-            }
-            
-            currentScanner = new Html5Qrcode("qrReader", {
-                verbose: false // Disable verbose logging for better performance
-            });
-            
-            currentScanner.start(
-                { facingMode: "environment" },
-                config,
-                onScanSuccess,
-                onScanFailure
-            ).then(() => {
-                console.log("html5-qrcode scanner started successfully");
-                document.getElementById('scanLoading').style.display = 'none';
-            }).catch(err => {
-                console.error("Failed to start scanner", err);
-                scannerContainer.style.display = 'none';
-                document.getElementById('scanToggleText').textContent = '📷 Scan QR/Barcode';
-                scannerActive = false;
-                currentScanner = null;
-                document.getElementById('scanLoading').style.display = 'none';
-                
-                // Show error message
-                const resultDiv = document.getElementById('attendanceResult');
-                resultDiv.className = "error";
-                resultDiv.innerHTML = "❌ Failed to start scanner. Please ensure camera access is allowed and try again.";
-            });
-        }
-        
-        // Screen capture functions
-        async function startScreenCapture() {
-            // Stop any active camera scanner
-            if (scannerActive) {
-                await stopScanner();
-            }
-            
-            // Show screen capture UI
-            document.getElementById('screenCaptureContainer').style.display = 'block';
-            document.getElementById('scannerContainer').style.display = 'none';
-            document.getElementById('scanToggleText').textContent = '📷 Scan QR/Barcode';
-        }
-        
-        function cancelScreenCapture() {
-            document.getElementById('screenCaptureContainer').style.display = 'none';
-            document.getElementById('screenCapturePreview').style.display = 'none';
-            
-            // Stop any screen capture stream
-            if (screenCaptureStream) {
-                screenCaptureStream.getTracks().forEach(track => track.stop());
-                screenCaptureStream = null;
-            }
-        }
-        
-        async function captureScreen() {
-            try {
-                // Use the Screen Capture API
-                screenCaptureStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: {
-                        displaySurface: 'window', // or 'screen', 'application'
-                        logicalSurface: true
-                    },
-                    audio: false
+                }).catch(err => {
+                    console.error("Failed to stop scanner", err);
                 });
-                
-                // Create a video element to display the capture
-                const video = document.createElement('video');
-                video.srcObject = screenCaptureStream;
-                video.autoplay = true;
-                
-                // When the video starts playing, we can process it
-                video.onplaying = () => {
-                    // Create canvas to capture frames
-                    const canvas = document.createElement('canvas');
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    const ctx = canvas.getContext('2d');
-                    
-                    // Show preview
-                    const preview = document.getElementById('screenCapturePreview');
-                    preview.src = canvas.toDataURL();
-                    preview.style.display = 'block';
-                    
-                    // Start scanning the captured screen
-                    scanScreenCapture(video, canvas, ctx);
-                };
-                
-            } catch (err) {
-                console.error("Screen capture failed:", err);
-                const resultDiv = document.getElementById('attendanceResult');
-                resultDiv.className = "error";
-                resultDiv.innerHTML = "❌ Screen capture canceled or failed. Please try again.";
-                cancelScreenCapture();
             }
         }
         
-        function scanScreenCapture(video, canvas, ctx) {
-            const selectedFormat = document.querySelector('input[name="scanFormat"]:checked').value;
-            const formatsToSupport = getFormatsToSupport(selectedFormat);
-            const codeReader = new ZXing.BrowserMultiFormatReader();
-            
-            // Start performance tracking
-            scanStartTime = performance.now();
-            scanCount = 0;
-            lastScanTime = scanStartTime;
-            scansPerSecond = 0;
-            
-            // Update scan speed display every second
-            scanSpeedUpdateInterval = setInterval(() => {
-                document.getElementById('scanSpeed').textContent = scansPerSecond.toFixed(1);
-            }, 200);
-            
-            // Function to process each frame
-            function processFrame() {
-                if (!screenCaptureStream) return; // Stop if capture was canceled
-                
-                // Draw video frame to canvas
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                // Get image data
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                
-                // Try to decode
-                try {
-                    const now = performance.now();
-                    const result = codeReader.decodeFromImage(
-                        null,
-                        imageData.data,
-                        imageData.width,
-                        imageData.height
-                    );
-                    
-                    scanCount++;
-                    
-                    // Calculate instantaneous scan rate
-                    const timeSinceLastScan = now - lastScanTime;
-                    lastScanTime = now;
-                    
-                    // Exponential moving average for smooth display
-                    const instantaneousRate = 1000 / timeSinceLastScan;
-                    scansPerSecond = scansPerSecond * 0.7 + instantaneousRate * 0.3;
-                    
-                    console.log(`Screen scan success: ${result.text}`);
-                    
-                    if (isValidRegistrationNumber(result.text)) {
-                        // Success - stop scanning
-                        clearInterval(scanSpeedUpdateInterval);
-                        cancelScreenCapture();
-                        
-                        // Auto-fill and submit
-                        document.getElementById('regNo').value = result.text;
-                        setTimeout(() => {
-                            document.getElementById('markAttendanceBtn').click();
-                        }, 300);
-                        
-                        // Show success message
-                        const resultDiv = document.getElementById('attendanceResult');
-                        resultDiv.className = "success";
-                        resultDiv.innerHTML = "✅ Scanned successfully from screen! Submitting attendance...";
-                        return;
-                    } else {
-                        // Invalid code - continue scanning
-                        const resultDiv = document.getElementById('attendanceResult');
-                        resultDiv.className = "error";
-                        resultDiv.innerHTML = "⚠️ Scanned code doesn't appear to be a valid registration number. Please try again.";
-                    }
-                } catch (err) {
-                    // No code found - continue scanning
-                    if (!(err instanceof ZXing.NotFoundException)) {
-                        console.warn("Screen scan error:", err);
-                    }
-                }
-                
-                // Process next frame
-                requestAnimationFrame(processFrame);
-            }
-            
-            // Start processing
-            processFrame();
-        }
+       function startScanner(format) {
+    const scannerContainer = document.getElementById('scannerContainer');
+    const qrReader = document.getElementById('qrReader');
+    
+    scannerContainer.style.display = 'block';
+    qrReader.innerHTML = '';
+    document.getElementById('scanToggle').textContent = '🛑 Stop Scanning';
+    scannerActive = true;
+
+    // Supported formats by html5-qrcode enum
+    const allFormats = [
+      Html5QrcodeSupportedFormats.QR_CODE,
+      Html5QrcodeSupportedFormats.CODE_128,
+      Html5QrcodeSupportedFormats.CODE_39,
+      Html5QrcodeSupportedFormats.EAN_13,
+      Html5QrcodeSupportedFormats.EAN_8,
+      Html5QrcodeSupportedFormats.UPC_A,
+      Html5QrcodeSupportedFormats.UPC_E,
+      Html5QrcodeSupportedFormats.ITF,
+      Html5QrcodeSupportedFormats.CODABAR,
+      Html5QrcodeSupportedFormats.DATA_MATRIX
+    ];
+
+    let formatsToSupport = [];
+    if (format === 'qr') {
+      formatsToSupport = [Html5QrcodeSupportedFormats.QR_CODE];
+    } else if (format === 'barcode') {
+      formatsToSupport = allFormats.filter(f => f !== Html5QrcodeSupportedFormats.QR_CODE);
+    } else {
+      formatsToSupport = allFormats;
+    }
+
+    const config = {
+        fps: 20,                      // Increase FPS for smoother scanning
+        qrbox: { width: 400, height: 400 },  // Larger scanning box for easier positioning
+        formatsToSupport: formatsToSupport,    // Limit to selected formats
         
-        function getFormatsToSupport(format) {
-            const allFormats = [
-                ZXing.BarcodeFormat.QR_CODE,
-                ZXing.BarcodeFormat.CODE_128,
-                ZXing.BarcodeFormat.CODE_39,
-                ZXing.BarcodeFormat.EAN_13,
-                ZXing.BarcodeFormat.EAN_8,
-                ZXing.BarcodeFormat.UPC_A,
-                ZXing.BarcodeFormat.UPC_E,
-                ZXing.BarcodeFormat.ITF,
-                ZXing.BarcodeFormat.CODABAR,
-                ZXing.BarcodeFormat.DATA_MATRIX
-            ];
-            
-            if (format === 'qr') {
-                return [ZXing.BarcodeFormat.QR_CODE];
-            } else if (format === 'barcode') {
-                return allFormats.filter(f => f !== ZXing.BarcodeFormat.QR_CODE);
-            } else {
-                return allFormats;
-            }
+        // Request very high resolution camera feed (4K UHD ideal)
+        videoConstraints: {
+            facingMode: "environment",
+            width: { ideal: 3840 },
+            height: { ideal: 2160 },
+            aspectRatio: { ideal: 16/9 }
         }
+    };
+
+    function onScanSuccess(decodedText, decodedResult) {
+        console.log(`Scanned: ${decodedText}`, decodedResult);
+
+        if (isValidRegistrationNumber(decodedText)) {
+            stopScanner();
+
+            document.getElementById('regNo').value = decodedText.trim();
+
+            setTimeout(() => {
+                document.getElementById('markAttendanceBtn').click();
+            }, 300);
+
+            const resultDiv = document.getElementById('attendanceResult');
+            resultDiv.className = "success";
+            resultDiv.innerHTML = "✅ Scanned successfully! Submitting attendance...";
+        } else {
+            const resultDiv = document.getElementById('attendanceResult');
+            resultDiv.className = "error";
+            resultDiv.innerHTML = "⚠️ Scanned code doesn't appear to be a valid registration number. Please try again.";
+        }
+    }
+
+    function onScanFailure(error) {
+        // Uncomment for debugging: console.warn(`Scan error: ${error}`);
+    }
+
+    currentScanner = new Html5Qrcode("qrReader");
+    currentScanner.start(
+        { facingMode: "environment" }, // will be overridden by videoConstraints inside config
+        config,
+        onScanSuccess,
+        onScanFailure
+    ).catch(err => {
+        console.error("Failed to start scanner", err);
+        scannerContainer.style.display = 'none';
+        document.getElementById('scanToggle').textContent = '📷 Scan QR/Barcode';
+        scannerActive = false;
+        currentScanner = null;
+
+        const resultDiv = document.getElementById('attendanceResult');
+        resultDiv.className = "error";
+        resultDiv.innerHTML = "❌ Failed to start scanner. Please ensure camera access is allowed and try again.";
+    });
+}
+
+        
         
         function isValidRegistrationNumber(text) {
             // Basic validation - adjust according to your registration number format
@@ -816,7 +429,6 @@
 
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
-            // Check for URL parameters to show results
             const urlParams = new URLSearchParams(window.location.search);
             const result = urlParams.get('result');
             const action = urlParams.get('action');
@@ -834,9 +446,7 @@
                 resultDiv.innerHTML = result;
                 
                 // Scroll to the result
-                setTimeout(() => {
-                    resultDiv.scrollIntoView({ behavior: 'smooth' });
-                }, 100);
+                resultDiv.scrollIntoView({ behavior: 'smooth' });
             }
             
             // QR/Barcode Scanner functionality
@@ -851,15 +461,6 @@
                 }
             });
             
-            // Screen capture functionality
-            const screenCaptureToggle = document.getElementById('screenCaptureToggle');
-            const captureScreenBtn = document.getElementById('captureScreenBtn');
-            const cancelScreenCaptureBtn = document.getElementById('cancelScreenCaptureBtn');
-            
-            screenCaptureToggle.addEventListener('click', startScreenCapture);
-            captureScreenBtn.addEventListener('click', captureScreen);
-            cancelScreenCaptureBtn.addEventListener('click', cancelScreenCapture);
-            
             // Manual form submission handler
             document.getElementById('attendanceForm').addEventListener('submit', function(e) {
                 const regNo = document.getElementById('regNo').value.trim();
@@ -870,41 +471,8 @@
                     resultDiv.innerHTML = "❌ Please enter a valid registration number";
                     return false;
                 }
-                
-                // Show loading state
-                const btn = document.getElementById('markAttendanceBtn');
-                btn.disabled = true;
-                btn.innerHTML = '<span class="loading-spinner"></span> Processing...';
-                
                 return true;
             });
-            
-            // Registration form submission handler
-            document.getElementById('registrationForm').addEventListener('submit', function(e) {
-                const btn = this.querySelector('button[type="submit"]');
-                btn.disabled = true;
-                btn.innerHTML = '<span class="loading-spinner"></span> Registering...';
-            });
-            
-            // Performance optimization: pre-warm the scanner when hovering over the button
-            scanToggle.addEventListener('mouseover', function() {
-                if (!scannerActive) {
-                    // Pre-load scanner libraries
-                    if (typeof ZXing === 'undefined') {
-                        const script = document.createElement('script');
-                        script.src = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1';
-                        document.head.appendChild(script);
-                    }
-                }
-            });
-        });
-        
-        // Clean up when page is unloaded
-        window.addEventListener('beforeunload', function() {
-            if (scannerActive) {
-                stopScanner();
-            }
-            cancelScreenCapture();
         });
     </script>
 </body>
