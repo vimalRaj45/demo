@@ -63,6 +63,7 @@ html, body {
   transition: all 0.3s ease;
 }
 
+
     .skill-badge {
       transition: all 0.2s ease;
     }
@@ -93,6 +94,9 @@ html, body {
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
+    section {
+    scroll-margin-top: 80px; /* adjust as per your navbar height */
+  }
   </style>
 </head>
 <body class="antialiased">
@@ -119,8 +123,22 @@ html, body {
       </div>
     </div>
   </nav>
+<!-- Mobile Sub Navigation -->
+<div id="mobileNav"
+     class="md:hidden fixed top-16 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-gray-100 overflow-x-auto py-2 px-4 transition-transform duration-300 scrollbar-hide"
+     data-aos="fade-down" data-aos-delay="150">
+  <div class="flex justify-center space-x-2 min-w-max w-max mx-auto">
+    <a href="#home" class="mobile-nav-link px-2 py-0.5 text-xs rounded-full font-medium whitespace-nowrap bg-purple-600 text-white">Home</a>
+    <a href="#skills" class="mobile-nav-link px-2 py-0.5 text-xs rounded-full text-gray-700 bg-gray-100 hover:bg-gray-200 whitespace-nowrap">Skills</a>
+    <a href="#projects" class="mobile-nav-link px-2 py-0.5 text-xs rounded-full text-gray-700 bg-gray-100 hover:bg-gray-200 whitespace-nowrap">Projects</a>
+    <a href="#education" class="mobile-nav-link px-2 py-0.5 text-xs rounded-full text-gray-700 bg-gray-100 hover:bg-gray-200 whitespace-nowrap">Education</a>
+    <a href="#contact" class="mobile-nav-link px-2 py-0.5 text-xs rounded-full text-gray-700 bg-gray-100 hover:bg-gray-200 whitespace-nowrap">Contact</a>
+  </div>
+</div>
 
-<section id="home" class="hero-pattern min-h-screen flex items-center pt-16">
+
+
+<section id="home" class="hero-pattern min-h-screen flex items-center pt-20">
   <div class="hero-overlay absolute inset-0"></div>
   <div class="relative z-10 w-full px-4 sm:px-6 lg:px-8 py-20 text-white">
     <div class="flex flex-row items-center w-full max-w-7xl mx-auto gap-4 sm:gap-8">
@@ -730,6 +748,62 @@ html, body {
 </section>
 
 <script>
+  
+   const nav = document.getElementById('mobileNav');
+  let lastScrollY = window.scrollY;
+  let timeout;
+  let hasScrolled = false;
+
+  window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+
+    // Show nav on first scroll
+    if (!hasScrolled) {
+      nav.style.transform = 'translateY(0)';
+      hasScrolled = true;
+    }
+
+    // Hide on scroll down
+    if (currentScrollY > lastScrollY) {
+      nav.style.transform = 'translateY(-100%)';
+    } else {
+      nav.style.transform = 'translateY(0)';
+    }
+
+    // Reset after stopping scroll (delay)
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      nav.style.transform = 'translateY(0)';
+    }, 300);
+
+    lastScrollY = currentScrollY;
+  });
+  const navLinks = document.querySelectorAll(".mobile-nav-link");
+
+  const sectionIds = [...navLinks].map(link => link.getAttribute("href").substring(1));
+  const sections = sectionIds.map(id => document.getElementById(id));
+
+  function activateLink(id) {
+    navLinks.forEach(link => {
+      const target = link.getAttribute("href").substring(1);
+      if (target === id) {
+        link.classList.add("bg-purple-600", "text-white");
+        link.classList.remove("bg-gray-100", "text-gray-700");
+      } else {
+        link.classList.remove("bg-purple-600", "text-white");
+        link.classList.add("bg-gray-100", "text-gray-700");
+      }
+    });
+  }
+
+  window.addEventListener("scroll", () => {
+    let currentId = null;
+    for (let i = 0; i < sections.length; i++) {
+      const rect = sections[i].getBoundingClientRect();
+      if (rect.top <= 120) currentId = sectionIds[i];
+    }
+    if (currentId) activateLink(currentId);
+  });
   // Enhanced form handling
   document.getElementById('contactForm').addEventListener('submit', function(e) {
     e.preventDefault();
