@@ -8,16 +8,20 @@
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root {
-      --primary: #7c3aed;
-      --secondary: #3b82f6;
-    }
-    body {
-      font-family: 'Outfit', sans-serif;
-      background-color: #f8fafc;
-      color: #1e293b;
-      overflow-x: hidden;
-    }
+   /* Prevent overflow */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+  font-family: 'Outfit', sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+}
     .gradient-text {
       background: linear-gradient(90deg, var(--primary), var(--secondary));
       -webkit-background-clip: text;
