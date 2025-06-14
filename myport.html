@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -120,62 +121,67 @@ html, body {
     </div>
   </nav>
 
-<section id="home" class="hero-pattern min-h-screen flex items-center pt-16">
+<section id="home" class="hero-pattern min-h-screen grid grid-cols-2 grid-rows-2 gap-2 sm:gap-4 p-2 sm:p-4 text-white relative">
   <div class="hero-overlay absolute inset-0"></div>
-  <div class="relative z-10 w-full px-4 sm:px-6 lg:px-8 py-20 text-white">
-    <div class="flex flex-row items-center w-full max-w-7xl mx-auto gap-4 sm:gap-8">
-
-      <!-- Left Side Text -->
-      <div class="w-1/2 flex flex-col justify-center" data-aos="fade-right">
-        <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-4 leading-tight">
-          <span class="gradient-text">Sri Vimal Raj</span><br>
-          <span class="text-lg sm:text-xl md:text-2xl lg:text-3xl">Full-Stack Developer</span>
+  <div class="relative z-10 w-full h-full">
+    
+    <!-- Grid Layout (2x2) - Same on all devices -->
+    <div class="grid grid-cols-2 grid-rows-2 gap-2 sm:gap-4 h-full w-full">
+      
+      <!-- Top Left (Text) -->
+      <div class="flex flex-col justify-center p-2 sm:p-4 md:p-6" data-aos="fade-right">
+        <h1 class="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold">
+          <span class="gradient-text">Sri Vimal Raj</span>
         </h1>
-        <p class="text-xs sm:text-sm md:text-base text-gray-200 mb-4 sm:mb-6">
-          Building innovative web solutions with modern technologies. Passionate about creating efficient, user-friendly applications.
+        <h2 class="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold mt-1 sm:mt-2">
+          Full-Stack Developer
+        </h2>
+        <p class="text-xs sm:text-sm md:text-base text-gray-200 mt-1 sm:mt-2">
+          Building innovative web solutions
         </p>
+      </div>
 
-        <!-- Contact Info -->
-        <div class="space-y-1 sm:space-y-2 mb-4 sm:mb-6 text-xs sm:text-sm md:text-base">
-          <div class="flex items-center gap-2 sm:gap-3">
-            <i class="bi bi-envelope-fill text-purple-300 text-sm sm:text-lg"></i>
+      <!-- Top Right (Image) -->
+      <div class="flex items-center justify-center p-1 sm:p-2" data-aos="fade-left" data-aos-delay="300">
+        <img
+          src="https://i.ibb.co/KjdcHDCr/1749908904961.jpg"
+          alt="Sri Vimal Raj"
+          class="w-full h-full object-contain rounded-lg shadow-sm sm:shadow-md"
+        />
+      </div>
+
+      <!-- Bottom Left (Contact Info) -->
+      <div class="flex flex-col justify-center p-2 sm:p-4 md:p-6" data-aos="fade-up">
+        <div class="space-y-1 sm:space-y-2 text-xs sm:text-sm md:text-base">
+          <div class="flex items-center gap-1 sm:gap-2">
+            <i class="bi bi-envelope-fill text-purple-300 text-sm sm:text-base"></i>
             <span>vimalraj5207@gmail.com</span>
           </div>
-          <div class="flex items-center gap-2 sm:gap-3">
-            <i class="bi bi-telephone-fill text-purple-300 text-sm sm:text-lg"></i>
+          <div class="flex items-center gap-1 sm:gap-2">
+            <i class="bi bi-telephone-fill text-purple-300 text-sm sm:text-base"></i>
             <span>+91-8807099288</span>
           </div>
-          <div class="flex items-center gap-2 sm:gap-3">
-            <i class="bi bi-geo-alt-fill text-purple-300 text-sm sm:text-lg"></i>
+          <div class="flex items-center gap-1 sm:gap-2">
+            <i class="bi bi-geo-alt-fill text-purple-300 text-sm sm:text-base"></i>
             <span>India</span>
           </div>
         </div>
+      </div>
 
-        <!-- Buttons -->
-        <div class="flex flex-wrap gap-2 sm:gap-4">
-          <a href="#projects" class="px-3 sm:px-5 py-1 sm:py-2 gradient-bg text-white rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm md:text-base">
-            <i class="bi bi-layers-fill me-1 sm:me-2"></i> View Projects
+      <!-- Bottom Right (Buttons) -->
+      <div class="flex flex-col justify-center p-2 sm:p-4 md:p-6" data-aos="fade-up" data-aos-delay="150">
+        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <a href="#projects" class="px-2 sm:px-3 py-1 sm:py-2 gradient-bg text-white rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 text-xs sm:text-sm">
+            <i class="bi bi-layers-fill me-1 sm:me-2"></i> Projects
           </a>
           <a href="https://github.com/vimalRaj45" target="_blank"
-            class="px-3 sm:px-5 py-1 sm:py-2 border border-white text-white rounded-full hover:bg-white/10 transition-all duration-300 transform hover:scale-105 flex items-center text-xs sm:text-sm md:text-base">
+            class="px-2 sm:px-3 py-1 sm:py-2 border border-white text-white rounded-full hover:bg-white/10 transition-all duration-300 hover:scale-105 text-xs sm:text-sm">
             <i class="bi bi-github me-1 sm:me-2"></i> GitHub
           </a>
         </div>
       </div>
-
-      <!-- Right Side Image -->
-      <div class="w-1/2 flex items-center justify-center" data-aos="fade-left" data-aos-delay="300">
-        <div class="relative w-full">
-          <img
-            src="https://i.ibb.co/KjdcHDCr/1749908904961.jpg"
-            alt="Sri Vimal Raj - Full-Stack Developer"
-            class="w-full h-auto max-h-[400px] object-contain rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl"
-          />
-          <div class="absolute inset-0 rounded-2xl sm:rounded-3xl border-2 border-white/20 pointer-events-none"></div>
-        </div>
-      </div>
-
     </div>
+
   </div>
 </section>
 
