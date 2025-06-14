@@ -1,0 +1,577 @@
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sri Vimal Raj | Full-Stack Developer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --primary: #7c3aed;
+      --secondary: #3b82f6;
+    }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+    .gradient-text {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .gradient-bg {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+    .nav-link {
+      position: relative;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -4px;
+      left: 0;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transition: width 0.3s;
+    }
+    .nav-link:hover::after,
+    .active-nav::after {
+      width: 100%;
+    }
+    .project-card {
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .project-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    .skill-badge {
+      transition: all 0.2s ease;
+    }
+    .skill-badge:hover {
+      transform: scale(1.05);
+    }
+    .hero-pattern {
+      background-image: url('https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    .hero-overlay {
+      background: rgba(0, 0, 0, 0.7);
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 4px;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- Navigation -->
+  <nav class="fixed w-full bg-white/90 backdrop-blur-md z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div data-aos="fade-down">
+          <a href="#home" class="text-xl font-bold gradient-text">Vimal Raj</a>
+        </div>
+        <div class="hidden md:flex space-x-8" data-aos="fade-down" data-aos-delay="100">
+          <a href="#home" class="nav-link text-gray-700 hover:text-purple-600">Home</a>
+          <a href="#skills" class="nav-link text-gray-700 hover:text-purple-600">Skills</a>
+          <a href="#projects" class="nav-link text-gray-700 hover:text-purple-600">Projects</a>
+          <a href="#education" class="nav-link text-gray-700 hover:text-purple-600">Education</a>
+          <a href="#contact" class="nav-link text-gray-700 hover:text-purple-600">Contact</a>
+        </div>
+        <div data-aos="fade-down" data-aos-delay="200">
+          <a href="#contact" class="px-4 py-2 gradient-bg text-white rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+            Hire Me
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section with Unsplash Background -->
+  <section id="home" class="hero-pattern min-h-screen flex items-center pt-16">
+    <div class="hero-overlay absolute inset-0"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10 text-white">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div data-aos="fade-right">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <span class="gradient-text">Sri Vimal Raj</span><br>
+            <span>Full-Stack Developer</span>
+          </h1>
+          <p class="text-xl text-gray-200 mb-8">Building innovative web solutions with modern technologies. Passionate about creating efficient, user-friendly applications.</p>
+          <div class="flex flex-wrap gap-4">
+            <a href="#projects" class="px-6 py-3 gradient-bg text-white rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+              View Projects
+            </a>
+            <a href="https://github.com/vimalRaj45" target="_blank" class="px-6 py-3 border border-white text-white rounded-full hover:bg-white/10 transition-all duration-300 transform hover:scale-105 flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+        <div data-aos="fade-left" data-aos-delay="300">
+          <div class="glass-card p-8 rounded-2xl shadow-xl">
+            <div class="space-y-4">
+              <div class="flex items-center">
+                <svg class="w-6 h-6 text-purple-300 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <span>vimalraj5207@gmail.com</span>
+              </div>
+              <div class="flex items-center">
+                <svg class="w-6 h-6 text-purple-300 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                </svg>
+                <span>+91-8807099288</span>
+              </div>
+              <div class="flex items-center">
+                <svg class="w-6 h-6 text-purple-300 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <span>India</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16" data-aos="fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Technical Skills</h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">Technologies I work with</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Languages -->
+        <div class="skill-badge bg-gray-50 p-8 rounded-xl shadow-sm" data-aos="fade-up" data-aos-delay="100">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold">Languages</h3>
+          </div>
+          <ul class="space-y-2">
+            <li class="flex items-center">
+              <svg class="w-4 h-4 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              JavaScript, PHP, HTML/CSS
+            </li>
+            <li class="flex items-center">
+              <svg class="w-4 h-4 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Java (Spring Boot), SQL
+            </li>
+            <li class="flex items-center">
+              <svg class="w-4 h-4 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Python, C
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Frameworks -->
+        <div class="skill-badge bg-gray-50 p-8 rounded-xl shadow-sm" data-aos="fade-up" data-aos-delay="150">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold">Frameworks</h3>
+          </div>
+          <ul class="space-y-2">
+            <li class="flex items-center">
+              <svg class="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              React, Express.js
+            </li>
+            <li class="flex items-center">
+              <svg class="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Bootstrap 5, UIkit
+            </li>
+            <li class="flex items-center">
+              <svg class="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Ionic, Spring Boot
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Tools -->
+        <div class="skill-badge bg-gray-50 p-8 rounded-xl shadow-sm" data-aos="fade-up" data-aos-delay="200">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold">Tools</h3>
+          </div>
+          <ul class="space-y-2">
+            <li class="flex items-center">
+              <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              GitHub, Postman
+            </li>
+            <li class="flex items-center">
+              <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Google Apps Script
+            </li>
+            <li class="flex items-center">
+              <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Vercel, Netlify
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Integrations -->
+        <div class="skill-badge bg-gray-50 p-8 rounded-xl shadow-sm" data-aos="fade-up" data-aos-delay="250">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold">Integrations</h3>
+          </div>
+          <ul class="space-y-2">
+            <li class="flex items-center">
+              <svg class="w-4 h-4 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Razorpay Payments
+            </li>
+            <li class="flex items-center">
+              <svg class="w-4 h-4 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Google/Microsoft OAuth
+            </li>
+            <li class="flex items-center">
+              <svg class="w-4 h-4 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Google Maps API
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section with Unsplash Images -->
+  <section id="projects" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16" data-aos="fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Featured Projects</h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">Some of my recent work with real-world applications</p>
+      </div>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Project 1 -->
+        <div class="project-card bg-white rounded-xl overflow-hidden" data-aos="fade-up">
+          <div class="relative h-48 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                 alt="EasanMart Project" 
+                 class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+              <h3 class="text-white text-xl font-bold">EasanMart</h3>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-gray-600 text-sm mb-2">Jan 2024 - Apr 2024</p>
+            <p class="text-gray-700 mb-4">Admin dashboard for order management, inventory tracking with WhatsApp integration.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">PHP</span>
+              <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">JavaScript</span>
+              <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">Google Apps Script</span>
+            </div>
+            <a href="https://your-live-project-link.com" target="_blank" class="inline-flex items-center text-purple-600 hover:text-purple-800 font-medium">
+              View Project
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Project 2 -->
+        <div class="project-card bg-white rounded-xl overflow-hidden" data-aos="fade-up" data-aos-delay="100">
+          <div class="relative h-48 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                 alt="SRK Properties Project" 
+                 class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+              <h3 class="text-white text-xl font-bold">SRK Properties</h3>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-gray-600 text-sm mb-2">Dec 2023 - Feb 2024</p>
+            <p class="text-gray-700 mb-4">Property listing platform with admin panel and Google Maps integration.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">PHP</span>
+              <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">JavaScript</span>
+              <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">Google Maps API</span>
+            </div>
+            <a href="https://your-live-link.com" target="_blank" class="inline-flex items-center text-purple-600 hover:text-purple-800 font-medium">
+              View Project
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Project 3 -->
+        <div class="project-card bg-white rounded-xl overflow-hidden" data-aos="fade-up" data-aos-delay="200">
+          <div class="relative h-48 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                 alt="Sona Location Tracker Project" 
+                 class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+              <h3 class="text-white text-xl font-bold">Sona Location Tracker</h3>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-gray-600 text-sm mb-2">Apr 2024 - May 2024</p>
+            <p class="text-gray-700 mb-4">Cross-platform app for real-time location tracking using Ionic.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">Ionic</span>
+              <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">JavaScript</span>
+              <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">Firebase</span>
+            </div>
+            <a href="https://your-live-link.com" target="_blank" class="inline-flex items-center text-purple-600 hover:text-purple-800 font-medium">
+              View Project
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center mt-16" data-aos="fade-up">
+        <a href="#contact" class="inline-flex items-center px-6 py-3 gradient-bg text-white rounded-full hover:shadow-lg transition-all duration-300">
+          Interested in my work? Let's talk
+          <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Education Section -->
+  <section id="education" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16" data-aos="fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Education</h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">My academic journey and qualifications</p>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- College Education -->
+        <div class="bg-gray-50 p-8 rounded-xl shadow-sm" data-aos="fade-right">
+          <div class="flex items-start">
+            <div class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mr-6">
+              <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2">Bachelor of Engineering in Computer Science</h3>
+              <p class="text-purple-600 font-medium mb-2">Sona College of Technology</p>
+              <p class="text-gray-600 mb-4">2023 - 2027 | Salem, Tamil Nadu</p>
+              <p class="text-gray-700">Currently pursuing my degree with focus on software development and system design.</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- School Education -->
+        <div class="bg-gray-50 p-8 rounded-xl shadow-sm" data-aos="fade-left">
+          <div class="flex items-start">
+            <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mr-6">
+              <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2">Higher Secondary School (12th)</h3>
+              <p class="text-blue-600 font-medium mb-2">Jedarpalyam Govt. Higher Secondary School</p>
+              <p class="text-gray-600 mb-4">Year completed: 2023 | Namakkal, Tamil Nadu</p>
+              <p class="text-gray-700">Completed with 89% in Maths/Computer Science stream.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16" data-aos="fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Get In Touch</h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">Have a project in mind or want to discuss opportunities?</p>
+      </div>
+      
+      <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden" data-aos="fade-up">
+        <div class="grid md:grid-cols-2">
+          <div class="p-8 md:p-12 gradient-bg text-white">
+            <h3 class="text-2xl font-bold mb-6">Contact Information</h3>
+            <div class="space-y-6">
+              <div class="flex items-start">
+                <div class="flex-shrink-0 bg-white/20 rounded-full p-3 mr-4">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="font-bold">Email</h4>
+                  <p>vimalraj5207@gmail.com</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="flex-shrink-0 bg-white/20 rounded-full p-3 mr-4">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="font-bold">Phone</h4>
+                  <p>+91-8807099288</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="flex-shrink-0 bg-white/20 rounded-full p-3 mr-4">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="font-bold">Location</h4>
+                  <p>India</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="p-8 md:p-12">
+            <form class="space-y-6">
+              <div>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                <input type="text" id="name" name="name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all duration-300">
+              </div>
+              <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input type="email" id="email" name="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all duration-300">
+              </div>
+              <div>
+                <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                <textarea id="message" name="message" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all duration-300"></textarea>
+              </div>
+              <button type="submit" class="w-full px-6 py-3 gradient-bg text-white rounded-lg hover:shadow-lg transition-all duration-300">
+                Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 bg-gray-800 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-6 md:mb-0" data-aos="fade-up">
+          <span class="text-xl font-bold gradient-text mb-2">Sri Vimal Raj</span>
+          <p class="text-gray-400">Full-Stack Developer</p>
+        </div>
+        <div class="flex space-x-6" data-aos="fade-up" data-aos-delay="100">
+          <a href="https://github.com/vimalRaj45" target="_blank" class="text-gray-400 hover:text-white transition-colors duration-300">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+          </a>
+          <a href="mailto:vimalraj5207@gmail.com" class="text-gray-400 hover:text-white transition-colors duration-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="mt-8 text-center text-gray-400 text-sm">
+        © 2024 Sri Vimal Raj. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- AOS JS -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      easing: 'ease-in-out',
+      once: true
+    });
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+</html>
