@@ -7,6 +7,7 @@
   <title>Sri Vimal Raj | Full-Stack Developer</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -111,9 +112,48 @@
   .custom-scroll::-webkit-scrollbar-track {
     background: transparent;
   }
+
+  .loader {
+  position: relative;
+  border-style: solid;
+  box-sizing: border-box;
+  border-width: 40px 60px 30px 60px;
+  border-color: #3760C9 #96DDFC #96DDFC #36BBF7;
+  animation: envFloating 1s ease-in infinite alternate;
+}
+
+.loader:after{
+  content:"";
+  position: absolute;
+  right: 62px;
+  top: -40px;
+  height: 70px;
+  width: 50px;
+  background-image:
+            linear-gradient(#fff 45px, transparent 0),
+            linear-gradient(#fff 45px, transparent 0),
+            linear-gradient(#fff 45px, transparent 0);
+  background-repeat: no-repeat;
+  background-size: 30px 4px;
+  background-position: 0px 11px , 8px 35px, 0px 60px;
+  animation: envDropping 0.75s linear infinite;
+}
+
+@keyframes envFloating {
+  0% { transform: translate(-2px, -5px)}
+  100% { transform: translate(0, 5px)}
+}
+
+@keyframes envDropping {
+  0% {background-position: 100px 11px , 115px 35px, 105px 60px; opacity: 1;}
+  50% {background-position: 0px 11px , 20px 35px, 5px 60px; }
+  60% {background-position: -30px 11px , 0px 35px, -10px 60px; }
+  75%, 100% {background-position: -30px 11px , -30px 35px, -30px 60px; opacity: 0;}
+}
+      
   </style>
 </head>
-<body class="antialiased">
+<body class="antialiased" >
 
   <!-- Navigation -->
   <nav class="fixed w-full bg-white/90 backdrop-blur-md z-50 shadow-sm">
@@ -499,7 +539,7 @@
       <!-- Contact Form -->
       <div class="p-8 space-y-6 dark:bg-gray-900">
         <h3 class="text-xl font-semibold text-gray-700 dark:text-white">Send Me a Message</h3>
-        <form id="contactForm" class="space-y-4">
+        <form id="contactForm" class="space-y-4" onsubmit="sendMessage(event)">
           <div>
             <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your Name</label>
             <input type="text" id="name" name="name" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-800 dark:text-white transition" required>
@@ -533,6 +573,8 @@
     </div>
   </div>
 </section>
+
+
 
 <script>
   const projectScroll = document.getElementById('projectScroll');
@@ -664,47 +706,42 @@
     }
     if (currentId) activateLink(currentId);
   });
-  document.getElementById("contactForm").addEventListener("submit", function (e) {
-    e.preventDefault();
+  function sendMessage(event) {
+    event.preventDefault(); // Prevent form reload
 
-    const form = e.target;
-    const formData = {
-      name: form.name.value,
-      email: form.email.value,
-      subject: form.subject.value,
-      message: form.message.value,
-    };
+    
+   document.getElementById("mainloading").style.display = "block";
 
-    fetch("https://script.google.com/macros/s/AKfycbwEUCcgRdFlhWK9QjNuotCtB-KXmB9NkN-bJsy2YMwlbInJTJD9rAd_PHrC4W3BIIZM/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          Swal.fire(
-            'Hello ' + formData.name + '!',
-            'We will contact you soon!',
-            'success'
-          );
-          form.reset();
-        } else {
-          Swal.fire(
-            'Error',
-            'Something went wrong. Please try again.',
-            'error'
-          );
-        }
+    const name = encodeURIComponent(document.getElementById("name").value);
+    const email = encodeURIComponent(document.getElementById("email").value);
+    const subject = encodeURIComponent(document.getElementById("subject").value);
+    const message = encodeURIComponent(document.getElementById("message").value);
+
+    const url = `https://script.google.com/macros/s/AKfycbwhxhhKbOYbGKuXU4nUw0vMSBpHFU2BDg-Zhaoo-WG6PsmpE2LsPgWeuru_3px_3TeZ6w/exec?name=${name}&email=${email}&subject=${subject}&message=${message}`;
+
+    fetch(url)
+      .then((res) => res.text())
+      .then((data) => {
+        document.getElementById("mainloading").style.display = "none";
+        Swal.fire({
+          icon: 'success',
+          title: 'Hello ' + decodeURIComponent(name),
+          text: 'We will contact you soon!',
+          confirmButtonColor: '#6366F1'
+        });
+        document.getElementById("contactForm").reset();
       })
-      .catch(err => {
-        Swal.fire(
-          'Error',
-          'Network error. Please try again later.',
-          'error'
-        );
+      .catch((err) => {
+        document.getElementById("mainloading").style.display = "none";
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops!',
+          text: 'Something went wrong. Please try again.',
+          confirmButtonColor: '#EF4444'
+        });
+        console.error("Error:", err);
       });
-  });
+  }
   // WhatsApp form handling
   document.getElementById('whatsappForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -854,5 +891,20 @@
       });
     });
   </script>
+  </div>
+
+<!-- Place this LAST inside body -->
+ <div style="display: none;" id="mainloading"> 
+  <div id="loaderContainer"
+       style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+              background: rgba(0, 0, 0, 0.8); z-index: 9999; display: flex;
+              justify-content: center; align-items: center;">
+    <span class="inline-flex items-center justify-center loader" id="lod"></span>
+  </div>
+  </div>
 </body>
+
+
+
+
 </html>
