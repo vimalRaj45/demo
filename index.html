@@ -4,40 +4,140 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Email Verification</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"  rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- AOS CSS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <!-- Outfit Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { background-color: #f8f9fa; padding-top: 60px; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                  url('https://source.unsplash.com/random/1920x1080/?email,verification,security') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      min-height: 100vh;
+      padding-top: 60px;
+    }
+    
+    .verification-card {
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
     .spinner {
-      width: 30px; height: 30px;
+      width: 30px; 
+      height: 30px;
       border: 4px solid #f3f3f3;
       border-top: 4px solid #4CAF50;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       display: inline-block;
     }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
+    
+    @keyframes spin { 
+      100% { transform: rotate(360deg); } 
+    }
+    
+    .btn-glow {
+      transition: all 0.3s ease;
+    }
+    
+    .btn-glow:hover {
+      box-shadow: 0 0 15px rgba(13, 110, 253, 0.7);
+      transform: translateY(-2px);
+    }
+    
+    .form-control {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .form-control:focus {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      border-color: #4CAF50;
+      box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
+    }
+    
+    .form-floating>label {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .form-floating>.form-control:focus~label {
+      color: #4CAF50;
+    }
   </style>
 </head>
 <body>
 
-<div class="container text-center">
-  <h2 id="pageTitle">Verify Your Email</h2>
-
-  <!-- Status Message -->
-  <div id="statusMessage" class="mt-3"></div>
-
-  <!-- Form Section -->
-  <form id="emailForm" class="mt-4 w-50 mx-auto d-block" style="display: none;">
-    <div class="mb-3 form-floating">
-      <input type="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
-      <label for="emailInput">Email address</label>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="verification-card" data-aos="fade-up">
+        <div class="text-center">
+          <h2 id="pageTitle">Verify Your Email</h2>
+          
+          <!-- Status Message -->
+          <div id="statusMessage" class="mt-3"></div>
+          
+          <!-- Form Section -->
+          <form id="emailForm" class="mt-4" style="display: none;">
+            <div class="mb-3 form-floating">
+              <input type="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
+              <label for="emailInput">Email address</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 btn-glow py-2">
+              Send Verification Link
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
-    <button type="submit" class="btn btn-primary w-100">Send Verification Link</button>
-  </form>
+  </div>
 </div>
 
+<!-- Bootstrap Toast -->
+<div aria-live="polite" aria-atomic="true" class="position-relative">
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="verificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header bg-dark text-white">
+        <img src="https://source.unsplash.com/random/50x50/?shield,security" class="rounded me-2" alt="Security">
+        <strong class="me-auto">Verification Status</strong>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body bg-secondary text-white">
+        <div id="toastMessage"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- AOS JS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
 <script>
+  // Initialize AOS
+  AOS.init();
+  
+  // Initialize toast
+  const verificationToast = new bootstrap.Toast(document.getElementById('verificationToast'));
+  
   const gasUrl = "https://script.google.com/macros/s/AKfycbwfZh8kKUqWBfnk-916eTE7qo_jMpv0e3iz2vhQEvHs5QUgtVzX4LcMIQ70KZA9odkO/exec"; 
+
+  function showToast(message, isSuccess = true) {
+    const toastMessage = document.getElementById('toastMessage');
+    toastMessage.innerHTML = message;
+    verificationToast.show();
+  }
 
   window.onload = function () {
     const urlParams = new URLSearchParams(window.location.search);
@@ -49,30 +149,74 @@
       document.getElementById("pageTitle").textContent = "Verifying Email...";
       document.getElementById("emailForm").style.display = "none";
 
-      statusDiv.innerHTML = `<p>Verifying your email... <span class="spinner"></span></p>`;
+      statusDiv.innerHTML = `<p class="d-flex align-items-center justify-content-center gap-2">
+                              <span>Verifying your email...</span> 
+                              <span class="spinner"></span>
+                            </p>`;
 
       fetch(`${gasUrl}?verify=${encodeURIComponent(uuid)}`)
         .then(response => response.json())
         .then(json => {
           if (json.status === "success") {
             statusDiv.innerHTML = `
-              <div class="alert alert-success mt-4">
-                ✅ ${json.email} has been verified!
-                <br><br>
-                <a href="/index.html" class="btn btn-outline-primary btn-sm">Go Home</a>
+              <div class="alert alert-success mt-4" data-aos="fade-up">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-check-circle-fill fs-4"></i>
+                  <div>
+                    <h4 class="alert-heading">Email Verified!</h4>
+                    ${json.email} has been successfully verified.
+                  </div>
+                </div>
+                <hr>
+                <a href="/index.html" class="btn btn-outline-light btn-sm mt-2">
+                  Continue to Dashboard
+                </a>
               </div>`;
+            
+            showToast(`<div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                        <div>
+                          <strong>Success!</strong>
+                          <div class="small">Your email has been verified</div>
+                        </div>
+                      </div>`);
           } else {
             statusDiv.innerHTML = `
-              <div class="alert alert-danger mt-4">
-                ❌ Invalid or already used link.
-                <br><br>
-                <a href="/index.html" class="btn btn-outline-primary btn-sm">Try Again</a>
+              <div class="alert alert-danger mt-4" data-aos="fade-up">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+                  <div>
+                    <h4 class="alert-heading">Verification Failed</h4>
+                    Invalid or already used verification link.
+                  </div>
+                </div>
+                <hr>
+                <a href="/index.html" class="btn btn-outline-light btn-sm mt-2">
+                  Try Again
+                </a>
               </div>`;
+            
+            showToast(`<div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-exclamation-triangle-fill text-danger fs-4"></i>
+                        <div>
+                          <strong>Verification Failed</strong>
+                          <div class="small">Invalid or expired link</div>
+                        </div>
+                      </div>`, false);
           }
         })
         .catch(err => {
           console.error("Error:", err);
-          statusDiv.innerHTML = `<div class="alert alert-danger mt-4">⚠️ Error verifying email.</div>`;
+          statusDiv.innerHTML = `<div class="alert alert-danger mt-4">
+                                  <i class="bi bi-x-circle-fill"></i> Error verifying email.
+                                </div>`;
+          showToast(`<div class="d-flex align-items-center gap-2">
+                      <i class="bi bi-x-circle-fill text-danger fs-4"></i>
+                      <div>
+                        <strong>Error</strong>
+                        <div class="small">Failed to verify email</div>
+                      </div>
+                    </div>`, false);
         });
 
     } else {
@@ -88,19 +232,42 @@
     const statusDiv = document.getElementById("statusMessage");
 
     if (!isValidEmail(email)) {
-      statusDiv.innerHTML = `<div class="alert alert-danger">Please enter a valid email.</div>`;
+      statusDiv.innerHTML = `<div class="alert alert-danger">
+                              <i class="bi bi-exclamation-circle-fill"></i> Please enter a valid email.
+                            </div>`;
       return;
     }
 
-    statusDiv.innerHTML = `<div class="alert alert-info">Sending verification email...</div>`;
+    statusDiv.innerHTML = `<div class="alert alert-info d-flex align-items-center gap-2">
+                            <span class="spinner"></span>
+                            <span>Sending verification email...</span>
+                          </div>`;
 
     fetch(`${gasUrl}?email=${encodeURIComponent(email)}`)
       .then(response => response.text())
       .then(data => {
-        statusDiv.innerHTML = `<div class="alert alert-success">${data}</div>`;
+        statusDiv.innerHTML = `<div class="alert alert-success" data-aos="fade-up">
+                                <i class="bi bi-check-circle-fill"></i> ${data}
+                              </div>`;
+        showToast(`<div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-envelope-check-fill text-success fs-4"></i>
+                    <div>
+                      <strong>Email Sent!</strong>
+                      <div class="small">Check your inbox</div>
+                    </div>
+                  </div>`);
       })
       .catch(err => {
-        statusDiv.innerHTML = `<div class="alert alert-danger">Error sending request.</div>`;
+        statusDiv.innerHTML = `<div class="alert alert-danger">
+                                <i class="bi bi-x-circle-fill"></i> Error sending request.
+                              </div>`;
+        showToast(`<div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-x-circle-fill text-danger fs-4"></i>
+                    <div>
+                      <strong>Error</strong>
+                      <div class="small">Failed to send email</div>
+                    </div>
+                  </div>`, false);
         console.error(err);
       });
   });
@@ -110,6 +277,9 @@
     return re.test(email);
   }
 </script>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
 </body>
 </html>
