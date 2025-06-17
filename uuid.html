@@ -1,0 +1,74 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Verify Email</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"  rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-5 text-center">
+  <h2>Verify Your Email</h2>
+  <form id="emailForm" class="mt-4 w-50 mx-auto text-start">
+    <div class="mb-3 form-floating">
+      <input type="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
+      <label for="emailInput">Email address</label>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Send Verification Link</button>
+  </form>
+
+  <div id="statusMessage" class="mt-4"></div>
+</div>
+
+<script>
+  function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = Math.random() * 16 | 0;
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+
+  document.getElementById("emailForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const email = document.getElementById("emailInput").value.trim();
+    const statusDiv = document.getElementById("statusMessage");
+
+    if (!isValidEmail(email)) {
+      statusDiv.innerHTML = `<div class="alert alert-danger">Please enter a valid email.</div>`;
+      return;
+    }
+
+    const uuid = generateUUID();
+
+    // Simulate sending email (you'd replace this with real email logic)
+    const verifyLink = `https://yourwebsite.com/verify.html?verify=${uuid}`;
+
+    statusDiv.innerHTML = `
+      <div class="alert alert-success">
+        Sent verification link to <strong>${email}</strong><br>
+        <a href="${verifyLink}" target="_blank">${verifyLink}</a>
+      </div>
+    `;
+
+    // Send UUID to Google Apps Script
+    const gasUrl = "https://script.google.com/macros/s/AKfycbyin0gOtobBdEMOvnzyXgyrbYjYwxwCgpxQPIH_JkV489e6lxeVhhFD4fHq_5o4X3Sj/exec";
+    fetch(`${gasUrl}?email=${encodeURIComponent(email)}&uuid=${encodeURIComponent(uuid)}`)
+      .then(response => response.text())
+      .then(data => {
+        console.log("Stored UUID:", data);
+      })
+      .catch(err => {
+        console.error("Failed to store UUID:", err);
+      });
+
+    document.getElementById("emailForm").reset();
+  });
+
+  function isValidEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+</script>
+</body>
+</html>
