@@ -43,7 +43,7 @@
         return;
       }
 
-      const gasUrl = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; 
+      const gasUrl = "https://script.google.com/macros/s/AKfycbyQgNPtv3m0Zb2CX5-nqhyze4dh9m1pv1e8ymujYAPerAb-VdD4538BSmzXGfu8JLml/exec"; 
       fetch(`${gasUrl}?verify=${encodeURIComponent(uuid)}`)
         .then(response => response.json())
         .then(json => {
