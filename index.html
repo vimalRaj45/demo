@@ -2,25 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Email Verification</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"  rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; padding-top: 60px; }
+    .spinner {
+      width: 30px; height: 30px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #4CAF50;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
 </head>
-<body class="bg-light">
+<body>
 
-<div class="container py-5 text-center">
-  <h2>Send Verification Email</h2>
-  <form id="emailForm" class="mt-4 w-50 mx-auto text-start">
+<div class="container text-center">
+  <h2 id="pageTitle">Verify Your Email</h2>
+
+  <!-- Status Message -->
+  <div id="statusMessage" class="mt-3"></div>
+
+  <!-- Form Section -->
+  <form id="emailForm" class="mt-4 w-50 mx-auto d-block" style="display: none;">
     <div class="mb-3 form-floating">
       <input type="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
       <label for="emailInput">Email address</label>
     </div>
     <button type="submit" class="btn btn-primary w-100">Send Verification Link</button>
   </form>
-
-  <div id="statusMessage" class="mt-4"></div>
 </div>
 
 <script>
+  const gasUrl = "https://script.google.com/macros/s/AKfycbwfZh8kKUqWBfnk-916eTE7qo_jMpv0e3iz2vhQEvHs5QUgtVzX4LcMIQ70KZA9odkO/exec"; 
+
+  window.onload = function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const uuid = urlParams.get('verify');
+    const statusDiv = document.getElementById("statusMessage");
+
+    if (uuid) {
+      // Mode: Verify UUID
+      document.getElementById("pageTitle").textContent = "Verifying Email...";
+      document.getElementById("emailForm").style.display = "none";
+
+      statusDiv.innerHTML = `<p>Verifying your email... <span class="spinner"></span></p>`;
+
+      fetch(`${gasUrl}?verify=${encodeURIComponent(uuid)}`)
+        .then(response => response.json())
+        .then(json => {
+          if (json.status === "success") {
+            statusDiv.innerHTML = `
+              <div class="alert alert-success mt-4">
+                ✅ ${json.email} has been verified!
+                <br><br>
+                <a href="/index.html" class="btn btn-outline-primary btn-sm">Go Home</a>
+              </div>`;
+          } else {
+            statusDiv.innerHTML = `
+              <div class="alert alert-danger mt-4">
+                ❌ Invalid or already used link.
+                <br><br>
+                <a href="/index.html" class="btn btn-outline-primary btn-sm">Try Again</a>
+              </div>`;
+          }
+        })
+        .catch(err => {
+          console.error("Error:", err);
+          statusDiv.innerHTML = `<div class="alert alert-danger mt-4">⚠️ Error verifying email.</div>`;
+        });
+
+    } else {
+      // Mode: Enter Email
+      document.getElementById("emailForm").style.display = "block";
+    }
+  };
+
+  // Handle form submission
   document.getElementById("emailForm").addEventListener("submit", function(e) {
     e.preventDefault();
     const email = document.getElementById("emailInput").value.trim();
@@ -31,14 +92,15 @@
       return;
     }
 
-    const gasUrl = "https://script.google.com/macros/s/AKfycbyQgNPtv3m0Zb2CX5-nqhyze4dh9m1pv1e8ymujYAPerAb-VdD4538BSmzXGfu8JLml/exec"; 
+    statusDiv.innerHTML = `<div class="alert alert-info">Sending verification email...</div>`;
+
     fetch(`${gasUrl}?email=${encodeURIComponent(email)}`)
       .then(response => response.text())
       .then(data => {
         statusDiv.innerHTML = `<div class="alert alert-success">${data}</div>`;
       })
       .catch(err => {
-        statusDiv.innerHTML = `<div class="alert alert-danger">Error sending email.</div>`;
+        statusDiv.innerHTML = `<div class="alert alert-danger">Error sending request.</div>`;
         console.error(err);
       });
   });
