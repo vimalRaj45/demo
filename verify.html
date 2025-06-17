@@ -5,35 +5,72 @@
   <meta charset="UTF-8">
   <title>Email Verification</title>
   <style>
-    body { font-family: sans-serif; padding: 40px; text-align: center; }
-    .spinner { width: 50px; height: 50px; border: 5px solid #ddd; border-top: 5px solid #4285F4; border-radius: 50%; animation: spin 1s linear infinite; margin: 30px auto; }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 60px;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #4CAF50;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 30px auto;
+    }
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+    .result {
+      font-size: 1.2rem;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
   <h2>Verifying your email...</h2>
   <div class="spinner"></div>
-  <div id="result"></div>
+  <div class="result" id="result">Please wait while we verify your email address.</div>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const uuid = urlParams.get('verify');
+    window.onload = function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const uuid = urlParams.get('verify');
 
-    if (!uuid) {
-      document.body.innerHTML = "<p>Invalid verification link.</p>";
-      return;
-    }
+      if (!uuid) {
+        document.getElementById("result").innerHTML = "<span style='color:red;'>❌ Invalid verification link.</span>";
+        return;
+      }
 
-    const gasUrl = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; 
-    fetch(`${gasUrl}?verify=${encodeURIComponent(uuid)}`)
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById("result").innerHTML = html;
-      })
-      .catch(err => {
-        document.body.innerHTML = "<p>Error verifying email. Please try again later.</p>";
-        console.error("Error:", err);
-      });
+      const gasUrl = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; 
+      fetch(`${gasUrl}?verify=${encodeURIComponent(uuid)}`)
+        .then(response => response.json())
+        .then(json => {
+          const resultDiv = document.getElementById("result");
+          if (json.status === "success") {
+            resultDiv.innerHTML = `
+              <h3 style="color:green;">✅ Success!</h3>
+              <p>Your email <strong>${json.email}</strong> has been verified.</p>
+              <a href="https://yourwebsite.com">Go  back to home</a>
+            `;
+          } else {
+            resultDiv.innerHTML = `
+              <h3 style="color:red;">❌ Error</h3>
+              <p>${json.message}</p>
+              <a href="https://yourwebsite.com">Go  back to home</a>
+            `;
+          }
+        })
+        .catch(err => {
+          document.getElementById("result").innerHTML = `
+            <h3 style="color:red;">⚠️ Network Error</h3>
+            <p>Could not reach verification service. Please try again later.</p>
+            <a href="https://yourwebsite.com">Go  back to home</a>
+          `;
+          console.error(err);
+        });
+    };
   </script>
 </body>
 </html>
