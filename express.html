@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login/Register</title>
+  <link rel="stylesheet" href="https://unpkg.com/primeflex@3.3.1/primeflex.min.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/primereact/resources/themes/lara-light-indigo/theme.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/primereact/resources/primereact.min.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/primeicons/primeicons.css"/>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+    }
+    .auth-container {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .video-background, .video-placeholder {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+    }
+    .overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: -1;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+    }
+    .spinner {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 999;
+    }
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 4px;
+      display: none;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+
+<div class="auth-container">
+  <img class="video-placeholder" src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1350&q=80" alt="background"/>
+  <video class="video-background" autoplay loop muted playsinline oncanplay="videoLoaded()">
+    <source src="https://player.vimeo.com/external/577980763.sd.mp4?s=5c0f5c9a8d9c2d5c9b3e3e5e5e5e5e5e5e5e5e5&profile_id=164&oauth2_token_id=57447761" type="video/mp4">
+  </video>
+  <div class="overlay"></div>
+
+  <div class="card">
+    <h2 id="form-title">Login</h2>
+    <form id="authForm">
+      <label>Email</label>
+      <input class="p-inputtext p-component w-full mb-3" type="email" id="email" required><br/>
+      <label>Password</label>
+      <input class="p-inputtext p-component w-full mb-3" type="password" id="password" minlength="6" required><br/>
+      <button type="submit" class="p-button p-component p-button-sm w-full" id="submitBtn">Login</button>
+    </form>
+    <button class="p-button p-button-text mt-3" onclick="toggleAuth()">Need an account?</button>
+  </div>
+</div>
+
+<div class="spinner" id="spinner">
+  <i class="pi pi-spin pi-spinner" style="font-size: 2em;"></i>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let isLogin = true;
+
+  function videoLoaded() {
+    document.querySelector('.video-placeholder').style.display = 'none';
+  }
+
+  function toggleAuth() {
+    isLogin = !isLogin;
+    document.getElementById('form-title').innerText = isLogin ? 'Login' : 'Register';
+    document.getElementById('submitBtn').innerText = isLogin ? 'Login' : 'Register';
+    event.target.innerText = isLogin ? 'Need an account?' : 'Already have an account?';
+  }
+
+  function showToast(message, type = 'info') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.style.backgroundColor = type === 'error' ? '#D32F2F' : '#388E3C';
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 3000);
+  }
+
+  document.getElementById('authForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    if (!email || password.length < 6) {
+      showToast('Please fill all fields correctly', 'error');
+      return;
+    }
+
+    document.getElementById('spinner').style.display = 'block';
+
+    const endpoint = isLogin ? 'login' : 'register';
+
+    try {
+      const response = await fetch(`https://postgres-1-p8t1.onrender.com/${endpoint}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast(isLogin ? 'Login successful!' : 'Registration successful!', 'success');
+        // You can redirect or show dashboard here
+      } else {
+        showToast(data.message || 'Authentication failed', 'error');
+      }
+    } catch (err) {
+      showToast('Network error', 'error');
+    } finally {
+      document.getElementById('spinner').style.display = 'none';
+    }
+  });
+</script>
+
+</body>
+</html>
