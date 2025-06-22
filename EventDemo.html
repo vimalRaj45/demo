@@ -128,6 +128,38 @@
                                     <label class="form-label">Response</label>
                                     <div class="response-area" id="register-response"></div>
                                 </div>
+                                <h3 id="form-title" class="mb-4">🔐 Password Recovery</h3>
+<h3 id="form-title" class="mb-4 text-primary">🔐 Forgot or Reset Password</h3>
+
+  <!-- Forgot Password -->
+  <div id="forgot-form" class="mb-4">
+    <h5 class="text-dark">🔑 Forgot Password</h5>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" id="email" class="form-control" placeholder="Enter your registered email" />
+    </div>
+    <button class="btn btn-primary" onclick="handleForgotPassword()">Send Reset Token</button>
+    <div id="token-display" class="mt-3 text-success fw-bold" style="display: none;"></div>
+  </div>
+
+  <hr />
+
+  <!-- Reset Password -->
+  <div id="reset-form">
+    <h5 class="text-dark">🔁 Reset Password</h5>
+    <div class="mb-3">
+      <label for="token" class="form-label">Reset Token</label>
+      <input type="text" id="token" class="form-control" placeholder="Paste your reset token here" />
+    </div>
+    <div class="mb-3">
+      <label for="new-password" class="form-label">New Password</label>
+      <input type="password" id="new-password" class="form-control" placeholder="Enter new password" />
+    </div>
+    <button class="btn btn-success" onclick="handleResetPassword()">Reset Password</button>
+  </div>
+
+  <!-- Message Area -->
+  <div id="msg" class="mt-4 text-info fw-semibold"></div>
                             </div>
                         </div>
                         
@@ -783,6 +815,60 @@
                 throw error;
             }
         }
+
+ const msgDiv = document.getElementById('msg');
+    const tokenDisplay = document.getElementById('token-display');
+
+    async function handleForgotPassword() {
+      const email = document.getElementById('email').value.trim();
+      if (!email) return alert("Please enter your email.");
+
+      msgDiv.innerText = "Sending reset request...";
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+        msgDiv.innerText = data.message || "Check your email if it exists.";
+
+        if (data.resetLink) {
+          // Show token only from the resetLink (for dev/demo)
+          const token = new URL(data.resetLink).searchParams.get("token");
+          tokenDisplay.style.display = 'block';
+          tokenDisplay.innerText = `🔐 Use this reset token: ${token}`;
+        }
+      } catch (err) {
+        msgDiv.innerText = "Something went wrong while requesting reset.";
+      }
+    }
+
+    async function handleResetPassword() {
+      const token = document.getElementById('token').value.trim();
+      const password = document.getElementById('new-password').value;
+
+      if (!token || !password) {
+        return alert("Please fill in both token and new password.");
+      }
+
+      msgDiv.innerText = "Validating and resetting password...";
+
+      try {
+        const res = await fetch(`https://eventdb.onrender.com/api/auth/reset-password/${token}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+
+        const data = await res.json();
+        msgDiv.innerText = data.message || data.error;
+      } catch (err) {
+        msgDiv.innerText = "Something went wrong during reset.";
+      }
+    }
         
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
