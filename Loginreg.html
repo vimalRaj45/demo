@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Secure Authentication Portal</title>
+
+  <!-- Outfit Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet" />
+  <!-- AOS CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary-color: #4e73df;
+      --primary-dark: #2e59d9;
+      --secondary-color: #f8f9fc;
+      --success-color: #1cc88a;
+      --warning-color: #f6c23e;
+      --danger-color: #e74a3b;
+      --dark-color: #5a5c69;
+      --light-color: #f8f9fa;
+    }
+    
+   body {
+  font-family: 'Outfit', sans-serif;
+  background-image: linear-gradient(
+      rgba(0, 0, 0, 0.3), 
+      rgba(0, 0, 0, 0.3)
+    ),
+    url("https://plus.unsplash.com/premium_photo-1681487814165-018814e29155?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  color: var(--dark-color);
+}
+
+    
+    .auth-container {
+      max-width: 600px;
+      margin: 0 auto;
+      width: 100%;
+      background: transparent;
+    }
+    
+    .auth-card {
+      border-radius: 12px;
+      overflow: hidden;
+      border: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background-color: transparent;
+    }
+    
+    .auth-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    }
+    
+    .card-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      padding: 1.75rem;
+      border-bottom: none;
+      color: white;
+      text-align: center;
+    }
+    
+    .card-body {
+      padding: 2.5rem;
+      background-color: white;
+    }
+    
+    .auth-title {
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--primary-dark);
+      position: relative;
+      padding-bottom: 0.75rem;
+    }
+    
+    .auth-title:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+      border-radius: 3px;
+    }
+    
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--dark-color);
+      font-size: 0.95rem;
+    }
+    
+    .form-control {
+      padding: 0.85rem 1.25rem;
+      border-radius: 8px;
+      border: 1px solid #d1d3e2;
+      transition: all 0.3s;
+      font-size: 0.95rem;
+    }
+    
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.15);
+    }
+    
+    .btn {
+      padding: 0.85rem;
+      border-radius: 8px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    
+    .btn-warning {
+      background-color: var(--warning-color);
+      border-color: var(--warning-color);
+      color: #000;
+    }
+    
+    .btn-warning:hover {
+      background-color: #f4b30d;
+      border-color: #f4b30d;
+      color: #000;
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+      border-color: var(--success-color);
+    }
+    
+    .btn-success:hover {
+      background-color: #17a673;
+      border-color: #17a673;
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 2rem 0;
+      color: #adb5bd;
+      font-size: 0.85rem;
+    }
+    
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .divider::before {
+      margin-right: 1rem;
+    }
+    
+    .divider::after {
+      margin-left: 1rem;
+    }
+    
+    .auth-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+    
+    .auth-link {
+      color: var(--primary-color);
+      font-weight: 500;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .auth-link:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+    
+    /* Password strength indicator */
+    .password-strength {
+      height: 4px;
+      background-color: #e9ecef;
+      border-radius: 2px;
+      margin-top: 0.5rem;
+      overflow: hidden;
+    }
+    
+    .strength-bar {
+      height: 100%;
+      width: 0;
+      transition: width 0.3s ease, background-color 0.3s ease;
+    }
+    
+    /* Toast notifications */
+    .toast-container {
+      z-index: 1090;
+      padding: 1.5rem;
+    }
+    
+    .toast {
+      border-radius: 8px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+      border: none;
+      overflow: hidden;
+    }
+    
+    .toast-body {
+      padding: 1rem 1.25rem;
+    }
+    
+    .icon-success {
+      color: var(--success-color);
+    }
+    
+    .icon-error {
+      color: var(--danger-color);
+    }
+    
+    .icon-warning {
+      color: var(--warning-color);
+    }
+    
+    .icon-info {
+      color: var(--primary-color);
+    }
+    
+    .btn-close-sm {
+      padding: 0.25rem;
+      font-size: 0.75rem;
+    }
+    
+    /* Loading spinner */
+    .spinner-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 576px) {
+      .card-body {
+        padding: 1.75rem;
+      }
+      
+      .auth-title {
+        font-size: 1.5rem;
+      }
+      
+      .toast-container {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast Notifications Container -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <!-- Success Toast Template -->
+    <div class="toast" id="successToast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-body">
+        <div class="d-flex gap-3 align-items-start">
+          <span><i class="fas fa-circle-check fa-lg icon-success"></i></span>
+          <div class="d-flex flex-column flex-grow-1 gap-1">
+            <div class="d-flex align-items-center">
+              <span class="fw-semibold" id="successToastTitle">Success</span>
+              <button type="button" class="btn-close btn-close-sm ms-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <span id="successToastMessage">Operation completed successfully.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Error Toast Template -->
+    <div class="toast" id="errorToast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-body">
+        <div class="d-flex gap-3 align-items-start">
+          <span><i class="fas fa-circle-xmark fa-lg icon-error"></i></span>
+          <div class="d-flex flex-column flex-grow-1 gap-1">
+            <div class="d-flex align-items-center">
+              <span class="fw-semibold" id="errorToastTitle">Error</span>
+              <button type="button" class="btn-close btn-close-sm ms-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <span id="errorToastMessage">An error occurred.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-container">
+    <div class="auth-card shadow-lg" data-aos="zoom-in" data-aos-duration="800">
+      <div class="card-header">
+  <h3><i class="bi bi-calendar-check me-2"></i>EventSync Portal</h3>
+</div>
+
+      <div class="card-body">
+
+        <!-- Login Section -->
+        <div id="login-section">
+          <h4 class="auth-title">Welcome back</h4>
+          
+          <div class="mb-4">
+            <label for="login-email" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="login-email" placeholder="john@example.com" required />
+          </div>
+          
+          <div class="mb-4">
+            <label for="login-password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="login-password" placeholder="Enter your password" required />
+            <div class="password-strength mt-2">
+              <div class="strength-bar" id="login-strength-bar"></div>
+            </div>
+          </div>
+          
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="rememberMe">
+              <label class="form-check-label" for="rememberMe">Remember me</label>
+            </div>
+            <a href="#" class="auth-link" onclick="showSection('forgot-section')">Forgot password?</a>
+          </div>
+          
+          <button class="btn btn-primary w-100 mb-3" onclick="loginUser()" id="login-btn">
+            <span id="login-btn-text">Sign In</span>
+            <span id="login-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
+          
+          <div class="divider">or continue with</div>
+          
+         <div class="d-flex gap-3 mb-4">
+  <button class="btn btn-outline-primary flex-grow-1 rounded-pill">
+    <i class="bi bi-google me-2"></i> Google
+  </button>
+  <button class="btn btn-outline-primary flex-grow-1 rounded-pill">
+    <i class="bi bi-microsoft me-2"></i> Microsoft
+  </button>
+</div>
+
+          
+          <div class="auth-footer">
+            Don't have an account? <a href="#" class="auth-link" onclick="showSection('register-section')">Sign up</a>
+          </div>
+        </div>
+
+        <!-- Forgot Password Section -->
+        <div id="forgot-section" class="d-none">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="auth-title mb-0">Reset Password</h4>
+            <button type="button" class="btn-close" aria-label="Close" onclick="showSection('login-section')"></button>
+          </div>
+          
+          <p class="text-muted mb-4">Enter your email address and we'll send you a link to reset your password.</p>
+          
+          <div class="mb-4">
+            <label for="forgot-email" class="form-label">Email Address</label>
+            <input type="email" id="forgot-email" class="form-control" placeholder="your@email.com" />
+          </div>
+          
+          <button class="btn btn-primary w-100 mb-3" onclick="handleForgotPassword()" id="forgot-btn">
+            <span id="forgot-btn-text">Send Reset Link</span>
+            <span id="forgot-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
+          
+          <div class="auth-footer">
+            Remember your password? <a href="#" class="auth-link" onclick="showSection('login-section')">Sign in</a>
+          </div>
+        </div>
+
+        <!-- Reset Password Section -->
+        <div id="reset-section" class="d-none">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="auth-title mb-0">Create New Password</h4>
+            <button type="button" class="btn-close" aria-label="Close" onclick="showSection('login-section')"></button>
+          </div>
+          
+          <p class="text-muted mb-4">Your new password must be different from previously used passwords.</p>
+          
+          <div class="mb-4">
+            <label for="reset-token" class="form-label">Reset Token</label>
+            <input type="text" id="reset-token" class="form-control" placeholder="Paste your reset token" />
+          </div>
+          
+          <div class="mb-4">
+            <label for="new-password" class="form-label">New Password</label>
+            <input type="password" id="new-password" class="form-control" placeholder="Enter new password" />
+            <div class="password-strength mt-2">
+              <div class="strength-bar" id="reset-strength-bar"></div>
+            </div>
+            <small class="text-muted"> with at least one number and special character</small>
+          </div>
+          
+          <div class="mb-4">
+            <label for="confirm-password" class="form-label">Confirm Password</label>
+            <input type="password" id="confirm-password" class="form-control" placeholder="Confirm your password" />
+          </div>
+          
+          <button class="btn btn-primary w-100 mb-3" onclick="handleResetPassword()" id="reset-btn">
+            <span id="reset-btn-text">Reset Password</span>
+            <span id="reset-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
+          
+          <div class="auth-footer">
+            <a href="#" class="auth-link" onclick="showSection('login-section')"><i class="bi bi-arrow-left me-1"></i>Back to login</a>
+          </div>
+        </div>
+
+        <!-- Register Section -->
+        <div id="register-section" class="d-none">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="auth-title mb-0">Create Account</h4>
+            <button type="button" class="btn-close" aria-label="Close" onclick="showSection('login-section')"></button>
+          </div>
+          
+          <div class="mb-4">
+            <label for="register-name" class="form-label">Full Name</label>
+            <input type="text" id="register-name" class="form-control" placeholder="John Doe" />
+          </div>
+          
+          <div class="mb-4">
+            <label for="register-email" class="form-label">Email Address</label>
+            <input type="email" id="register-email" class="form-control" placeholder="john@example.com" />
+          </div>
+
+          <div class="mb-4">
+            <label for="register-contact" class="form-label">Contact Number</label>
+            <input type="email" id="register-contact" class="form-control" placeholder="8975654564" />
+          </div>
+          
+          <div class="mb-4">
+            <label for="register-password" class="form-label">Password</label>
+            <input type="password" id="register-password" class="form-control" placeholder="Create a password" />
+            <div class="password-strength mt-2">
+              <div class="strength-bar" id="register-strength-bar"></div>
+            </div>
+            <small class="text-muted">Minimum 8 characters with at least one number and special character</small>
+          </div>
+          
+          <div class="mb-4">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="termsAgree">
+              <label class="form-check-label" for="termsAgree">
+                I agree to the <a href="#" class="auth-link">Terms of Service</a> and <a href="#" class="auth-link">Privacy Policy</a>
+              </label>
+            </div>
+          </div>
+          
+          <button class="btn btn-primary w-100 mb-3" onclick="registerUser()" id="register-btn">
+            <span id="register-btn-text">Create Account</span>
+            <span id="register-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
+          
+          <div class="auth-footer">
+            Already have an account? <a href="#" class="auth-link" onclick="showSection('login-section')">Sign in</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- AOS JS -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    // Initialize AOS
+    AOS.init({
+      once: true,
+      easing: 'ease-out-quad'
+    });
+    
+    // Initialize toasts
+    const successToast = new bootstrap.Toast(document.getElementById('successToast'));
+    const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+    
+    // Show toast notification
+    function showToast(type, title, message, duration = 5000) {
+      const toastEl = type === 'success' ? successToast : errorToast;
+      const titleEl = type === 'success' 
+        ? document.getElementById('successToastTitle') 
+        : document.getElementById('errorToastTitle');
+      const messageEl = type === 'success' 
+        ? document.getElementById('successToastMessage') 
+        : document.getElementById('errorToastMessage');
+      
+      titleEl.textContent = title;
+      messageEl.textContent = message;
+      
+      toastEl.show();
+      
+      if (duration) {
+        setTimeout(() => {
+          toastEl.hide();
+        }, duration);
+      }
+    }
+    
+    // Password strength indicator
+    document.getElementById('new-password')?.addEventListener('input', function() {
+      updatePasswordStrength(this.value, 'reset-strength-bar');
+    });
+    
+    document.getElementById('login-password')?.addEventListener('input', function() {
+      updatePasswordStrength(this.value, 'login-strength-bar');
+    });
+    
+    document.getElementById('register-password')?.addEventListener('input', function() {
+      updatePasswordStrength(this.value, 'register-strength-bar');
+    });
+    
+    function updatePasswordStrength(password, elementId) {
+      const strengthBar = document.getElementById(elementId);
+      if (!strengthBar) return;
+      
+      const strength = calculatePasswordStrength(password);
+      
+      strengthBar.style.width = strength.percentage + '%';
+      strengthBar.style.backgroundColor = strength.color;
+    }
+    
+    function calculatePasswordStrength(password) {
+      let strength = 0;
+      if (password.length > 0) strength += 10;
+      if (password.length >= 8) strength += 30;
+      if (/[A-Z]/.test(password)) strength += 15;
+      if (/[0-9]/.test(password)) strength += 15;
+      if (/[^A-Za-z0-9]/.test(password)) strength += 30;
+      
+      strength = Math.min(100, strength);
+      
+      let color;
+      if (strength < 40) color = '#e74a3b'; // red
+      else if (strength < 70) color = '#f6c23e'; // yellow
+      else color = '#1cc88a'; // green
+      
+      return { percentage: strength, color };
+    }
+    
+    // Toggle between sections
+    function showSection(sectionId) {
+      // Hide all sections
+      document.querySelectorAll('[id$="-section"]').forEach(section => {
+        section.classList.add('d-none');
+      });
+      
+      // Show requested section
+      document.getElementById(sectionId).classList.remove('d-none');
+      
+      // Focus on first input
+      const firstInput = document.querySelector(`#${sectionId} input`);
+      if (firstInput) {
+        setTimeout(() => firstInput.focus(), 100);
+      }
+    }
+    
+    const API_BASE_URL = 'https://eventdb.onrender.com/api';
+    let currentToken = localStorage.getItem('jwtToken') || '';
+
+    // LOGIN
+    async function loginUser() {
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value.trim();
+      const loginBtn = document.getElementById('login-btn');
+      const loginBtnText = document.getElementById('login-btn-text');
+      const loginSpinner = document.getElementById('login-spinner');
+
+      if (!email || !password) {
+        showToast('error', 'Validation Error', 'Please enter both email and password.');
+        return;
+      }
+
+      // Show loading state
+      loginBtn.disabled = true;
+      loginBtnText.textContent = 'Authenticating...';
+      loginSpinner.classList.remove('d-none');
+
+      try {
+        const data = { email, password };
+        const result = await makeRequest('POST', '/auth/login', data, false);
+
+        setToken(result.token);
+
+        showToast('success', 'Login Successful', `Welcome back, ${result.name || 'User'}!`);
+        
+        // Optional: redirect after login
+        // window.location.href = "dashboard.html";
+
+      } catch (error) {
+        showToast('error', 'Login Failed', error.message || 'Invalid credentials. Please try again.');
+      } finally {
+        // Reset button state
+        loginBtn.disabled = false;
+        loginBtnText.textContent = 'Sign In';
+        loginSpinner.classList.add('d-none');
+      }
+    }
+
+    // REGISTER
+    async function registerUser() {
+      const name = document.getElementById('register-name').value.trim();
+      const email = document.getElementById('register-email').value.trim();
+      const contact_no = document.getElementById('register-contact').value.trim();
+      const password = document.getElementById('register-password').value.trim();
+      const termsAgreed = document.getElementById('termsAgree').checked;
+      const registerBtn = document.getElementById('register-btn');
+      const registerBtnText = document.getElementById('register-btn-text');
+      const registerSpinner = document.getElementById('register-spinner');
+
+      if (!name || !email || !password) {
+        showToast('error', 'Validation Error', 'Please fill in all fields.');
+        return;
+      }
+
+      if (!termsAgreed) {
+        showToast('error', 'Terms Not Accepted', 'You must agree to the terms and conditions.');
+        return;
+      }
+
+     
+
+      // Show loading state
+      registerBtn.disabled = true;
+      registerBtnText.textContent = 'Creating Account...';
+      registerSpinner.classList.remove('d-none');
+
+      try {
+       const data = { name, email, password, role: 'participant', contact_no };
+        const result = await makeRequest('POST', '/auth/register', data, false);
+
+        showToast('success', 'Account Created', 'Your account has been created successfully!');
+        
+        // Auto switch to login after success
+        setTimeout(() => {
+          showSection('login-section');
+          document.getElementById('login-email').value = email;
+          document.getElementById('login-password').focus();
+        }, 2000);
+
+      } catch (error) {
+        showToast('error', 'Registration Failed', error.message || 'Could not create account. Please try again.');
+      } finally {
+        // Reset button state
+        registerBtn.disabled = false;
+        registerBtnText.textContent = 'Create Account';
+        registerSpinner.classList.add('d-none');
+      }
+    }
+
+    // SET JWT
+    function setToken(token) {
+      currentToken = token;
+      localStorage.setItem('jwtToken', token);
+    }
+
+    // MAKE REQUEST
+    async function makeRequest(method, endpoint, data = null, requiresAuth = true) {
+      const headers = { 'Content-Type': 'application/json' };
+      if (requiresAuth && currentToken) {
+        headers['Authorization'] = `Bearer ${currentToken}`;
+      }
+
+      const options = { method, headers };
+      if (data) options.body = JSON.stringify(data);
+
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+      const contentType = response.headers.get('content-type');
+      let result = contentType && contentType.includes('application/json') ? await response.json() : await response.text();
+      if (!response.ok) throw new Error(result.error || result.message || 'Request failed');
+      return result;
+    }
+
+    // FORGOT PASSWORD
+    async function handleForgotPassword() {
+      const email = document.getElementById('forgot-email').value.trim();
+      const forgotBtn = document.getElementById('forgot-btn');
+      const forgotBtnText = document.getElementById('forgot-btn-text');
+      const forgotSpinner = document.getElementById('forgot-spinner');
+
+      if (!email) {
+        showToast('error', 'Validation Error', 'Please enter your email address.');
+        return;
+      }
+
+      // Show loading state
+      forgotBtn.disabled = true;
+      forgotBtnText.textContent = 'Sending...';
+      forgotSpinner.classList.remove('d-none');
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+        
+        if (res.ok) {
+          showToast('success', 'Reset Link Sent', 'Check your email for the password reset link.');
+          
+          if (data.resetLink) {
+            const token = new URL(data.resetLink).searchParams.get("token");
+            
+            // Auto switch to reset form
+            setTimeout(() => {
+              showSection('reset-section');
+              document.getElementById('reset-token').value = token;
+              document.getElementById('new-password').focus();
+            }, 1500);
+          }
+        } else {
+          showToast('error', 'Request Failed', data.message || "Failed to send reset link.");
+        }
+      } catch (err) {
+        showToast('error', 'Error', "Something went wrong while requesting reset.");
+      } finally {
+        // Reset button state
+        forgotBtn.disabled = false;
+        forgotBtnText.textContent = 'Send Reset Link';
+        forgotSpinner.classList.add('d-none');
+      }
+    }
+
+    // RESET PASSWORD
+    async function handleResetPassword() {
+      const token = document.getElementById('reset-token').value.trim();
+      const password = document.getElementById('new-password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const resetBtn = document.getElementById('reset-btn');
+      const resetBtnText = document.getElementById('reset-btn-text');
+      const resetSpinner = document.getElementById('reset-spinner');
+
+      if (!token || !password || !confirmPassword) {
+        showToast('error', 'Validation Error', "Please fill in all fields.");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showToast('error', 'Validation Error', "Passwords don't match.");
+        return;
+      }
+
+      if (password.length < 8) {
+        showToast('error', 'Weak Password', "Password must be at least 8 characters long.");
+        return;
+      }
+
+      // Show loading state
+      resetBtn.disabled = true;
+      resetBtnText.textContent = 'Resetting...';
+      resetSpinner.classList.remove('d-none');
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/auth/reset-password/${token}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+
+        const data = await res.json();
+        
+        if (res.ok) {
+          showToast('success', 'Password Reset', data.message || "Password reset successfully!");
+          
+          // Auto switch to login form after success
+          setTimeout(() => {
+            showSection('login-section');
+            document.getElementById('login-email').focus();
+          }, 2000);
+        } else {
+          showToast('error', 'Reset Failed', data.message || data.error || "Password reset failed.");
+        }
+      } catch (err) {
+        showToast('error', 'Error', "Something went wrong during reset.");
+      } finally {
+        // Reset button state
+        resetBtn.disabled = false;
+        resetBtnText.textContent = 'Reset Password';
+        resetSpinner.classList.add('d-none');
+      }
+    }
+  </script>
+</body>
+</html>
