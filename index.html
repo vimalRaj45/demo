@@ -31,6 +31,9 @@
                 <li class="nav-item">
                     <a href="1.html" class="nav-link btn-primary">Edit Profile</a>
                 </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link btn-primary">Logout</a>
+                </li>
             </ul>
             <div class="hamburger">
                 <span class="bar"></span>
@@ -254,7 +257,16 @@
             </div>
         </div>
     </footer>
+    <script>function logout() {
+    // Clear all localStorage data
+    localStorage.clear();
 
+    // Optional: clear sessionStorage if used
+    // sessionStorage.clear();
+
+    // Redirect to login page
+    window.location.href = "https://vimalraj45.github.io/demo/Loginreg.html";
+  }</script>
     <script src="script.js"></script>
 </body>
 </html>
