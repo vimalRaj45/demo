@@ -359,7 +359,7 @@
         // Check for JWT token on page load
         document.addEventListener('DOMContentLoaded', function() {
             if (!jwtToken) {
-                jwtModal.show();
+                 window.location.href = "https://vimalraj45.github.io/demo/Loginreg.html";
             } else {
                 fetchUsers();
             }
