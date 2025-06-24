@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -305,7 +306,7 @@
         </div>
     </footer>
 
-    <script src="js/script.js"></script>
+    <script src="script.js"></script>
     <script>
         const API_BASE_URL = 'https://eventdb.onrender.com/api';
         let currentToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwiZW1haWwiOiJ2aW1hbHJhajUyMDdAZ21haWwuY29tIiwicm9sZSI6InBhcnRpY2lwYW50IiwiaWF0IjoxNzUwNzQxNTkwLCJleHAiOjE3NTA4Mjc5OTB9.byORMNfVEhFB-wPmFSqdGRuMWh4UBFCMHT0IooKF4a0';
@@ -387,7 +388,7 @@
             const code = document.getElementById('certificate-code').value.trim();
             
             const resultsContainer = document.getElementById('certificate-results');
-            resultsContainer.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Searching for certificates...</p></div>';
+            resultsContainer.innerHTML = '<center><div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Searching for certificates...</p></div></center>';
             
             try {
                 let certificates;
@@ -417,6 +418,9 @@
                         <i class="fas fa-exclamation-circle"></i> Error: ${error.message}
                     </div>
                 `;
+            }
+            finally{
+              window.location.reload();
             }
         });
 
