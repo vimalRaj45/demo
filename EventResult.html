@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Participants & Results</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- AOS Animations -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <!-- Outfit Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: #f8f9fa;
+    }
+    .response-area {
+      white-space: pre-wrap;
+      background: #f1f1f1;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      border-radius: 0.5rem;
+    }
+    table {
+      width: 100%;
+    }
+    .loader {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container py-5">
+  <h2 class="text-center mb-4" data-aos="fade-up">Event Participants & Results Management</h2>
+
+  <!-- Participants Section -->
+  <div class="card shadow-sm border-info mb-4" data-aos="fade-up">
+    <div class="card-header bg-info text-white">
+      <i class="bi bi-people-fill me-2"></i><strong>Event Participants</strong>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label for="participants-event-id" class="form-label">Choose Event</label>
+        <select class="form-select" id="participants-event-id"></select>
+      </div>
+      <div class="mb-3">
+        <label for="cert-sheet-id" class="form-label">Google Sheet ID</label>
+        <input type="text" id="cert-sheet-id" class="form-control" placeholder="Enter Sheet ID">
+      </div>
+      <button class="btn btn-primary" onclick="getEventParticipants()">
+        <i class="bi bi-search me-1"></i>Get Participants
+      </button>
+
+      <!-- Loader -->
+      <div id="participants-loader" class="loader">
+        <div class="spinner-border text-info" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <label class="form-label">Participants List</label>
+        <div id="event-participants-response"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Section -->
+  <div class="card shadow-sm border-success mb-4" data-aos="fade-up">
+    <div class="card-header bg-success text-white">
+      <i class="bi bi-trophy me-2"></i><strong>Add / Update Result</strong>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="result-event-id" class="form-label">Event ID</label>
+          <input type="text" class="form-control" id="result-event-id" placeholder="1">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="result-participant-id" class="form-label">Participant ID</label>
+          <input type="text" class="form-control" id="result-participant-id" placeholder="1">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="result-score" class="form-label">Score</label>
+          <input type="number" class="form-control" id="result-score" placeholder="85">
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="result-rank" class="form-label">Rank</label>
+          <input type="number" class="form-control" id="result-rank" placeholder="1">
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="result-remarks" class="form-label">Remarks</label>
+          <input type="text" class="form-control" id="result-remarks" placeholder="Excellent performance">
+        </div>
+      </div>
+      <button class="btn btn-success" onclick="addUpdateResult()">
+        <i class="bi bi-save me-1"></i>Submit Result
+      </button>
+      <div class="mt-3">
+        <label class="form-label">Response</label>
+        <div class="response-area" id="add-result-response"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+  <div id="liveToast" class="toast align-items-center text-white bg-primary border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body" id="toast-message"></div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init();
+  const API_BASE_URL = 'https://eventdb.onrender.com/api';
+  let currentToken = localStorage.getItem('jwtToken') || '';
+
+  async function makeRequest(method, endpoint, data = null) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (currentToken) headers['Authorization'] = `Bearer ${currentToken}`;
+
+    const options = { method, headers };
+    if (data) options.body = JSON.stringify(data);
+
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+    if (!response.ok) throw new Error((await response.json()).message || 'API Error');
+    return await response.json();
+  }
+
+  async function getAllEvents() {
+    try {
+      const result = await makeRequest('GET', '/events');
+      const dropdown = document.getElementById('participants-event-id');
+      dropdown.innerHTML = '<option value="">-- Select Event --</option>';
+      result.forEach(ev => {
+        const option = document.createElement('option');
+        option.value = ev.id;
+        option.textContent = `${ev.id} - ${ev.title}`;
+        dropdown.appendChild(option);
+      });
+    } catch (err) {
+      showToast(`❌ ${err.message}`, 'danger');
+    }
+  }
+
+  async function getEventParticipants() {
+    const loader = document.getElementById('participants-loader');
+    const container = document.getElementById('event-participants-response');
+    container.innerHTML = '';
+    loader.style.display = 'flex';
+
+    try {
+      const eventId = document.getElementById('participants-event-id').value;
+      const sheetId = document.getElementById('cert-sheet-id').value;
+
+      if (!eventId || !sheetId) {
+        showToast("⚠️ Event ID and Sheet ID required", 'warning');
+        loader.style.display = 'none';
+        return;
+      }
+
+      const participants = await makeRequest('GET', `/events/${eventId}/participants`);
+      const emailFetchUrl = `https://script.google.com/macros/s/AKfycby3WAfq_K0hwe8z-_2MEk-WrztmDZseJ64jaoNvrKaOmmYf3ZnyO9W7IK8F7ZwYu5QI/exec?sheetId=${sheetId}`;
+      const emailResponse = await fetch(emailFetchUrl);
+      const sheetEmails = await emailResponse.json();
+
+      const emailSet = new Set(sheetEmails.map(e => e?.toLowerCase().trim()));
+      console.log("📄 Sheet Emails Set (Lowercase):", Array.from(emailSet));
+
+      if (!participants.length) {
+        container.innerHTML = '<div class="text-muted">No participants found.</div>';
+        return;
+      }
+
+      const tableRows = participants.map(p => {
+        const participantEmail = p.email?.toLowerCase().trim();
+        const present = emailSet.has(participantEmail);
+        console.log(`👤 Checking: ${participantEmail} → ${present ? '✔️ Present' : '❌ Absent'}`);
+        return `
+          <tr>
+            <td>${p.id}</td>
+            <td>${p.name}</td>
+            <td>${p.email}</td>
+            <td>${present ? '✔️ Present' : '❌ Absent'}</td>
+            <td>${new Date(p.registered_at).toLocaleString()}</td>
+          </tr>`;
+      }).join('');
+
+      const table = `
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped table-hover">
+            <thead class="table-dark">
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Attendance</th>
+                <th>Registered At</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows}
+            </tbody>
+          </table>
+        </div>`;
+      container.innerHTML = table;
+      showToast('✅ Participants loaded');
+    } catch (error) {
+      console.error("❌ Error loading participants or emails:", error);
+      container.textContent = `❌ ${error.message}`;
+      showToast(`❌ ${error.message}`, 'danger');
+    } finally {
+      loader.style.display = 'none';
+    }
+  }
+
+  async function addUpdateResult() {
+    try {
+      const data = {
+        participant_id: document.getElementById('result-participant-id').value,
+        score: parseInt(document.getElementById('result-score').value),
+        rank: parseInt(document.getElementById('result-rank').value),
+        remarks: document.getElementById('result-remarks').value
+      };
+      const eventId = document.getElementById('result-event-id').value;
+      const result = await makeRequest('POST', `/events/${eventId}/results`, data);
+      document.getElementById('add-result-response').textContent = JSON.stringify(result, null, 2);
+      showToast('✅ Result submitted');
+    } catch (error) {
+      document.getElementById('add-result-response').textContent = `Error: ${error.message}`;
+      showToast(`❌ ${error.message}`, 'danger');
+    }
+  }
+
+  function showToast(message, type = 'primary') {
+    const toastEl = document.getElementById('liveToast');
+    const toastBody = document.getElementById('toast-message');
+    toastBody.textContent = message;
+    toastEl.className = `toast align-items-center text-white bg-${type} border-0 show`;
+    new bootstrap.Toast(toastEl).show();
+  }
+
+  window.addEventListener('DOMContentLoaded', getAllEvents);
+</script>
+</body>
+</html>

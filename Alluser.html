@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventDB Admin Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+              url('https://plus.unsplash.com/premium_vector-1705741561303-b811bea523bc?q=80&w=996&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=format&fit=crop&w=800&q=80') center center/cover no-repeat;
+  color: white;
+        }
+        .badge-admin {
+            background-color: #ffc107;
+            color: #000;
+        }
+        .badge-participant {
+            background-color: #0d6efd;
+            color: #fff;
+        }
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+         .offcanvas {
+            max-width: 280px;
+        }
+        @media (min-width: 768px) {
+            .offcanvas-backdrop {
+                display: none !important;
+            }
+        }
+        
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Top Navbar (visible on all screens) -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-top mb-5">
+        <div class="container-fluid">
+            <button class="navbar-toggler me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="#">EventDB Admin</a>
+        </div>
+    </nav>
+     <!-- Offcanvas Sidebar (mobile) -->
+    <div class="offcanvas offcanvas-start bg-primary text-white" tabindex="-1" id="sidebar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">EventDB Admin</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">
+                        <i class="bi bi-calendar-plus me-2"></i>Create Event
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">
+                        <i class="bi bi-file-earmark-arrow-up me-2"></i>Upload Certificate
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">
+                        <i class="bi bi-images me-2"></i>Gallery
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">
+                        <i class="bi bi-person-plus me-2"></i>EventResult
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Sidebar (desktop) -->
+    <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+        <div class="position-sticky pt-3">
+            <div class="text-center mb-4">
+                <h4 class="text-white">EventDB Admin</h4>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">
+                        <i class="bi bi-calendar-plus me-2"></i>Create Event
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">
+                        <i class="bi bi-file-earmark-arrow-up me-2"></i>Upload Certificate
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">
+                        <i class="bi bi-images me-2"></i>Gallery
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">
+                        <i class="bi bi-person-plus me-2"></i>EventResult
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    
+  
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 mt-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2" data-aos="fade-down">User Management</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0" data-aos="fade-down">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-outline-dark mb-3" id="exportBtn">
+                                <i class="fas fa-download me-1"></i> Export
+                            </button>
+                            <button class="btn btn-outline-dark mb-3" onclick="exportAllUsers()">
+  <i class="fas fa-print"></i> Export All Users
+</button>
+
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4" id="statsCards" data-aos="fade-up">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+
+                <!-- Users Table -->
+                <div class="card" data-aos="fade-up">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="mb-0">All Users</h5>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="searchInput" placeholder="Search users...">
+                                    <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Last Login</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center" id="pagination">
+                                <!-- Will be populated by JavaScript -->
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- User Details Modal -->
+                <div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="userDetailsModalLabel">User Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-4 text-center">
+                                        <div class="mb-3">
+                                            <img src="https://ui-avatars.com/api/?name=User&background=random" class="img-fluid rounded-circle" alt="User Image" id="userImage">
+                                        </div>
+                                        <h4 id="userName">Loading...</h4>
+                                        <span class="badge" id="userRoleBadge">participant</span>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            <h5>Basic Information</h5>
+                                            <ul class="list-group">
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Email
+                                                    <span class="text-muted" id="userEmail">Loading...</span>
+                                                </li>
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Phone
+                                                    <span class="text-muted" id="userPhone">Loading...</span>
+                                                </li>
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Joined
+                                                    <span class="text-muted" id="userCreated">Loading...</span>
+                                                </li>
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Last Login
+                                                    <span class="text-muted" id="userLastLogin">Loading...</span>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6>Participations (<span id="participationCount">0</span>)</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm" id="participationsTable">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Event</th>
+                                                                <th>Status</th>
+                                                                <th>Result</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- Will be populated by JavaScript -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6>Organized Events (<span id="organizedEventsCount">0</span>)</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm" id="organizedEventsTable">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Event</th>
+                                                                <th>Type</th>
+                                                                <th>Participants</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- Will be populated by JavaScript -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="card" style="display: none;">
+                                            <div class="card-header">
+                                                <h6>(<span id="galleryImagesCount">0</span>)</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row" id="galleryImages">
+                                                    <!-- Will be populated by JavaScript -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- JWT Input Modal -->
+    <div class="modal fade" id="jwtModal" tabindex="-1" aria-labelledby="jwtModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="jwtModalLabel">Enter JWT Token</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="jwtToken" class="form-label">Bearer Token</label>
+                        <input type="password" class="form-control" id="jwtToken" placeholder="Enter your JWT token">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="submitJwt">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Custom JS -->
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out'
+        });
+
+        // Global variables
+        let usersData = [];
+        let currentPage = 1;
+        const usersPerPage = 10;
+        let jwtToken = localStorage.getItem('eventdb_jwt');
+
+        // DOM Elements
+        const usersTableBody = document.getElementById('usersTableBody');
+        const statsCards = document.getElementById('statsCards');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const pagination = document.getElementById('pagination');
+        const jwtModal = new bootstrap.Modal(document.getElementById('jwtModal'));
+        const jwtTokenInput = document.getElementById('jwtToken');
+        const submitJwtBtn = document.getElementById('submitJwt');
+
+        // Check for JWT token on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!jwtToken) {
+                jwtModal.show();
+            } else {
+                fetchUsers();
+            }
+        });
+
+ 
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    window.print();
+  });
+
+
+
+        // Submit JWT token
+        submitJwtBtn.addEventListener('click', function() {
+            jwtToken = jwtTokenInput.value.trim();
+            if (jwtToken) {
+                localStorage.setItem('eventdb_jwt', jwtToken);
+                jwtModal.hide();
+                fetchUsers();
+            } else {
+                alert('Please enter a valid JWT token');
+            }
+        });
+
+        // Search functionality
+        searchBtn.addEventListener('click', function() {
+            currentPage = 1;
+            renderUsersTable();
+        });
+
+        searchInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                currentPage = 1;
+                renderUsersTable();
+            }
+        });
+
+        // Fetch users from API
+        async function fetchUsers() {
+            try {
+                const response = await fetch('https://eventdb.onrender.com/admin/users', {
+                    headers: {
+                        'Authorization': `Bearer ${jwtToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    usersData = data.data;
+                    updateStatsCards();
+                    renderUsersTable();
+                } else {
+                    throw new Error('API returned unsuccessful response');
+                }
+            } catch (error) {
+                console.error('Error fetching users:', error);
+                alert('Error fetching users. Please check your JWT token and try again.');
+                localStorage.removeItem('eventdb_jwt');
+                jwtToken = null;
+                jwtModal.show();
+            }
+        }
+
+        // Update stats cards
+        function updateStatsCards() {
+            const totalUsers = usersData.length;
+            const activeUsers = usersData.filter(user => user.last_login !== null).length;
+            const participants = usersData.filter(user => user.role === 'participant').length;
+            const admins = usersData.filter(user => user.role === 'admin').length;
+
+            statsCards.innerHTML = `
+                <div class="row gy-3">
+    <div class="col-12 col-md-3">
+        <div class="card text-white bg-primary h-100">
+            <div class="card-body">
+                <h6 class="card-title">TOTAL USERS</h6>
+                <h2 class="card-text">${totalUsers}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-3">
+        <div class="card text-white bg-success h-100">
+            <div class="card-body">
+                <h6 class="card-title">ACTIVE USERS</h6>
+                <h2 class="card-text">${activeUsers}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-3">
+        <div class="card text-white bg-info h-100">
+            <div class="card-body">
+                <h6 class="card-title">PARTICIPANTS</h6>
+                <h2 class="card-text">${participants}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-3">
+        <div class="card text-white bg-warning h-100">
+            <div class="card-body">
+                <h6 class="card-title">ADMINS</h6>
+                <h2 class="card-text">${admins}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+            `;
+        }
+
+    
+// Render users table
+function renderUsersTable() {
+    const searchTerm = searchInput.value.toLowerCase();
+    let filteredUsers = usersData;
+
+    if (searchTerm) {
+        filteredUsers = usersData.filter(user => 
+            user.name.toLowerCase().includes(searchTerm) || 
+            user.email.toLowerCase().includes(searchTerm) ||
+            user.role.toLowerCase().includes(searchTerm) ||
+            user.id.toString().includes(searchTerm)
+        );
+    }
+
+    const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+    const startIndex = (currentPage - 1) * usersPerPage;
+    const paginatedUsers = filteredUsers.slice(startIndex, startIndex + usersPerPage);
+
+    usersTableBody.innerHTML = paginatedUsers.map(user => `
+        <tr class="cursor-pointer" onclick="showUserDetails(${user.id})">
+            <td>${user.id}</td>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>
+                <span class="badge ${user.role === 'admin' ? 'badge-admin' : 'badge-participant'}">
+                    ${user.role}
+                </span>
+            </td>
+            <td>${user.last_login ? formatDateTime(user.last_login) : 'Never'}</td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); showUserDetails(${user.id})">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-success" onclick="event.stopPropagation(); exportUser(${user.id})">
+                    <i class="fas fa-print"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+
+    renderPagination(totalPages);
+}
+
+// Export one user
+function exportUser(id) {
+    const user = usersData.find(u => u.id === id);
+    if (user) {
+        printUserData([user]);
+    }
+}
+
+// Export all users
+function exportAllUsers() {
+    printUserData(usersData);
+}
+
+function printUserData(dataArray) {
+    const popup = window.open('', '_blank');
+    const style = `
+        <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+            th { background-color: #f4f4f4; }
+            .print-btn {
+                margin-top: 20px;
+                padding: 10px 20px;
+                font-size: 16px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                cursor: pointer;
+                border-radius: 5px;
+            }
+        </style>
+    `;
+    const tableHeader = `
+        <tr>
+            <th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Last Login</th>
+        </tr>
+    `;
+    const tableRows = dataArray.map(user => `
+        <tr>
+            <td>${user.id}</td>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.role}</td>
+            <td>${user.last_login ? formatDateTime(user.last_login) : 'Never'}</td>
+        </tr>
+    `).join('');
+
+    popup.document.write(`
+        <html>
+        <head><title>User Data</title>${style}</head>
+        <body>
+            <h2>User Details</h2>
+            <table>${tableHeader}${tableRows}</table>
+            <button class="print-btn" onclick="window.print()">🖨️ Print Screen</button>
+        </body>
+        </html>
+    `);
+    popup.document.close();
+}
+
+
+        // Render pagination
+        function renderPagination(totalPages) {
+            let paginationHTML = '';
+            
+            if (currentPage > 1) {
+                paginationHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Previous</a>
+                    </li>
+                `;
+            } else {
+                paginationHTML += `
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                `;
+            }
+
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHTML += `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                    </li>
+                `;
+            }
+
+            if (currentPage < totalPages) {
+                paginationHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Next</a>
+                    </li>
+                `;
+            } else {
+                paginationHTML += `
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                    </li>
+                `;
+            }
+
+            pagination.innerHTML = paginationHTML;
+        }
+
+        // Change page
+        function changePage(page) {
+            currentPage = page;
+            renderUsersTable();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Show user details
+        function showUserDetails(userId) {
+            const user = usersData.find(u => u.id === userId);
+            if (!user) return;
+
+            const userDetailsModal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
+            const userImage = document.getElementById('userImage');
+            const userName = document.getElementById('userName');
+            const userRoleBadge = document.getElementById('userRoleBadge');
+            const userEmail = document.getElementById('userEmail');
+            const userPhone = document.getElementById('userPhone');
+            const userCreated = document.getElementById('userCreated');
+            const userLastLogin = document.getElementById('userLastLogin');
+            const participationCount = document.getElementById('participationCount');
+            const organizedEventsCount = document.getElementById('organizedEventsCount');
+            const galleryImagesCount = document.getElementById('galleryImagesCount');
+            const participationsTable = document.getElementById('participationsTable').querySelector('tbody');
+            const organizedEventsTable = document.getElementById('organizedEventsTable').querySelector('tbody');
+            const galleryImages = document.getElementById('galleryImages');
+
+            // Set basic user info
+            userImage.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`;
+            userName.textContent = user.name;
+            userRoleBadge.textContent = user.role;
+            userRoleBadge.className = `badge ${user.role === 'admin' ? 'badge-admin' : 'badge-participant'}`;
+            userEmail.textContent = user.email;
+            userPhone.textContent = user.contact_no || 'N/A';
+            userCreated.textContent = formatDateTime(user.created_at);
+            userLastLogin.textContent = user.last_login ? formatDateTime(user.last_login) : 'Never';
+
+            // Set participations
+            participationCount.textContent = user.participations.length;
+            participationsTable.innerHTML = user.participations.map(part => `
+                <tr>
+                    <td>${part.event_title}</td>
+                    <td><span class="badge bg-${getStatusBadgeColor(part.status)}">${part.status}</span></td>
+                    <td>
+                        ${part.result ? `
+                            Score: ${part.result.score}<br>
+                            Rank: ${part.result.rank}<br>
+                            Remarks: ${part.result.remarks}
+                        ` : 'N/A'}
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="3" class="text-center">No participations</td></tr>';
+
+            // Set organized events
+            organizedEventsCount.textContent = user.organized_events.length;
+            organizedEventsTable.innerHTML = user.organized_events.map(event => `
+                <tr>
+                    <td>${event.title}</td>
+                    <td>${event.type}</td>
+                    <td>${event.participants}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="3" class="text-center">No organized events</td></tr>';
+
+            // Set gallery images
+            galleryImagesCount.textContent = '';
+            galleryImages.innerHTML = '';
+
+            userDetailsModal.show();
+        }
+
+        // Helper function to format date/time
+        function formatDateTime(dateTimeString) {
+            if (!dateTimeString) return 'N/A';
+            const date = new Date(dateTimeString);
+            return date.toLocaleString();
+        }
+
+        // Helper function to get status badge color
+        function getStatusBadgeColor(status) {
+            switch (status) {
+                case 'upcoming': return 'info';
+                case 'ongoing': return 'success';
+                case 'completed': return 'secondary';
+                default: return 'light text-dark';
+            }
+        }
+
+        // Make functions available globally
+        window.showUserDetails = showUserDetails;
+        window.changePage = changePage;
+    </script>
+</body>
+</html>

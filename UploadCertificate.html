@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Certificate</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: #f8f9fa;
+    }
+    .response-area {
+      white-space: pre-wrap;
+      background: #f1f1f1;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      border-radius: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container py-5">
+    <!-- Participants Section -->
+<div class="card shadow-sm border-info mb-4" data-aos="fade-up">
+  <div class="card-header bg-info text-white">
+    <i class="bi bi-people-fill me-2"></i><strong>Event Participants</strong>
+  </div>
+  <div class="card-body">
+    <div class="mb-3">
+      <label for="participants-event-id" class="form-label">Choose Event</label>
+      <select class="form-select" id="participants-event-id">
+        <option value="">-- Loading Events --</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="getEventParticipants()">
+      <i class="bi bi-search me-1"></i>Get Participants
+    </button>
+    <div class="mt-3">
+      <label class="form-label">Participants List</label>
+      <div id="event-participants-response" class="table-responsive border rounded p-2 bg-light">
+        <div class="text-muted">Select an event and click "Get Participants".</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <h2 class="text-center mb-4" data-aos="fade-down">Upload Certificate (Admin Only)</h2>
+  <div class="card shadow-sm" data-aos="fade-up">
+    <div class="card-header bg-primary text-white">
+      <i class="bi bi-upload me-2"></i>Certificate Upload Panel
+    </div>
+    <div class="card-body">
+      <input type="text" id="cert-event-id" placeholder="Event ID" class="form-control mb-2">
+      <input type="text" id="cert-participant-id" placeholder="Participant ID" class="form-control mb-2">
+      <input type="text" id="cert-sheet-id" placeholder="Google Sheet ID" class="form-control mb-2">
+      <input type="text" id="cert-template-id" placeholder="Slide Template ID" class="form-control mb-2">
+      <input type="text" id="cert-folder-id" placeholder="Drive Folder ID" class="form-control mb-2">
+      <input type="email" id="cert-email" placeholder="Participant Email" class="form-control mb-2" readonly>
+      <button onclick="uploadCertificate()" class="btn btn-success mt-2 w-100">
+        🚀 Generate & Upload Certificate
+      </button>
+      <div class="mt-3">
+        <label class="form-label">Response</label>
+        <div class="response-area" id="upload-certificate-response"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+  <div id="liveToast" class="toast align-items-center text-white bg-primary border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body" id="toast-message"></div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init();
+  const API_BASE_URL = 'https://eventdb.onrender.com/api';
+  let currentToken = localStorage.getItem('jwtToken') || '';
+
+  async function getAllEvents() {
+  showLoader();
+  try {
+    console.log("📤 Requesting all events...");
+    const result = await makeRequest('GET', '/events');
+    console.log("📥 Received events:", result);
+
+    const dropdown = document.getElementById('participants-event-id');
+    dropdown.innerHTML = '<option value="">-- Select Event --</option>';
+
+    if (!result.length) {
+      console.warn("⚠️ No events found.");
+      showToast("⚠️ No events available", 'warning');
+      return;
+    }
+
+    result.forEach(ev => {
+      const option = document.createElement('option');
+      option.value = ev.id;
+      option.textContent = `${ev.id} - ${ev.title}`;
+      dropdown.appendChild(option);
+    });
+
+    showToast("✅ Events loaded successfully");
+  } catch (err) {
+    console.error("❌ Error loading events:", err);
+    showToast(`❌ ${err.message}`, 'danger');
+  } finally {
+    hideLoader();
+  }
+}
+
+
+async function getEventParticipants() {
+  showLoader();
+  try {
+    const eventId = document.getElementById('participants-event-id').value;
+
+    if (!eventId) {
+      console.warn("⚠️ No event selected.");
+      showToast("⚠️ Please select an event", 'warning');
+      return;
+    }
+
+    console.log(`📤 Fetching participants for Event ID: ${eventId}`);
+    const participants = await makeRequest('GET', `/events/${eventId}/participants`);
+    console.log("📥 Participants received:", participants);
+
+    const container = document.getElementById('event-participants-response');
+
+    if (!participants.length) {
+      console.warn("⚠️ No participants found.");
+      container.innerHTML = '<div class="text-muted">No participants found.</div>';
+      return;
+    }
+
+    const table = `
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>Participant_ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Registered At</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${participants.map(p => `
+              <tr>
+                <td>${p.id}</td>
+                <td>${p.name}</td>
+                <td>${p.email}</td>
+                <td>${new Date(p.registered_at).toLocaleString()}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    container.innerHTML = table;
+    showToast("✅ Participants loaded");
+  } catch (error) {
+    console.error("❌ Failed to fetch participants:", error);
+    document.getElementById('event-participants-response').textContent = `Error: ${error.message}`;
+    showToast(`❌ ${error.message}`, 'danger');
+  } finally {
+    hideLoader();
+  }
+}
+
+document.getElementById('cert-participant-id').addEventListener('change', async function () {
+  const participantId = this.value;
+  if (!participantId) return;
+
+  showLoader();
+  try {
+    console.log(`🔍 Fetching email for participant ID: ${participantId}`);
+    const response = await makeRequest('GET', `/participants/${participantId}/email`);
+    const email = response.email;
+    console.log(`📧 Email fetched: ${email}`);
+    document.getElementById('cert-email').value = email;
+  } catch (err) {
+    console.error("❌ Error fetching email:", err.message);
+    document.getElementById('cert-email').value = '';
+    alert('Error fetching email for this participant');
+  } finally {
+    hideLoader();
+  }
+});
+
+
+  async function uploadCertificate() {
+    showLoader();
+    try {
+      const eventId = document.getElementById('cert-event-id').value;
+      const participantId = document.getElementById('cert-participant-id').value;
+      const sheetId = document.getElementById('cert-sheet-id').value;
+      const templateId = document.getElementById('cert-template-id').value;
+      const folderId = document.getElementById('cert-folder-id').value;
+      const participantEmail = document.getElementById('cert-email').value;
+
+      const checkRes = await fetch(`${API_BASE_URL}/events/${eventId}/certificates/${participantId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentToken}`
+        }
+      });
+
+      if (checkRes.ok) {
+        const existing = await checkRes.json();
+        if (existing?.certificate_url) {
+          document.getElementById('upload-certificate-response').textContent =
+            `⚠️ Already Sent.\nURL: ${existing.certificate_url}`;
+          return;
+        }
+      } else if (checkRes.status !== 404) {
+        throw new Error((await checkRes.json()).error || 'Fetch Error');
+      }
+
+      const scriptUrl = `https://script.google.com/macros/s/AKfycbxMSYgYtdgSPI9rYznpjyTNjjjQ4yNczG5IoJ_k8rgy16BmKIQt8Wom-I4VlAGM0eXH/exec`;
+      const query = `?sheetId=${sheetId}&templateId=${templateId}&folderId=${folderId}&email=${encodeURIComponent(participantEmail)}`;
+      const fullUrl = `${scriptUrl}${query}`;
+
+      const response = await fetch(fullUrl);
+      const responseText = await response.text();
+
+      if (!responseText.startsWith("✅")) throw new Error(responseText);
+
+      const urlMatch = responseText.match(/URL: (.+?) - Timestamp:/);
+      const timestampMatch = responseText.match(/Timestamp: (.+)$/);
+      if (!urlMatch || !timestampMatch) throw new Error("Invalid generator response");
+
+      const certificateUrl = urlMatch[1];
+      const issuedAt = parseIndianTimestampToISO(timestampMatch[1].trim());
+      const uniqueCode = generateUniqueCode();
+
+      const payload = {
+        event_id: parseInt(eventId),
+        participant_id: parseInt(participantId),
+        certificate_url: certificateUrl,
+        issued_at: issuedAt,
+        unique_code: uniqueCode
+      };
+
+      const result = await makeRequest('POST', `/events/${eventId}/certificates`, payload);
+      document.getElementById('upload-certificate-response').textContent = `✅ Certificate Uploaded\n${JSON.stringify(result, null, 2)}`;
+      showToast('✅ Certificate uploaded successfully');
+    } catch (error) {
+      document.getElementById('upload-certificate-response').textContent = `❌ Error: ${error.message}`;
+      showToast(`❌ ${error.message}`, 'danger');
+    }
+    finally {
+      hideLoader();
+    }
+  }
+
+  function generateUniqueCode(length = 10) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  }
+
+  function parseIndianTimestampToISO(str) {
+    const [datePart, timeRaw] = str.split(', ');
+    const [d, m, y] = datePart.split('/');
+    const [time, meridian] = timeRaw.split(' ');
+    let [h, min, sec] = time.split(':').map(Number);
+    if (meridian === 'pm' && h < 12) h += 12;
+    if (meridian === 'am' && h === 12) h = 0;
+    return new Date(`${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}T${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`).toISOString();
+  }
+
+  async function makeRequest(method, endpoint, data = null) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (currentToken) headers['Authorization'] = `Bearer ${currentToken}`;
+    const options = { method, headers };
+    if (data) options.body = JSON.stringify(data);
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+    if (!response.ok) throw new Error((await response.json()).message || 'API error');
+    return await response.json();
+  }
+  function showLoader() {
+  document.getElementById('global-loader').style.display = 'flex';
+}
+
+function hideLoader() {
+  document.getElementById('global-loader').style.display = 'none';
+}
+
+
+  function showToast(message, type = 'primary') {
+    const toastEl = document.getElementById('liveToast');
+    const toastBody = document.getElementById('toast-message');
+    toastBody.textContent = message;
+    toastEl.className = `toast align-items-center text-white bg-${type} border-0 show`;
+    new bootstrap.Toast(toastEl).show();
+  }
+   window.addEventListener('DOMContentLoaded', getAllEvents);
+</script>
+<!-- Loader Spinner -->
+<div id="global-loader" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(255,255,255,0.7); z-index: 2000; display: flex; align-items: center; justify-content: center;">
+  <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+</body>
+</html>
