@@ -19,7 +19,7 @@
 
   <style>
     :root {
-      --primary-color: #4e73df;
+      --primary-color: #6366f1;
       --primary-dark: #2e59d9;
       --secondary-color: #f8f9fc;
       --success-color: #1cc88a;
@@ -35,16 +35,7 @@
       rgba(0, 0, 0, 0.3), 
       rgba(0, 0, 0, 0.3)
     ),
-    url("https://plus.unsplash.com/premium_photo-1681487814165-018814e29155?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-attachment: fixed;
-  background-size: cover;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  color: var(--dark-color);
+   
 }
 
     
@@ -360,19 +351,7 @@
             <span id="login-btn-text">Sign In</span>
             <span id="login-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
           </button>
-          
-          <div class="divider">or continue with</div>
-          
-         <div class="d-flex gap-3 mb-4">
-  <button class="btn btn-outline-primary flex-grow-1 rounded-pill">
-    <i class="bi bi-google me-2"></i> Google
-  </button>
-  <button class="btn btn-outline-primary flex-grow-1 rounded-pill">
-    <i class="bi bi-microsoft me-2"></i> Microsoft
-  </button>
-</div>
-
-          
+         
           <div class="auth-footer">
             Don't have an account? <a href="#" class="auth-link" onclick="showSection('register-section')">Sign up</a>
           </div>
@@ -592,44 +571,52 @@
     const API_BASE_URL = 'https://eventdb.onrender.com/api';
     let currentToken = localStorage.getItem('jwtToken') || '';
 
-    // LOGIN
-    async function loginUser() {
-      const email = document.getElementById('login-email').value.trim();
-      const password = document.getElementById('login-password').value.trim();
-      const loginBtn = document.getElementById('login-btn');
-      const loginBtnText = document.getElementById('login-btn-text');
-      const loginSpinner = document.getElementById('login-spinner');
+   // LOGIN
+async function loginUser() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value.trim();
+  const loginBtn = document.getElementById('login-btn');
+  const loginBtnText = document.getElementById('login-btn-text');
+  const loginSpinner = document.getElementById('login-spinner');
 
-      if (!email || !password) {
-        showToast('error', 'Validation Error', 'Please enter both email and password.');
-        return;
+  if (!email || !password) {
+    showToast('error', 'Validation Error', 'Please enter both email and password.');
+    return;
+  }
+
+  // Show loading state
+  loginBtn.disabled = true;
+  loginBtnText.textContent = 'Authenticating...';
+  loginSpinner.classList.remove('d-none');
+
+  try {
+    const data = { email, password };
+    const result = await makeRequest('POST', '/auth/login', data, false);
+
+    // Store token and user
+    setToken(result.token);
+    localStorage.setItem("user", JSON.stringify(result.user)); // Store user info
+
+    showToast('success', 'Login Successful', `Welcome back, ${result.user.name || 'User'}!`);
+
+    // Redirect after 2 sec based on role
+    setTimeout(() => {
+      if (result.user.role === 'admin') {
+        window.location.href = "https://vimalraj45.github.io/demo/Alluser.html";
+      } else {
+        window.location.href = "https://vimalraj45.github.io/demo/EventDemo.html"; // Adjust as needed
       }
+    }, 2000);
 
-      // Show loading state
-      loginBtn.disabled = true;
-      loginBtnText.textContent = 'Authenticating...';
-      loginSpinner.classList.remove('d-none');
-
-      try {
-        const data = { email, password };
-        const result = await makeRequest('POST', '/auth/login', data, false);
-
-        setToken(result.token);
-
-        showToast('success', 'Login Successful', `Welcome back, ${result.name || 'User'}!`);
-        
-        // Optional: redirect after login
-        // window.location.href = "dashboard.html";
-
-      } catch (error) {
-        showToast('error', 'Login Failed', error.message || 'Invalid credentials. Please try again.');
-      } finally {
-        // Reset button state
-        loginBtn.disabled = false;
-        loginBtnText.textContent = 'Sign In';
-        loginSpinner.classList.add('d-none');
-      }
-    }
+  } catch (error) {
+    showToast('error', 'Login Failed', error.message || 'Invalid credentials. Please try again.');
+  } finally {
+    // Reset button state
+    loginBtn.disabled = false;
+    loginBtnText.textContent = 'Sign In';
+    loginSpinner.classList.add('d-none');
+  }
+}
 
     // REGISTER
     async function registerUser() {
