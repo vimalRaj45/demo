@@ -734,7 +734,7 @@
         const result = await makeRequest('POST', `/events/${eventId}/register`, { 
           registration_data: registrationData 
         });
-        
+        alert(`✅ Registration successful: ${result.message || 'You have successfully registered for the event!'}`)
         showToast("🎉 Successfully registered for the event!", 'success');
         eventModal.hide();
         getAllEvents(); // Refresh events list
