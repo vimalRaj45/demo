@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificates - EventHub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/certificates.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Additional styles for API functionality -->
+    <style>
+        
+        .certificate-card {
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .certificate-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .certificate-card .card-body {
+            padding: 1.5rem;
+        }
+        .certificate-card .card-title {
+            color: #4e73df;
+            margin-bottom: 1rem;
+        }
+        .certificate-code {
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+        }
+        .no-certificates {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+        }
+        .no-certificates i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #dee2e6;
+        }
+        .search-btn {
+            width: 100%;
+            padding: 0.75rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>EventHub</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="events.html" class="nav-link">Events</a>
+                </li>
+                <li class="nav-item">
+                    <a href="certificates.html" class="nav-link active">Certificates</a>
+                </li>
+                <li class="nav-item">
+                    <a href="results.html" class="nav-link">Results</a>
+                </li>
+                <li class="nav-item">
+                    <a href="C:\Users\shanm\Downloads\event-website\event-website\1.html" class="nav-link btn-primary">Edit Profile</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Download Certificates</h1>
+            <p>Get your participation and achievement certificates instantly</p>
+        </div>
+    </section>
+
+    <!-- Certificate Download Section -->
+    <section class="certificate-section">
+        <div class="container">
+            <div class="certificate-container">
+                <div class="certificate-form-section">
+                    <div class="form-header">
+                        <i class="fas fa-certificate"></i>
+                        <h2>Certificate Lookup</h2>
+                        <p>Enter your details to find and download your certificates</p>
+                    </div>
+
+                    <form id="certificate-form" class="certificate-form">
+                        <div class="form-group">
+                            <label for="participant-name">Full Name</label>
+                            <input type="text" id="participant-name" name="participant-name" required 
+                                   placeholder="Enter your full name as registered">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="participant-email">Email Address</label>
+                            <input type="email" id="participant-email" name="participant-email" required 
+                                   placeholder="Enter your registered email address">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="certificate-code">Certificate Code (Optional)</label>
+                            <input type="text" id="certificate-code" name="certificate-code"
+                                   placeholder="Enter your certificate code if you have one">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary search-btn">
+                            <i class="fas fa-search"></i>
+                            Find My Certificates
+                        </button>
+                    </form>
+                </div>
+
+                <div class="certificate-preview-section">
+                    <div class="preview-header">
+                        <h3>Certificate Preview</h3>
+                        <p>Your certificates will appear here</p>
+                    </div>
+                    
+                    <div id="certificate-results" class="certificate-results">
+                        <div class="no-certificates">
+                            <i class="fas fa-certificate"></i>
+                            <h4>No Certificates Found</h4>
+                            <p>Enter your details to search for certificates</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sample Certificates Section -->
+    <section class="sample-certificates">
+        <div class="container">
+            <h2 class="section-title">Sample Certificates</h2>
+            <p class="section-subtitle">See examples of certificates you can earn by participating in our events</p>
+            
+            <div class="samples-grid">
+                <div class="sample-card">
+                    <div class="sample-image">
+                        <div class="certificate-template participation">
+                            <div class="cert-header">
+                                <h3>CERTIFICATE OF PARTICIPATION</h3>
+                                <div class="cert-logo">EventHub</div>
+                            </div>
+                            <div class="cert-content">
+                                <p class="cert-text">This is to certify that</p>
+                                <h4 class="cert-name">[Participant Name]</h4>
+                                <p class="cert-text">has successfully participated in</p>
+                                <h5 class="cert-event">[Event Name]</h5>
+                                <p class="cert-date">Date: [Event Date]</p>
+                            </div>
+                            <div class="cert-footer">
+                                <div class="signature">
+                                    <p>Event Organizer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h4>Participation Certificate</h4>
+                    <p>Awarded to all participants who complete an event</p>
+                </div>
+
+                <div class="sample-card">
+                    <div class="sample-image">
+                        <div class="certificate-template achievement">
+                            <div class="cert-header">
+                                <h3>CERTIFICATE OF ACHIEVEMENT</h3>
+                                <div class="cert-logo">EventHub</div>
+                            </div>
+                            <div class="cert-content">
+                                <p class="cert-text">This is to certify that</p>
+                                <h4 class="cert-name">[Participant Name]</h4>
+                                <p class="cert-text">has achieved</p>
+                                <h5 class="cert-achievement">1st Place</h5>
+                                <p class="cert-text">in</p>
+                                <h5 class="cert-event">[Event Name]</h5>
+                                <p class="cert-date">Date: [Event Date]</p>
+                            </div>
+                            <div class="cert-footer">
+                                <div class="signature">
+                                    <p>Event Organizer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h4>Achievement Certificate</h4>
+                    <p>Awarded to winners and top performers</p>
+                </div>
+
+                <div class="sample-card">
+                    <div class="sample-image">
+                        <div class="certificate-template completion">
+                            <div class="cert-header">
+                                <h3>CERTIFICATE OF COMPLETION</h3>
+                                <div class="cert-logo">EventHub</div>
+                            </div>
+                            <div class="cert-content">
+                                <p class="cert-text">This is to certify that</p>
+                                <h4 class="cert-name">[Participant Name]</h4>
+                                <p class="cert-text">has successfully completed</p>
+                                <h5 class="cert-event">[Workshop/Course Name]</h5>
+                                <p class="cert-text">with a score of</p>
+                                <h5 class="cert-score">95%</h5>
+                                <p class="cert-date">Date: [Completion Date]</p>
+                            </div>
+                            <div class="cert-footer">
+                                <div class="signature">
+                                    <p>Event Organizer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h4>Completion Certificate</h4>
+                    <p>Awarded for completing workshops and courses</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Instructions Section -->
+    <section class="instructions-section">
+        <div class="container">
+            <h2 class="section-title">How to Download Your Certificate</h2>
+            <div class="instructions-grid">
+                <div class="instruction-card">
+                    <div class="instruction-icon">
+                        <i class="fas fa-user-edit"></i>
+                    </div>
+                    <h3>Step 1: Enter Details</h3>
+                    <p>Fill in your full name and email address exactly as you registered for the event.</p>
+                </div>
+                
+                <div class="instruction-card">
+                    <div class="instruction-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Step 2: Search</h3>
+                    <p>Click "Find My Certificates" to search for all certificates associated with your details.</p>
+                </div>
+                
+                <div class="instruction-card">
+                    <div class="instruction-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3>Step 3: Download</h3>
+                    <p>Select and download your certificates in high-quality PDF format.</p>
+                </div>
+                
+                <div class="instruction-card">
+                    <div class="instruction-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h3>Step 4: Share</h3>
+                    <p>Share your achievements on social media or add them to your professional profile.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>EventHub</h3>
+                    <p>Your premier platform for organizing and participating in educational and competitive events.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="certificates.html">Certificates</a></li>
+                        <li><a href="results.html">Results</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-envelope"></i> info@eventhub.com</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 EventHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        const API_BASE_URL = 'https://eventdb.onrender.com/api';
+        let currentToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwiZW1haWwiOiJ2aW1hbHJhajUyMDdAZ21haWwuY29tIiwicm9sZSI6InBhcnRpY2lwYW50IiwiaWF0IjoxNzUwNzQxNTkwLCJleHAiOjE3NTA4Mjc5OTB9.byORMNfVEhFB-wPmFSqdGRuMWh4UBFCMHT0IooKF4a0';
+
+        // Reusable request function
+        async function makeRequest(method, endpoint, data = null, requiresAuth = true) {
+            const headers = { 'Content-Type': 'application/json' };
+            if (requiresAuth && currentToken) {
+                headers['Authorization'] = `Bearer ${currentToken}`;
+            }
+
+            const options = { method, headers };
+            if (data) options.body = JSON.stringify(data);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+                const contentType = response.headers.get('content-type');
+                const result = contentType && contentType.includes('application/json') ? await response.json() : await response.text();
+
+                if (!response.ok) {
+                    throw new Error(result.error || result.message || 'Request failed');
+                }
+
+                return result;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        // Display certificates in the results area
+        function displayCertificates(certificates, containerId) {
+            const container = document.getElementById(containerId);
+            
+            if (!Array.isArray(certificates)) {
+                certificates = [certificates]; // Handle single certificate case
+            }
+
+            if (certificates.length === 0) {
+                container.innerHTML = `
+                    <div class="no-certificates">
+                        <i class="fas fa-certificate"></i>
+                        <h4>No Certificates Found</h4>
+                        <p>No certificates were found matching your search criteria</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            
+            certificates.forEach(cert => {
+                const card = document.createElement('div');
+                card.className = 'card certificate-card';
+                card.innerHTML = `
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-award"></i> ${cert.event_title}</h5>
+                        <p class="card-text"><strong>Type:</strong> ${cert.event_type}</p>
+                        <p class="card-text"><strong>Participant:</strong> ${cert.participant_name}</p>
+                        <p class="card-text"><strong>Issued At:</strong> ${new Date(cert.issued_at).toLocaleString()}</p>
+                        <p class="card-text"><strong>Code:</strong> <span class="certificate-code">${cert.unique_code}</span></p>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="${cert.certificate_url}" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-download me-1"></i> Download Certificate
+                            </a>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Handle form submission
+        document.getElementById('certificate-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('participant-name').value.trim();
+            const email = document.getElementById('participant-email').value.trim();
+            const code = document.getElementById('certificate-code').value.trim();
+            
+            const resultsContainer = document.getElementById('certificate-results');
+            resultsContainer.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Searching for certificates...</p></div>';
+            
+            try {
+                let certificates;
+                
+                if (code) {
+                    // Search by certificate code
+                    certificates = await makeRequest('GET', `/certificates/${code}`);
+                } else {
+                    // Search by participant details (would need backend support)
+                    // For now using the get all certificates endpoint
+                    certificates = await makeRequest('GET', '/certificates');
+                    
+                    // Filter by name and email if we had that data
+                    // This is just a placeholder - your backend would need to support this
+                    if (name || email) {
+                        certificates = certificates.filter(cert => 
+                            (!name || cert.participant_name.toLowerCase().includes(name.toLowerCase())) &&
+                            (!email || cert.participant_email?.toLowerCase().includes(email.toLowerCase()))
+                        );
+                    }
+                }
+                
+                displayCertificates(certificates, 'certificate-results');
+            } catch (error) {
+                resultsContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle"></i> Error: ${error.message}
+                    </div>
+                `;
+            }
+        });
+
+        // Load certificates on page load if token exists
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (currentToken) {
+                try {
+                    const certificates = await makeRequest('GET', '/certificates');
+                    displayCertificates(certificates, 'certificate-results');
+                } catch (error) {
+                    console.error('Could not load certificates:', error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

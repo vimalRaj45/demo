@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Update Profile</title>
+
+  <!-- Google Fonts & Bootstrap CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+      font-family: 'Outfit', sans-serif;
+      color: #1f2937;
+    }
+
+    .profile-container {
+      max-width: 500px;
+      margin: 80px auto;
+      background: #ffffff;
+      padding: 2.5rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease-in-out;
+    }
+
+    .profile-container:hover {
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+    }
+
+    h3 {
+      font-weight: 600;
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+      color: #111827;
+    }
+
+    label.form-label {
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+    }
+
+    .form-control {
+      height: 44px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      background-color: #f9fafb;
+      border: 1px solid #d1d5db;
+      transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+      background-color: #ffffff;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 0.15rem rgba(59, 130, 246, 0.25);
+    }
+
+    .btn-primary {
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background-color: #3b82f6;
+      border: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #2563eb;
+    }
+
+    .toast-container {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1055;
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    @media (max-width: 576px) {
+      .profile-container {
+        margin: 40px 20px;
+        padding: 2rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Spinner -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Profile Form -->
+  <div class="profile-container">
+    <h3><i class="bi bi-person-circle me-2"></i>Update Profile</h3>
+
+    <div class="mb-3">
+      <label for="my-email" class="form-label">Email (read-only)</label>
+      <input type="email" class="form-control" id="my-email" readonly>
+    </div>
+
+    <div class="mb-3">
+      <label for="my-name" class="form-label">Name</label>
+      <input type="text" class="form-control" id="my-name" placeholder="Enter your name">
+    </div>
+
+    <div class="mb-3">
+      <label for="my-contact" class="form-label">Contact Number</label>
+      <input type="text" class="form-control" id="my-contact" placeholder="Enter contact number">
+    </div>
+
+    <div class="mb-3 d-none">
+      <label for="my-role" class="form-label">Role (optional)</label>
+      <select id="my-role" class="form-select">
+        <option value="">(Keep same)</option>
+        <option value="participant">Participant</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+
+    <button onclick="updateMyProfile()" class="btn btn-primary w-100 mt-2">
+      <i class="bi bi-save me-1"></i>Update Profile
+    </button>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container">
+    <div id="toast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" id="toast-msg">Success message</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const API_BASE_URL = 'https://eventdb.onrender.com/api';
+    let currentToken = localStorage.getItem('jwtToken') || '';
+
+    function showToast(message, type = 'success') {
+      const toastEl = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastEl.className = `toast align-items-center text-bg-${type} border-0`;
+      toastMsg.textContent = message;
+      new bootstrap.Toast(toastEl).show();
+    }
+
+    async function makeRequest(method, endpoint, data = null, requiresAuth = true) {
+      const headers = { 'Content-Type': 'application/json' };
+      if (requiresAuth && currentToken) headers['Authorization'] = `Bearer ${currentToken}`;
+      const options = { method, headers };
+      if (data) options.body = JSON.stringify(data);
+
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+      const result = response.headers.get('content-type')?.includes('application/json') ? await response.json() : await response.text();
+
+      if (!response.ok) throw new Error(result.error || result.message || 'Request failed');
+      return result;
+    }
+
+    async function getMyProfile() {
+      try {
+        const result = await makeRequest('GET', '/profile');
+        document.getElementById('my-email').value = result.email;
+        document.getElementById('my-name').value = result.name;
+        document.getElementById('my-contact').value = result.contact_no || '';
+        document.getElementById('loadingOverlay').style.display = 'none';
+        showToast('✔️ Profile loaded successfully', 'success');
+      } catch (error) {
+        showToast(`❌ Failed to load profile: ${error.message}`, 'danger');
+      }
+    }
+
+    async function updateMyProfile() {
+      const email = document.getElementById('my-email').value;
+      const name = document.getElementById('my-name').value;
+      const contact_no = document.getElementById('my-contact').value;
+      const role = document.getElementById('my-role').value || null;
+
+      const data = { name, contact_no, role };
+
+      try {
+        await makeRequest('PUT', `/users/${email}`, data);
+        showToast('✔️ Profile updated successfully', 'success');
+        setTimeout(() => window.location.href = 'index.html', 2000);
+      } catch (err) {
+        showToast(`❌ Failed to update: ${err.message}`, 'danger');
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', getMyProfile);
+  </script>
+</body>
+</html>

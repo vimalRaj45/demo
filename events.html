@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - EventHub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/events.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <!-- AOS CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+   <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4cc9f0;
+      --dark-color: #1a1a2e;
+      --light-color: #f8f9fa;
+      --success-color: #4bb543;
+      --warning-color: #ff9505;
+      --danger-color: #ff3e3e;
+    }
+    
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Outfit', sans-serif;
+      color: #333;
+    }
+    
+    
+    
+    .event-card {
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      border: none;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .event-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .event-img {
+      height: 200px;
+      object-fit: cover;
+      object-position: center;
+    }
+    
+    .badge-status {
+      text-transform: capitalize;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      padding: 5px 10px;
+    }
+    
+    .toast-container {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 1055;
+    }
+    
+    .profile-section {
+      background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(67, 97, 238, 0.15);
+    }
+  /* Renamed from .navbar to .eh-navbar */
+.eh-navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    padding: 0.4rem 0;
+}
+
+.eh-nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+}
+
+.eh-nav-logo h2 {
+   color: #6366f1;
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+
+.eh-nav-menu {
+   display: flex;
+    list-style: none;
+    align-items: center;
+    gap: 2rem;
+}
+
+.eh-nav-link {
+    text-decoration: none;
+    color: #374151;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+}
+
+.eh-nav-link:hover {
+    color: #6366f1;
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.eh-btn-primary {
+    background: #6366f1;
+    color: white;
+    padding: 0.75rem 1.5rem;
+}
+
+.eh-btn-primary:hover {
+    background: #5855eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.eh-hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.eh-bar {
+    width: 25px;
+    height: 3px;
+    background: #374151;
+    margin: 3px 0;
+    transition: 0.3s;
+}
+
+/* Avoid Bootstrap modal conflict */
+.eh-modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.eh-section-title {
+    position: relative;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
+
+.eh-section-title:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.eh-loading-spinner {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .event-img {
+        height: 150px;
+    }
+
+    .eh-hamburger {
+        display: flex;
+    }
+
+    .eh-nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 70px;
+        flex-direction: column;
+        background-color: white;
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+        padding: 2rem 0;
+    }
+
+    .eh-nav-menu.active {
+        left: 0;
+    }
+}
+
+  </style>
+</head>
+<body>
+  <nav class="eh-navbar ">
+  <div class="eh-nav-container " >
+    <div class="eh-nav-logo">
+      <h2>EventHub</h2>
+    </div>
+    <ul class="eh-nav-menu">
+      <li class="eh-nav-item">
+        <a href="index.html" class="eh-nav-link">Home</a>
+      </li>
+      <li class="eh-nav-item">
+        <a href="events.html" class="eh-nav-link active">Events</a>
+      </li>
+      <li class="eh-nav-item">
+        <a href="certificates.html" class="eh-nav-link">Certificates</a>
+      </li>
+      <li class="eh-nav-item">
+        <a href="results.html" class="eh-nav-link">Results</a>
+      </li>
+      <li class="eh-nav-item">
+                    <a href="C:\Users\shanm\Downloads\event-website\event-website\1.html" class="nav-link btn-primary">Edit Profile</a>
+      </li>
+    </ul>
+    <div class="eh-hamburger">
+      <span class="eh-bar"></span>
+      <span class="eh-bar"></span>
+      <span class="eh-bar"></span>
+    </div>
+  </div>
+</nav>
+
+
+    <div class="toast-container"></div>
+
+  <div class="container py-4 "style="margin-top: 70px;">
+    <!-- Profile Verification Section -->
+    <div class="row mb-4" id="profileVerificationSection" style="display: none;">
+      <div class="col-12">
+        <div class="profile-section" data-aos="fade-up">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0"><i class="bi bi-shield-check me-2"></i>Profile Verification</h3>
+            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Verified</span>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Full Name</label>
+              <input type="text" class="form-control bg-white" id="verified-name" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control bg-white" id="verified-email" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Contact Number</label>
+              <input type="text" class="form-control bg-white" id="verified-contact" readonly>
+            </div>
+          </div>
+          <p class="text-white-50 mb-0"><i class="bi bi-info-circle me-1"></i>Your profile information will be used for event registration</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <h2 class="mb-4 text-center text-dark fw-bold" data-aos="fade-down">
+      <i class="bi bi-calendar3-event me-2"></i>Upcoming Events
+    </h2>
+
+    <!-- Filter Section -->
+    <div class="card shadow-sm border-0 mb-4" data-aos="fade-up">
+      <div class="card-body d-flex flex-wrap gap-3 align-items-center">
+        <label for="event-status" class="form-label mb-0 fw-medium">
+          <i class="bi bi-funnel-fill me-2"></i>Filter by Status:
+        </label>
+        <select class="form-select w-auto" id="event-status">
+          <option value="">All Events</option>
+          <option value="upcoming">Upcoming</option>
+          <option value="ongoing">Ongoing</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <button class="btn btn-primary ms-auto" onclick="getAllEvents()">
+          <i class="bi bi-arrow-clockwise me-1"></i>Refresh Events
+        </button>
+      </div>
+    </div>
+
+    <!-- My Events Section -->
+    <div class="card shadow-sm border-0 mb-4" data-aos="fade-up">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="card-title mb-0"><i class="bi bi-ticket-perforated me-2"></i>My Registered Events</h5>
+          <button class="btn btn-outline-primary btn-sm" onclick="getMyEvents()">
+            <i class="bi bi-arrow-repeat me-1"></i>Refresh
+          </button>
+        </div>
+        <div id="my-events-container" class="row g-4 mt-2 d-none"></div>
+      </div>
+    </div>
+
+    <!-- Event Cards Grid -->
+    <div class="row g-4" id="events-container"></div>
+  </div>
+
+  <!-- Event Details Modal -->
+  <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="eventModalBody">
+          <div class="text-center py-4" id="modalLoading">
+            <div class="loading-spinner spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading event details...</p>
+          </div>
+          <div id="modalContent" style="display: none;">
+            <!-- Content will be loaded here -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input type="hidden" id="register-event-id">
+          <div id="registrationForm" class="w-100">
+            <h6 class="mb-3"><i class="bi bi-person-check me-2"></i>Registration Details</h6>
+            <div class="alert alert-info">
+              <i class="bi bi-info-circle me-2"></i>You will be registered as: 
+              <strong id="registering-as">Loading profile...</strong>
+            </div>
+            <div class="mb-3" style="display: none;">
+              <label class="form-label">Additional Information (JSON)</label>
+              <textarea id="register-data" class="form-control" rows="3" placeholder='{"team": "Team Name", "preferences": {}}'></textarea>
+            </div>
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <i class="bi bi-x-circle me-1"></i>Cancel
+              </button>
+              <button type="button" class="btn btn-success" onclick="registerForEvent()" id="registerButton">
+                <i class="bi bi-check-circle me-1"></i>Confirm Registration
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+   <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>EventHub</h3>
+                    <p>Your premier platform for organizing and participating in educational and competitive events.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="certificates.html">Certificates</a></li>
+                        <li><a href="results.html">Results</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-envelope"></i> info@eventhub.com</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 EventHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+  <!-- JS Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script> 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> 
+
+  <script>
+    // Initialize animations
+    AOS.init({
+      duration: 500,
+      easing: 'ease-out-quad',
+      once: true
+    });
+    
+    const API_BASE_URL = 'https://eventdb.onrender.com/api'; 
+    let currentToken = localStorage.getItem('jwtToken') || '';
+    let currentUserProfile = null;
+    const eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
+
+    // Toast notification system
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `toast align-items-center text-bg-${type} border-0 show`;
+      toast.setAttribute('role', 'alert');
+      toast.setAttribute('aria-live', 'assertive');
+      toast.setAttribute('aria-atomic', 'true');
+      toast.innerHTML = `
+        <div class="d-flex">
+          <div class="toast-body d-flex align-items-center">
+            <i class="bi ${type === 'success' ? 'bi-check-circle' : type === 'danger' ? 'bi-exclamation-triangle' : 'bi-info-circle'} me-2"></i>
+            ${message}
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      `;
+      document.querySelector('.toast-container').appendChild(toast);
+      setTimeout(() => toast.remove(), 5000);
+    }
+
+    // API request handler
+    async function makeRequest(method, endpoint, data = null, requiresAuth = true) {
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      if (requiresAuth && currentToken) {
+        headers['Authorization'] = `Bearer ${currentToken}`;
+      }
+      const options = { method, headers };
+      if (data) options.body = JSON.stringify(data);
+
+      try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        const contentType = response.headers.get('content-type');
+        let result = contentType && contentType.includes('application/json') ? await response.json() : await response.text();
+
+        if (!response.ok) {
+          throw new Error(result.message || result.error || 'Request failed');
+        }
+
+        return result;
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+      }
+    }
+
+    // Load user profile
+    async function getMyProfile() {
+      try {
+        const result = await makeRequest('GET', '/profile');
+        currentUserProfile = result;
+        
+        // Update verification section
+        document.getElementById('verified-name').value = result.name;
+        document.getElementById('verified-email').value = result.email;
+        document.getElementById('verified-contact').value = result.contact_no || 'Not provided';
+        document.getElementById('profileVerificationSection').style.display = 'block';
+        
+        showToast('Profile information loaded successfully', 'success');
+        return result;
+      } catch (error) {
+        showToast(`Failed to load profile: ${error.message}`, 'danger');
+        throw error;
+      }
+    }
+
+    // Load user's registered events
+    async function getMyEvents() {
+      const container = document.getElementById('my-events-container');
+      container.classList.remove('d-none');
+      container.innerHTML = `
+        <div class="col-12 text-center py-4">
+          <div class="loading-spinner spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-2">Loading your events...</p>
+        </div>`;
+
+      try {
+        const result = await makeRequest('GET', '/profile/events');
+        container.innerHTML = '';
+
+        if (!result || !Array.isArray(result) || result.length === 0) {
+          container.innerHTML = `
+            <div class="col-12">
+              <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>You are not registered for any events yet.
+              </div>
+            </div>`;
+          return;
+        }
+
+        for (const event of result) {
+          const card = document.createElement('div');
+          card.className = 'col-md-6 col-lg-4';
+          card.setAttribute('data-aos', 'fade-up');
+          card.innerHTML = `
+            <div class="card h-100 event-card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h5 class="card-title mb-0">${event.title}</h5>
+                  <span class="badge bg-${getStatusColor(event.status)} badge-status">${event.status}</span>
+                </div>
+                <p class="card-text text-muted small mb-3">Event ID: ${event.id}</p>
+                
+                ${(event.score !== null || event.rank !== null) ? `
+                  <div class="bg-light p-3 rounded mb-3">
+                    ${event.score !== null ? `
+                      <div class="d-flex justify-content-between mb-2">
+                        <span><i class="bi bi-star-fill text-warning me-2"></i>Score</span>
+                        <span class="fw-bold">${event.score}</span>
+                      </div>
+                    ` : ''}
+                    ${event.rank !== null ? `
+                      <div class="d-flex justify-content-between">
+                        <span><i class="bi bi-trophy-fill text-success me-2"></i>Rank</span>
+                        <span class="fw-bold">${event.rank}</span>
+                      </div>
+                    ` : ''}
+                  </div>
+                ` : `
+                  <div class="alert alert-warning small mb-3">
+                    <i class="bi bi-hourglass me-2"></i>Results not published yet
+                  </div>
+                `}
+                
+                <button class="btn btn-outline-primary w-100" onclick='showEventModal(${JSON.stringify(event)})'>
+                  <i class="bi bi-eye me-1"></i>View Details
+                </button>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        }
+      } catch (error) {
+        container.innerHTML = `
+          <div class="col-12">
+            <div class="alert alert-danger">
+              <i class="bi bi-exclamation-triangle me-2"></i>Error fetching your events: ${error.message}
+            </div>
+          </div>`;
+      }
+    }
+
+    // Load all events with optional filtering
+    async function getAllEvents() {
+      try {
+        const container = document.getElementById('events-container');
+        container.innerHTML = `
+          <div class="col-12 text-center py-4">
+            <div class="loading-spinner spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading events...</p>
+          </div>`;
+
+        const status = document.getElementById('event-status').value;
+        const endpoint = status ? `/events?status=${status}` : '/events';
+        const events = await makeRequest('GET', endpoint, null, false);
+        displayEvents(events);
+      } catch (error) {
+        console.error("Error loading events:", error.message);
+        document.getElementById('events-container').innerHTML = `
+          <div class="col-12">
+            <div class="alert alert-danger">
+              <i class="bi bi-exclamation-triangle me-2"></i>Error: ${error.message}
+            </div>
+          </div>`;
+      }
+    }
+
+    // Display events in the grid
+    async function displayEvents(events) {
+      const container = document.getElementById('events-container');
+      container.innerHTML = '';
+      
+      if (!events.length) {
+        container.innerHTML = `
+          <div class="col-12 text-center">
+            <div class="alert alert-warning">
+              <i class="bi bi-calendar-x me-2"></i>No events found for the selected filter.
+            </div>
+          </div>`;
+        return;
+      }
+      
+      for (const event of events) {
+        const galleryImage = await getFirstGalleryImage(event.id);
+        const card = document.createElement('div');
+        card.className = 'col-md-6 col-lg-4';
+        card.setAttribute('data-aos', 'fade-up');
+        card.innerHTML = `
+          <div class="card h-100 event-card">
+            <img loading="lazy" src="${galleryImage}" class="event-img card-img-top" alt="${event.title}">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="card-title mb-0">${event.title}</h5>
+                <span class="badge bg-${getStatusColor(event.status)} badge-status">${event.status}</span>
+              </div>
+              <p class="card-text text-muted">${event.description}</p>
+              
+              <ul class="list-unstyled mt-3 mb-4 small">
+                <li class="mb-2"><i class="bi bi-calendar-event me-2"></i><strong>Start:</strong> ${formatDate(event.start_date)}</li>
+                <li class="mb-2"><i class="bi bi-calendar2-check me-2"></i><strong>End:</strong> ${formatDate(event.end_date)}</li>
+                <li><i class="bi bi-people-fill me-2"></i><strong>Participants:</strong> ${event.current_participants}/${event.max_participants}</li>
+              </ul>
+              
+              <button class="btn btn-primary w-100" onclick='showEventModal(${JSON.stringify(event)})'>
+                <i class="bi bi-eye me-1"></i>View Details
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    // Show event details in modal
+    async function showEventModal(event) {
+      document.getElementById('eventModalLabel').textContent = event.title;
+      document.getElementById('register-event-id').value = event.id;
+      
+      // Show loading state
+      document.getElementById('modalLoading').style.display = 'block';
+      document.getElementById('modalContent').style.display = 'none';
+      
+      // Load profile if not already loaded
+      if (!currentUserProfile) {
+        try {
+          await getMyProfile();
+        } catch (error) {
+          showToast('Please verify your profile before registration', 'warning');
+        }
+      }
+      
+      // Update registering-as information
+      if (currentUserProfile) {
+        document.getElementById('registering-as').innerHTML = `
+          ${currentUserProfile.name} (${currentUserProfile.email}) ${currentUserProfile.contact_no ? `• ${currentUserProfile.contact_no}` : ''}
+        `;
+      } else {
+        document.getElementById('registering-as').textContent = 'Profile not verified';
+      }
+      
+      // Set modal content
+      document.getElementById('modalContent').innerHTML = `
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <h6><i class="bi bi-card-text me-2"></i>Description</h6>
+            <p>${event.detailed_description || 'No detailed description provided'}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <h6><i class="bi bi-list-check me-2"></i>Rules</h6>
+            <p>${event.rules || 'No rules specified'}</p>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <h6><i class="bi bi-tag me-2"></i>Event Type</h6>
+            <p>${event.event_type}</p>
+          </div>
+          <div class="col-md-4 mb-3">
+            <h6><i class="bi bi-calendar-x me-2"></i>Registration Deadline</h6>
+            <p>${formatDate(event.registration_deadline) || 'No deadline'}</p>
+          </div>
+          <div class="col-md-4 mb-3">
+            <h6><i class="bi bi-people me-2"></i>Participation</h6>
+            <p>${event.current_participants}/${event.max_participants || '∞'} spots filled</p>
+          </div>
+        </div>
+        
+        ${event.status === 'upcoming' || event.status === 'ongoing' ? `
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>This event is currently ${event.status}. 
+            ${event.current_participants >= event.max_participants ? 
+              '<strong class="text-danger">Fully booked!</strong>' : 
+              'Register now to secure your spot!'}
+          </div>
+        ` : ''}
+      `;
+      
+      // Hide loading and show content
+      document.getElementById('modalLoading').style.display = 'none';
+      document.getElementById('modalContent').style.display = 'block';
+      
+      // Show modal
+      eventModal.show();
+    }
+
+    // Get first gallery image for an event
+    async function getFirstGalleryImage(eventId) {
+      try {
+        const res = await makeRequest('GET', `/events/${eventId}/gallery`, null, false);
+        return res?.[0]?.image_url || 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80';
+      } catch (error) {
+        console.warn(`No gallery for event ${eventId}:`, error.message);
+        return 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80';
+      }
+    }
+
+    // Register for an event
+    async function registerForEvent() {
+      const eventId = document.getElementById('register-event-id').value;
+      const registerButton = document.getElementById('registerButton');
+      
+      if (!currentUserProfile) {
+        showToast('Please verify your profile before registration', 'warning');
+        return;
+      }
+      
+      // Disable button during registration
+      registerButton.disabled = true;
+      registerButton.innerHTML = `
+        <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+        Registering...
+      `;
+      
+      try {
+        let registrationData = {};
+        try {
+          registrationData = JSON.parse(document.getElementById('register-data').value || '{}');
+        } catch (e) {
+          throw new Error('Invalid JSON in registration data');
+        }
+        
+        const result = await makeRequest('POST', `/events/${eventId}/register`, { 
+          registration_data: registrationData 
+        });
+        
+        showToast("🎉 Successfully registered for the event!", 'success');
+        eventModal.hide();
+        getAllEvents(); // Refresh events list
+      } catch (error) {
+        showToast(`❌ Registration failed: ${error.message}`, 'danger');
+      } finally {
+        registerButton.disabled = false;
+        registerButton.innerHTML = `
+          <i class="bi bi-check-circle me-1"></i>Confirm Registration
+        `;
+      }
+    }
+
+    // Helper function to get status color
+    function getStatusColor(status) {
+      switch (status) {
+        case 'upcoming': return 'info';
+        case 'ongoing': return 'success';
+        case 'completed': return 'secondary';
+        case 'cancelled': return 'danger';
+        default: return 'dark';
+      }
+    }
+
+    // Helper function to format dates
+    function formatDate(dateStr) {
+      if (!dateStr) return 'Not specified';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    // Initialize the page
+    window.addEventListener('DOMContentLoaded', () => {
+      getAllEvents();
+      
+      // Try to load profile if token exists
+      if (currentToken) {
+        getMyProfile().catch(() => {
+          // Silent fail - user can manually load profile later
+        });
+      }
+    });
+        const hamburger = document.querySelector('.eh-hamburger');
+const navMenu = document.querySelector('.eh-nav-menu');
+
+hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    navMenu.classList.toggle('active');
+});
+
+// Close mobile menu when clicking on a link
+document.querySelectorAll('.eh-nav-link').forEach(n => 
+    n.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+    })
+);
+
+  </script>
+</body>
+</html>

@@ -1,285 +1,261 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Email Verification</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- AOS CSS -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <!-- Outfit Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Outfit', sans-serif;
-      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                  url('https://source.unsplash.com/random/1920x1080/?email,verification,security') no-repeat center center fixed;
-      background-size: cover;
-      color: white;
-      min-height: 100vh;
-      padding-top: 60px;
-    }
-    
-    .verification-card {
-      background-color: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 15px;
-      padding: 2rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    }
-    
-    .spinner {
-      width: 30px; 
-      height: 30px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #4CAF50;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      display: inline-block;
-    }
-    
-    @keyframes spin { 
-      100% { transform: rotate(360deg); } 
-    }
-    
-    .btn-glow {
-      transition: all 0.3s ease;
-    }
-    
-    .btn-glow:hover {
-      box-shadow: 0 0 15px rgba(13, 110, 253, 0.7);
-      transform: translateY(-2px);
-    }
-    
-    .form-control {
-      background-color: rgba(255, 255, 255, 0.1);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    .form-control:focus {
-      background-color: rgba(255, 255, 255, 0.2);
-      color: white;
-      border-color: #4CAF50;
-      box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
-    }
-    
-    .form-floating>label {
-      color: rgba(255, 255, 255, 0.7);
-    }
-    
-    .form-floating>.form-control:focus~label {
-      color: #4CAF50;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventHub - Event Organization Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-      <div class="verification-card" data-aos="fade-up">
-        <div class="text-center">
-          <h2 id="pageTitle">Verify Your Email</h2>
-          
-          <!-- Status Message -->
-          <div id="statusMessage" class="mt-3"></div>
-          
-          <!-- Form Section -->
-          <form id="emailForm" class="mt-4" style="display: none;">
-            <div class="mb-3 form-floating">
-              <input type="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
-              <label for="emailInput">Email address</label>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>EventHub</h2>
             </div>
-            <button type="submit" class="btn btn-primary w-100 btn-glow py-2">
-              Send Verification Link
-            </button>
-          </form>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="events.html" class="nav-link">Events</a>
+                </li>
+                <li class="nav-item">
+                    <a href="certificates.html" class="nav-link">Certificates</a>
+                </li>
+                <li class="nav-item">
+                    <a href="results.html" class="nav-link">Results</a>
+                </li>
+                <li class="nav-item">
+                    <a href="C:\Users\shanm\Downloads\event-website\event-website\1.html" class="nav-link btn-primary">Edit Profile</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <!-- Hero Section -->
+<section id="home" class="hero">
+    <!-- Video Background -->
+    <video autoplay muted loop playsinline class="hero-video">
+        <source src="https://n6xuovvnbt9fbc6b.public.blob.vercel-storage.com/3255275-uhd_2560_1440_25fps-KLFFhZkLpNYebeYBRCn03LUYYtjG44.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-container">
+        <div class="hero-content">
+            <h1 class="hero-title">Organize Amazing Events</h1>
+            <p class="hero-description">
+                Join our platform to participate in quizzes, webinars, essay writing competitions, and more. 
+                Register for events, download certificates, and view your results all in one place.
+            </p>
+            <div class="hero-buttons">
+                <a href="events.html" class="btn btn-primary">Browse Events</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+    <!-- What is EventHub Section -->
+<section class="eventhub-section">
+  <div class="container">
+    <h2>What is EventHub?</h2>
+
+    <div class="eventhub-cards">
+      <!-- Card 1 -->
+      <div class="eventhub-card">
+        <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fG1lZXRpbmd8ZW58MHx8MHx8fDA%3D" 
+             class="eventhub-card-img" alt="Tech Events">
+        <div class="eventhub-card-body">
+          <h3 class="eventhub-card-title">Host & Manage Tech Events</h3>
+          <p class="eventhub-card-text">
+            Organize and manage workshops, speaker sessions, and conferences all in one place.
+          </p>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="eventhub-card">
+        <img src="https://images.unsplash.com/photo-1561489396-888724a1543d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGV2ZW50fGVufDB8fDB8fHww" 
+             class="eventhub-card-img" alt="Learning Webinars">
+        <div class="eventhub-card-body">
+          <h3 class="eventhub-card-title">Learn from Webinars & Talks</h3>
+          <p class="eventhub-card-text">
+            Attend engaging online sessions, tutorials, and panels by experts from around the world.
+          </p>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="eventhub-card">
+        <img src="https://images.unsplash.com/photo-1523582407565-efee5cf4a353?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVldGluZyUyMHN0dWRlbnQlMjBjb21wZXRpb258ZW58MHx8MHx8fDA%3D" 
+             class="eventhub-card-img" alt="Competitions">
+        <div class="eventhub-card-body">
+          <h3 class="eventhub-card-title">Participate in Competitions</h3>
+          <p class="eventhub-card-text">
+            Showcase your talent in quizzes, hackathons, and creative contests hosted via EventHub.
+          </p>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
+<style>
+  /* General Section Styling */
+.eventhub-section {
+  background-color: #f9fafb;
+  padding: 5rem 0;
+}
 
-<!-- Bootstrap Toast -->
-<div aria-live="polite" aria-atomic="true" class="position-relative">
-  <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="verificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="toast-header bg-dark text-white">
-        <img src="https://source.unsplash.com/random/50x50/?shield,security" class="rounded me-2" alt="Security">
-        <strong class="me-auto">Verification Status</strong>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
-      <div class="toast-body bg-secondary text-white">
-        <div id="toastMessage"></div>
-      </div>
-    </div>
-  </div>
-</div>
+.eventhub-section h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 3rem;
+  color: #1f2937;
+}
 
-<!-- Bootstrap JS Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- AOS JS -->
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+/* Card Container */
+.eventhub-cards {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
 
-<script>
-  // Initialize AOS
-  AOS.init();
-  
-  // Initialize toast
-  const verificationToast = new bootstrap.Toast(document.getElementById('verificationToast'));
-  
-  const gasUrl = "https://script.google.com/macros/s/AKfycbwfZh8kKUqWBfnk-916eTE7qo_jMpv0e3iz2vhQEvHs5QUgtVzX4LcMIQ70KZA9odkO/exec"; 
+/* Individual Card Styling */
+.eventhub-card {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 360px;
+}
 
-  function showToast(message, isSuccess = true) {
-    const toastMessage = document.getElementById('toastMessage');
-    toastMessage.innerHTML = message;
-    verificationToast.show();
+.eventhub-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Card Image */
+.eventhub-card-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Card Body */
+.eventhub-card-body {
+  padding: 1.5rem;
+}
+
+.eventhub-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #111827;
+}
+
+.eventhub-card-text {
+  color: #6b7280;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Responsive Grid */
+@media (min-width: 768px) {
+  .eventhub-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
   }
+}
 
-  window.onload = function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const uuid = urlParams.get('verify');
-    const statusDiv = document.getElementById("statusMessage");
-
-    if (uuid) {
-      // Mode: Verify UUID
-      document.getElementById("pageTitle").textContent = "Verifying Email...";
-      document.getElementById("emailForm").style.display = "none";
-
-      statusDiv.innerHTML = `<p class="d-flex align-items-center justify-content-center gap-2">
-                              <span>Verifying your email...</span> 
-                              <span class="spinner"></span>
-                            </p>`;
-
-      fetch(`${gasUrl}?verify=${encodeURIComponent(uuid)}`)
-        .then(response => response.json())
-        .then(json => {
-          if (json.status === "success") {
-            statusDiv.innerHTML = `
-              <div class="alert alert-success mt-4" data-aos="fade-up">
-                <div class="d-flex align-items-center gap-2">
-                  <i class="bi bi-check-circle-fill fs-4"></i>
-                  <div>
-                    <h4 class="alert-heading">Email Verified!</h4>
-                    ${json.email} has been successfully verified.
-                  </div>
-                </div>
-                <hr>
-                <a href="https://vimalraj45.github.io/demo/verify.html" class="btn btn-outline-secondary btn-sm mt-2">
-                  Continue to Dashboard
-                </a>
-              </div>`;
-            
-            showToast(`<div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-check-circle-fill text-success fs-4"></i>
-                        <div>
-                          <strong>Success!</strong>
-                          <div class="small">Your email has been verified</div>
-                        </div>
-                      </div>`);
-          } else {
-            statusDiv.innerHTML = `
-              <div class="alert alert-danger mt-4" data-aos="fade-up">
-                <div class="d-flex align-items-center gap-2">
-                  <i class="bi bi-exclamation-triangle-fill fs-4"></i>
-                  <div>
-                    <h4 class="alert-heading">Verification Failed</h4>
-                    Invalid or already used verification link.
-                  </div>
-                </div>
-                <hr>
-                <a href="/index.html" class="btn btn-outline-light btn-sm mt-2">
-                  Try Again
-                </a>
-              </div>`;
-            
-            showToast(`<div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-exclamation-triangle-fill text-danger fs-4"></i>
-                        <div>
-                          <strong>Verification Failed</strong>
-                          <div class="small">Invalid or expired link</div>
-                        </div>
-                      </div>`, false);
-          }
-        })
-        .catch(err => {
-          console.error("Error:", err);
-          statusDiv.innerHTML = `<div class="alert alert-danger mt-4">
-                                  <i class="bi bi-x-circle-fill"></i> Error verifying email.
-                                </div>`;
-          showToast(`<div class="d-flex align-items-center gap-2">
-                      <i class="bi bi-x-circle-fill text-danger fs-4"></i>
-                      <div>
-                        <strong>Error</strong>
-                        <div class="small">Failed to verify email</div>
-                      </div>
-                    </div>`, false);
-        });
-
-    } else {
-      // Mode: Enter Email
-      document.getElementById("emailForm").style.display = "block";
-    }
-  };
-
-  // Handle form submission
-  document.getElementById("emailForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-    const email = document.getElementById("emailInput").value.trim();
-    const statusDiv = document.getElementById("statusMessage");
-
-    if (!isValidEmail(email)) {
-      statusDiv.innerHTML = `<div class="alert alert-danger">
-                              <i class="bi bi-exclamation-circle-fill"></i> Please enter a valid email.
-                            </div>`;
-      return;
-    }
-
-    statusDiv.innerHTML = `<div class="alert alert-info d-flex align-items-center gap-2">
-                            <span class="spinner"></span>
-                            <span>Sending verification email...</span>
-                          </div>`;
-
-    fetch(`${gasUrl}?email=${encodeURIComponent(email)}`)
-      .then(response => response.text())
-      .then(data => {
-        statusDiv.innerHTML = `<div class="alert alert-success" data-aos="fade-up">
-                                <i class="bi bi-check-circle-fill"></i> ${data}
-                              </div>`;
-        showToast(`<div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-envelope-check-fill text-success fs-4"></i>
-                    <div>
-                      <strong>Email Sent!</strong>
-                      <div class="small">Check your inbox</div>
-                    </div>
-                  </div>`);
-      })
-      .catch(err => {
-        statusDiv.innerHTML = `<div class="alert alert-danger">
-                                <i class="bi bi-x-circle-fill"></i> Error sending request.
-                              </div>`;
-        showToast(`<div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-x-circle-fill text-danger fs-4"></i>
-                    <div>
-                      <strong>Error</strong>
-                      <div class="small">Failed to send email</div>
-                    </div>
-                  </div>`, false);
-        console.error(err);
-      });
-  });
-
-  function isValidEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+@media (max-width: 767px) {
+  .eventhub-card {
+    max-width: 100%;
   }
-</script>
+}
+</style>
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Why Choose EventHub?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Easy Registration</h3>
+                    <p>Simple and quick event registration process with instant confirmation.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3>Digital Certificates</h3>
+                    <p>Download your participation and achievement certificates instantly.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Real-time Results</h3>
+                    <p>View your performance and results as soon as events conclude.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Community</h3>
+                    <p>Connect with like-minded participants and build your network.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>EventHub</h3>
+                    <p>Your premier platform for organizing and participating in educational and competitive events.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="certificates.html">Certificates</a></li>
+                        <li><a href="results.html">Results</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-envelope"></i> info@eventhub.com</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 EventHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
+    <script src="js/script.js"></script>
 </body>
 </html>
+
