@@ -420,11 +420,21 @@
                 `;
             }
             finally{
-              window.location.reload();
+              const certificates = await makeRequest('GET', '/certificates');
+                    displayCertificates(certificates, 'certificate-results');
             }
         });
 
-       
+        // Load certificates on page load if token exists
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (currentToken) {
+                try {
+                    console.log('Loading certificates for token:', currentToken);
+                } catch (error) {
+                    console.error('Could not load certificates:', error);
+                }
+            }
+        });
     </script>
 </body>
 </html>
