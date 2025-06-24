@@ -379,51 +379,59 @@
             });
         }
 
-        // Handle form submission
-        document.getElementById('certificate-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('participant-name').value.trim();
-            const email = document.getElementById('participant-email').value.trim();
-            const code = document.getElementById('certificate-code').value.trim();
-            
-            const resultsContainer = document.getElementById('certificate-results');
-            resultsContainer.innerHTML = '<center><div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Searching for certificates...</p></div></center>';
-            
-            try {
-                let certificates;
-                
-                if (code) {
-                    // Search by certificate code
-                    certificates = await makeRequest('GET', `/certificates/${code}`);
-                } else {
-                    // Search by participant details (would need backend support)
-                    // For now using the get all certificates endpoint
-                    certificates = await makeRequest('GET', '/certificates');
-                    
-                    // Filter by name and email if we had that data
-                    // This is just a placeholder - your backend would need to support this
-                    if (name || email) {
-                        certificates = certificates.filter(cert => 
-                            (!name || cert.participant_name.toLowerCase().includes(name.toLowerCase())) &&
-                            (!email || cert.participant_email?.toLowerCase().includes(email.toLowerCase()))
-                        );
-                    }
-                }
-                
-                displayCertificates(certificates, 'certificate-results');
-            } catch (error) {
-                resultsContainer.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-circle"></i> Error: ${error.message}
-                    </div>
-                `;
+      document.getElementById('certificate-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('participant-name').value.trim();
+    const email = document.getElementById('participant-email').value.trim();
+    const code = document.getElementById('certificate-code').value.trim();
+    
+    const resultsContainer = document.getElementById('certificate-results');
+    resultsContainer.innerHTML = '<center><div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Searching for certificates...</p></div></center>';
+    
+    try {
+        let certificates;
+
+        if (code) {
+            // Search by certificate code
+            certificates = await makeRequest('GET', `/certificates/${code}`);
+        } else if (email) {
+            // Search by email
+            const response = await makeRequest('GET', `/email/${encodeURIComponent(email)}`);
+
+
+// Extract certificates from the events
+certificates = response.events
+  .filter(e => e.certificate)
+  .map(e => ({
+    event_title: e.event.title,
+    event_type: e.event.type,
+    participant_name: response.user.name,
+    issued_at: e.certificate.issuedAt,
+    unique_code: e.certificate.uniqueCode,
+    certificate_url: e.certificate.url
+  }));
+        } else {
+            // Fallback to all certificates and filter manually
+            certificates = await makeRequest('GET', '/certificates');
+
+            if (name) {
+                certificates = certificates.filter(cert => 
+                    cert.participant_name.toLowerCase().includes(name.toLowerCase())
+                );
             }
-            finally{
-              const certificates = await makeRequest('GET', '/certificates');
-                    displayCertificates(certificates, 'certificate-results');
-            }
-        });
+        }
+
+        displayCertificates(certificates, 'certificate-results');
+    } catch (error) {
+        resultsContainer.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> Error: ${error.message}
+            </div>
+        `;
+    }
+});
+
 
         // Load certificates on page load if token exists
         document.addEventListener('DOMContentLoaded', async function() {
