@@ -1,0 +1,564 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EventDB Chatbot Assistant</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --primary-light: #edf2ff;
+      --secondary-color: #3f37c9;
+      --accent-color: #4895ef;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --text-color: #2b2d42;
+      --text-light: #8d99ae;
+      --success-color: #4cc9f0;
+      --warning-color: #f72585;
+      --danger-color: #ef233c;
+      --user-message-bg: #4361ee;
+      --bot-message-bg: #ffffff;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+      --shadow-lg: 0 15px 30px rgba(0,0,0,0.12);
+      --border-radius-sm: 8px;
+      --border-radius-md: 12px;
+      --border-radius-lg: 16px;
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      min-height: 100vh;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      padding: 2rem 1rem;
+    }
+
+    .chat-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .chat-header h3 {
+      font-weight: 700;
+      color: var(--primary-color);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: white;
+      padding: 0.75rem 2rem;
+      border-radius: 50px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(67,97,238,0.1);
+    }
+
+    #chatbox {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 1.5rem;
+      height: 65vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      scroll-behavior: smooth;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .message-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-width: 85%;
+    }
+
+    .user-message {
+      align-self: flex-end;
+    }
+
+    .bot-message {
+      align-self: flex-start;
+    }
+
+    .message {
+      padding: 0.875rem 1.25rem;
+      border-radius: var(--border-radius-md);
+      word-wrap: break-word;
+      position: relative;
+      animation: fadeIn 0.4s ease-out;
+      box-shadow: var(--shadow-sm);
+      line-height: 1.5;
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+    }
+
+    .user .message {
+      background-color: var(--user-message-bg);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .bot .message {
+      background-color: var(--bot-message-bg);
+      color: var(--text-color);
+      border-bottom-left-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .message-time {
+      font-size: 0.7rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+
+    .user .message-time {
+      text-align: right;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .bot .message-time {
+      text-align: left;
+      color: var(--text-light);
+    }
+
+    .input-container {
+      display: flex;
+      gap: 0.75rem;
+      position: relative;
+      background: white;
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 0.5rem;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    #userInput {
+      flex: 1;
+      padding: 1rem 1.25rem;
+      border: none;
+      border-radius: var(--border-radius-sm);
+      font-size: 1rem;
+      transition: var(--transition);
+      background: transparent;
+    }
+
+    #userInput:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(67,97,238,0.2);
+    }
+
+    #sendButton {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius-sm);
+      padding: 0 1.75rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(67,97,238,0.2);
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.875rem 1.5rem;
+      background-color: var(--bot-message-bg);
+      border-radius: var(--border-radius-md);
+      width: fit-content;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .typing-dot {
+      width: 10px;
+      height: 10px;
+      background-color: rgba(0,0,0,0.3);
+      border-radius: 50%;
+      animation: typingAnimation 1.4s infinite ease-in-out;
+    }
+
+    .welcome-message {
+      text-align: center;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, rgba(67,97,238,0.05) 0%, rgba(67,97,238,0.02) 100%);
+      border-radius: var(--border-radius-md);
+      margin-bottom: 1rem;
+      border: 1px solid rgba(67,97,238,0.1);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      justify-content: center;
+    }
+
+    .suggestion-chip {
+      background: rgba(67,97,238,0.08);
+      color: var(--primary-color);
+      border: none;
+      border-radius: 50px;
+      padding: 0.6rem 1.25rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .error-message {
+      background-color: #fff0f0;
+      color: var(--danger-color);
+      padding: 0.875rem 1.25rem;
+      border-radius: var(--border-radius-md);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border: 1px solid rgba(239,35,60,0.2);
+    }
+
+    /* Event line formatting */
+    .event-line {
+      margin: 0.25rem 0;
+      line-height: 1.6;
+    }
+
+    .event-title-line {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin: 0.5rem 0;
+    }
+
+    .event-detail-line {
+      display: flex;
+      margin: 0.25rem 0;
+    }
+
+    .detail-label {
+      min-width: 120px;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .detail-value {
+      flex: 1;
+    }
+
+    .event-divider {
+      height: 1px;
+      background: rgba(0,0,0,0.1);
+      margin: 1rem 0;
+    }
+
+    @keyframes typingAnimation {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      #chatbox {
+        height: 60vh;
+        padding: 1rem;
+      }
+      
+      .message {
+        max-width: 90%;
+      }
+      
+      .detail-label {
+        min-width: 100px;
+      }
+    }
+
+    /* Scrollbar styling */
+    #chatbox::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #chatbox::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.03);
+      border-radius: 10px;
+    }
+
+    #chatbox::-webkit-scrollbar-thumb {
+      background: rgba(67,97,238,0.3);
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="container py-4">
+  <div class="chat-header">
+    <h3><i class="fas fa-robot"></i> EventDB Chatbot Assistant</h3>
+  </div>
+  
+  <div id="chatbox">
+    <div class="welcome-message animate__animated animate__fadeIn">
+      <h4>Welcome to EventDB Assistant!</h4>
+      <p>I can help you find information about upcoming events, registration details, and more.</p>
+      
+      <div class="suggestions">
+        <div class="suggestion-chip" onclick="insertSuggestion('What events are happening this week?')">
+          <i class="far fa-calendar-alt"></i> This Week's Events
+        </div>
+        <div class="suggestion-chip" onclick="insertSuggestion('Show me upcoming tech conferences')">
+          <i class="fas fa-laptop-code"></i> Tech Conferences
+        </div>
+        <div class="suggestion-chip" onclick="insertSuggestion('What events have I registered for?')">
+          <i class="fas fa-user-check"></i> My Events
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="input-container">
+    <input type="text" id="userInput" class="form-control" placeholder="Ask about an event..." autocomplete="off" />
+    <button id="sendButton" onclick="sendMessage()">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
+
+  <script>
+    const API_KEY = "AIzaSyAU8Plhzh1ZPGuMdN96YcMXNpHSBlG1_xM";
+    let eventsText = "";
+    let isTyping = false;
+
+    function getCurrentTime() {
+      const now = new Date();
+      return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function addMessage(content, sender = 'bot') {
+      const chatbox = document.getElementById("chatbox");
+      const messageContainer = document.createElement("div");
+      messageContainer.className = `message-container ${sender}-message animate__animated animate__fadeInUp`;
+      
+      const messageDiv = document.createElement("div");
+      messageDiv.className = sender;
+      
+      const messageContent = document.createElement("div");
+      messageContent.className = "message";
+      messageContent.innerHTML = content;
+      
+      const timeSpan = document.createElement("div");
+      timeSpan.className = "message-time";
+      timeSpan.textContent = getCurrentTime();
+      
+      messageDiv.appendChild(messageContent);
+      messageDiv.appendChild(timeSpan);
+      messageContainer.appendChild(messageDiv);
+      chatbox.appendChild(messageContainer);
+      
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+      if (isTyping) return;
+      
+      const chatbox = document.getElementById("chatbox");
+      const typingDiv = document.createElement("div");
+      typingDiv.className = "typing-indicator animate__animated animate__fadeIn";
+      typingDiv.id = "typingIndicator";
+      
+      for (let i = 0; i < 3; i++) {
+        const dot = document.createElement("div");
+        dot.className = "typing-dot";
+        typingDiv.appendChild(dot);
+      }
+      
+      chatbox.appendChild(typingDiv);
+      chatbox.scrollTop = chatbox.scrollHeight;
+      isTyping = true;
+    }
+
+    function hideTypingIndicator() {
+      const typingIndicator = document.getElementById("typingIndicator");
+      if (typingIndicator) {
+        typingIndicator.classList.add("animate__fadeOut");
+        setTimeout(() => {
+          typingIndicator.remove();
+          isTyping = false;
+        }, 300);
+      }
+    }
+
+    function insertSuggestion(text) {
+      const input = document.getElementById("userInput");
+      input.value = text;
+      input.focus();
+    }
+
+    async function loadEvents() {
+      const jwtToken = localStorage.getItem("jwtToken");
+      if (!jwtToken) {
+        eventsText = "User is not logged in. Only public events available.";
+      }
+
+      try {
+        const [publicRes, profileRes] = await Promise.all([
+          fetch("https://eventdb.onrender.com/api/events"),
+          fetch("https://eventdb.onrender.com/api/profile/events", {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`
+            }
+          })
+        ]);
+
+        const publicEvents = await publicRes.json();
+        const profileEvents = jwtToken ? await profileRes.json() : [];
+
+        function formatEvent(event) {
+          return `
+Title: ${event.title}
+Type: ${event.event_type}
+Status: ${event.status}
+Start: ${new Date(event.start_date).toLocaleString()}
+End: ${new Date(event.end_date).toLocaleString()}
+Registration Deadline: ${new Date(event.registration_deadline).toLocaleString()}
+Description: ${event.detailed_description}
+-----------------------------`;
+        }
+
+        let formattedPublic = publicEvents.map(formatEvent).join('\n');
+        let formattedProfile = profileEvents.length ? profileEvents.map(formatEvent).join('\n') : "No profile events found.";
+
+        eventsText = `Public Events:\n${formattedPublic}\n\nYour Registered Events:\n${formattedProfile}`;
+
+      } catch (err) {
+        console.error("Failed to load events:", err);
+        eventsText = "Failed to load event data from the server.";
+        addMessage("<div class='error-message'><i class='fas fa-exclamation-circle'></i> Failed to load event data. Some functionality may be limited.</div>", 'bot');
+      }
+    }
+
+    loadEvents();
+
+    function formatEventResponse(text) {
+      if (text.includes('Title:')) {
+        const events = text.split('-----------------------------');
+        let formattedResponse = '';
+        
+        events.forEach(eventText => {
+          if (!eventText.trim()) return;
+          
+          const lines = eventText.trim().split('\n');
+          let eventHtml = '';
+          
+          lines.forEach(line => {
+            if (line.startsWith('Title:')) {
+              eventHtml += `<div class="event-title-line">${line.replace('Title:', '<i class="fas fa-calendar-alt"></i>')}</div>`;
+            } else if (line.includes(':')) {
+              const [label, value] = line.split(':').map(part => part.trim());
+              eventHtml += `
+                <div class="event-detail-line">
+                  <span class="detail-label">${label}:</span>
+                  <span class="detail-value">${value}</span>
+                </div>`;
+            } else if (line.trim()) {
+              eventHtml += `<div class="event-line">${line}</div>`;
+            }
+          });
+          
+          formattedResponse += eventHtml + '<div class="event-divider"></div>';
+        });
+        
+        return formattedResponse;
+      }
+      
+      return text;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const message = input.value.trim();
+      if (!message) return;
+
+      addMessage(message, 'user');
+      input.value = "";
+      showTypingIndicator();
+
+      const prompt = `
+You are an AI assistant for an event management website. Use the following event information to answer user questions clearly and helpfully.
+
+When listing events, format the response with each detail on a new line like this:
+Title: [Event Title]
+Type: [Event Type]
+Status: [Status]
+Start: [Start Date]
+End: [End Date]
+Registration Deadline: [Deadline]
+Description: [Description]
+-----------------------------
+
+${eventsText}
+
+User Question: ${message}
+Provide a clear, line-by-line response based on the event data above.
+`;
+
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }]
+          })
+        });
+
+        const result = await response.json();
+        hideTypingIndicator();
+
+        let reply = result?.candidates?.[0]?.content?.parts?.[0]?.text || 
+                   "<div class='error-message'><i class='fas fa-exclamation-circle'></i> Sorry, I couldn't get a response. Please try again.</div>";
+        
+        reply = formatEventResponse(reply);
+        addMessage(reply, 'bot');
+      } catch (err) {
+        console.error("Error calling Gemini API:", err);
+        hideTypingIndicator();
+        addMessage("<div class='error-message'><i class='fas fa-exclamation-circle'></i> Error fetching response. Please check your connection and try again.</div>", 'bot');
+      }
+    }
+
+    document.getElementById("userInput").addEventListener("keypress", function (e) {
+      if (e.key === "Enter") sendMessage();
+    });
+
+    window.addEventListener('load', () => {
+      document.getElementById('userInput').focus();
+    });
+  </script>
+</body>
+</html>
