@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simple Quiz</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+  <div class="container">
+    <h2 class="mb-4 text-center">📝 Simple Quiz</h2>
+    <form id="quizForm"></form>
+    <div class="text-center mt-4">
+      <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("quizForm");
+    const submitBtn = document.getElementById("submitBtn");
+
+    // ✅ Replace with your actual Web App URL
+    const API_URL = "https://script.google.com/macros/s/AKfycby32aJzhL0bDTwwKitIq6uN0suAY0STXy-ko1p8nL7b60Rs_TkNWRx4KZWDKFDqion1Iw/exec";
+
+    // Load questions dynamically from Google Sheets
+    async function loadQuiz() {
+      try {
+        const res = await fetch(API_URL);
+        const questions = await res.json();
+
+        questions.forEach(q => {
+          const wrapper = document.createElement("div");
+          wrapper.classList.add("mb-3");
+
+          const label = document.createElement("label");
+          label.innerText = q.question;
+          label.classList.add("form-label");
+
+          let input;
+          if (q.type === "select") {
+            input = document.createElement("select");
+            input.classList.add("form-select");
+            q.options.forEach(opt => {
+              const option = document.createElement("option");
+              option.value = opt;
+              option.innerText = opt;
+              input.appendChild(option);
+            });
+          } else {
+            input = document.createElement("input");
+            input.type = q.type;
+            input.classList.add("form-control");
+          }
+
+          input.name = q.name;
+          wrapper.appendChild(label);
+          wrapper.appendChild(input);
+          form.appendChild(wrapper);
+        });
+      } catch (err) {
+        alert("❌ Failed to load quiz. Check console.");
+        console.error(err);
+      }
+    }
+
+    // Submit form data to Apps Script
+    submitBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = {};
+      formData.forEach((v, k) => data[k] = v);
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "text/plain" // ✅ FIXED FOR CORS
+          }
+        });
+
+        const result = await res.json();
+        if (result.success) {
+          alert("✅ Submission successful!");
+          form.reset();
+        } else {
+          alert("❌ Submission failed.");
+        }
+      } catch (err) {
+        alert("❌ Error submitting form. Check console.");
+        console.error(err);
+      }
+    });
+
+    loadQuiz();
+  </script>
+</body>
+</html>
