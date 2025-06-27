@@ -15,107 +15,185 @@
   <style>
     :root {
       --primary-color: #4e73df;
+      --primary-light: #e6eaf8;
       --secondary-color: #f8f9fc;
       --accent-color: #2e59d9;
       --correct-color: #28a745;
       --incorrect-color: #dc3545;
+      --warning-color: #ffc107;
+      --dark-color: #2c3e50;
+      --light-color: #f8f9fa;
+      --border-radius: 12px;
+      --box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
     body {
-      background-color: #f8f9fa;
+      background-color: #f5f7fa;
       font-family: 'Outfit', sans-serif;
+      color: var(--dark-color);
+      line-height: 1.6;
     }
     
     .quiz-container {
       max-width: 800px;
       margin: 2rem auto;
-      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-      border-radius: 0.75rem;
+      box-shadow: var(--box-shadow);
+      border-radius: var(--border-radius);
       overflow: hidden;
+      background: white;
+      transition: var(--transition);
     }
     
     .quiz-header {
-      background-color: var(--primary-color);
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
       color: white;
       padding: 1.75rem;
       position: relative;
+      text-align: center;
     }
     
     .quiz-header h2 {
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 0;
+      letter-spacing: 0.5px;
+      font-size: 1.8rem;
     }
     
     .quiz-body {
-      padding: 2rem;
+      padding: 2.5rem;
       background-color: white;
     }
     
     .question-card {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
       border-left: 4px solid var(--primary-color);
-      transition: all 0.3s ease;
+      transition: var(--transition);
       position: relative;
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
     }
     
     .question-card:hover {
-      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
     
     .form-label {
-      font-weight: 500;
-      color: #495057;
+      font-weight: 600;
+      color: var(--dark-color);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .form-label .question-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: 50%;
+      margin-right: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
     }
     
     .btn-submit {
-      background-color: var(--primary-color);
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
       border: none;
-      padding: 0.75rem 2rem;
-      font-weight: 500;
+      padding: 0.85rem 2.5rem;
+      font-weight: 600;
       letter-spacing: 0.5px;
-      transition: all 0.3s ease;
+      transition: var(--transition);
+      border-radius: 50px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      box-shadow: 0 4px 6px rgba(78, 115, 223, 0.3);
     }
     
     .btn-submit:hover {
-      background-color: var(--accent-color);
       transform: translateY(-2px);
+      box-shadow: 0 7px 14px rgba(78, 115, 223, 0.3);
+    }
+    
+    .btn-submit:active {
+      transform: translateY(0);
     }
     
     .progress-container {
-      height: 8px;
-      background-color: #e9ecef;
-      border-radius: 4px;
-      margin-bottom: 2rem;
+      height: 10px;
+      background-color: var(--primary-light);
+      border-radius: 5px;
+      margin-bottom: 2.5rem;
       overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
     }
     
     .progress-bar {
-      background-color: var(--primary-color);
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
       transition: width 0.6s ease;
+      position: relative;
+    }
+    
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.15) 75%,
+        transparent 75%,
+        transparent
+      );
+      background-size: 40px 40px;
+      animation: progressAnimation 1s linear infinite;
+    }
+    
+    @keyframes progressAnimation {
+      0% { background-position: 0 0; }
+      100% { background-position: 40px 0; }
     }
     
     .quiz-icon {
-      margin-right: 10px;
+      margin-right: 12px;
+      font-size: 1.2em;
     }
     
     .form-control, .form-select {
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
+      padding: 0.85rem 1.25rem;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      transition: var(--transition);
+      font-size: 1rem;
     }
     
     .form-control:focus, .form-select:focus {
       border-color: var(--primary-color);
-      box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+      box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.2);
     }
     
     .loading-spinner {
       display: none;
-      width: 2rem;
-      height: 2rem;
+      width: 1.5rem;
+      height: 1.5rem;
       border: 0.25em solid rgba(255, 255, 255, 0.3);
       border-top-color: white;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: spin 0.8s linear infinite;
+      margin-left: 10px;
     }
     
     @keyframes spin {
@@ -123,40 +201,167 @@
     }
     
     .result-modal .modal-header {
-      background-color: var(--primary-color);
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
       color: white;
+      border-bottom: none;
+      padding: 1.5rem;
+    }
+    
+    .result-modal .modal-content {
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      border: none;
+      box-shadow: var(--box-shadow);
     }
     
     .result-badge {
-      font-size: 1.2rem;
-      padding: 0.5rem 1rem;
+      font-size: 1.1rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-
+    
+    .result-modal .modal-body {
+      padding: 2rem;
+    }
+    
+    .result-modal .modal-footer {
+      border-top: none;
+      padding: 1.5rem;
+      background-color: #f8f9fa;
+    }
+    
     .timeout-indicator {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: #f8d7da;
-      color: #721c24;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
-      font-size: 0.8rem;
-      font-weight: bold;
+      top: 15px;
+      right: 15px;
+      background-color: #fff8f8;
+      color: #dc3545;
+      padding: 0.35rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(220, 53, 69, 0.1);
     }
-
+    
+    .timeout-indicator i {
+      margin-right: 5px;
+      font-size: 0.9em;
+    }
+    
     .timeout-bar {
-      height: 4px;
-      background-color: #e9ecef;
-      margin-top: 0.5rem;
-      border-radius: 2px;
+      height: 6px;
+      background-color: #f0f0f0;
+      margin-top: 0.75rem;
+      border-radius: 3px;
       overflow: hidden;
     }
-
+    
     .timeout-progress {
       height: 100%;
-      background-color: #dc3545;
+      background: linear-gradient(90deg, #dc3545, #ff6b6b);
       width: 100%;
       transition: width 1s linear;
+      position: relative;
+    }
+    
+    .timeout-progress::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.3) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0.3) 75%,
+        transparent 75%,
+        transparent
+      );
+      background-size: 20px 20px;
+      animation: progressAnimation 0.8s linear infinite;
+    }
+    
+    .quiz-intro {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding: 0 1rem;
+    }
+    
+    .quiz-intro p {
+      color: #6c757d;
+      font-size: 1.05rem;
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+    }
+    
+    .quiz-intro .total-time {
+      display: inline-block;
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .form-floating label {
+      padding: 1rem 1.25rem;
+    }
+    
+    .form-floating .form-control {
+      height: calc(3.5rem + 2px);
+      padding: 1rem 1.25rem;
+    }
+    
+    .form-floating .form-control:not(:placeholder-shown) ~ label {
+      opacity: 0.8;
+    }
+    
+    .alert {
+      border-radius: var(--border-radius);
+      padding: 1rem 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .is-invalid {
+      border-color: var(--incorrect-color);
+    }
+    
+    .is-invalid:focus {
+      box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .invalid-feedback {
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .quiz-body {
+        padding: 1.5rem;
+      }
+      
+      .quiz-header h2 {
+        font-size: 1.5rem;
+      }
+      
+      .question-card {
+        padding: 1.25rem;
+      }
+      
+      .btn-submit {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -169,6 +374,13 @@
     <div class="quiz-body">
       <div class="progress-container">
         <div class="progress-bar" id="quizProgress" style="width: 0%"></div>
+      </div>
+      
+      <div class="quiz-intro">
+        <div class="total-time" id="totalTimeIndicator">
+          <i class="fas fa-clock me-2"></i>Total time: <span id="totalTimeValue">0</span>s
+        </div>
+        <p>Answer all questions before time runs out. The timer will automatically submit your answers when time expires.</p>
       </div>
       
       <form id="quizForm"></form>
@@ -213,9 +425,13 @@
   
   <script>
     // Initialize AOS
-    AOS.init();
+    AOS.init({
+      duration: 800,
+      easing: 'ease-out-quad',
+      once: true
+    });
     
-    const API_URL = "https://script.google.com/macros/s/AKfycbwQ7J9GzZ1ir5b02bhhihgAkuLAwglbIxxFegXzX3S66B0vsdMpa-SdEq6qxBkWMwq6Qg/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzmp1fwjprEnzwpwt0hNcGE9zLc6TzOwoDRxyGO89wMq6v3PA_gSXt4AspdxXoX2mZrqw/exec";
 
     const form = document.getElementById("quizForm");
     const quizTitle = document.getElementById("quizTitle");
@@ -229,6 +445,7 @@
     const resultMessage = document.getElementById("resultMessage");
     const resultIcon = document.getElementById("resultIcon");
     const retryBtn = document.getElementById("retryBtn");
+    const totalTimeValue = document.getElementById("totalTimeValue");
 
     const queryParams = new URLSearchParams(window.location.search);
     const quizName = queryParams.get('quiz') || 'Maths';
@@ -248,6 +465,7 @@
         // Calculate total timeout
         totalTimeout = questions.reduce((sum, q) => sum + (q.timeout || 0), 0);
         console.log("Total timeout:", totalTimeout);
+        totalTimeValue.textContent = totalTimeout;
 
         // Add email field if not present
         if (!document.getElementById("emailField")) {
@@ -255,8 +473,10 @@
           emailWrapper.classList.add("mb-4");
           emailWrapper.id = "emailField";
           emailWrapper.innerHTML = `
-            <label class="form-label">Email (optional)</label>
-            <input type="email" name="Email" class="form-control" placeholder="Enter email to receive results">
+            <div class="form-floating">
+              <input type="email" name="Email" class="form-control" id="emailInput" placeholder="Enter email">
+              <label for="emailInput">Email (optional)</label>
+            </div>
           `;
           form.appendChild(emailWrapper);
         }
@@ -264,7 +484,7 @@
         // Create question cards
         questions.forEach((q, index) => {
           const wrapper = document.createElement("div");
-          wrapper.classList.add("question-card", "p-3", "bg-light", "rounded", "mb-3");
+          wrapper.classList.add("question-card");
           wrapper.dataset.aos = "fade-up";
           wrapper.dataset.aosDelay = index * 100;
           wrapper.id = `question-${q.name}`;
@@ -273,7 +493,7 @@
           if (q.timeout) {
             const timeoutIndicator = document.createElement("div");
             timeoutIndicator.classList.add("timeout-indicator");
-            timeoutIndicator.innerHTML = `Time: ${q.timeout}s`;
+            timeoutIndicator.innerHTML = `<i class="fas fa-clock"></i> Time: ${q.timeout}s`;
             
             const timeoutBar = document.createElement("div");
             timeoutBar.classList.add("timeout-bar");
@@ -288,8 +508,8 @@
           }
 
           const label = document.createElement("label");
-          label.textContent = `${index + 1}. ${q.question}`;
-          label.classList.add("form-label", "mb-2", "d-block");
+          label.classList.add("form-label");
+          label.innerHTML = `<span class="question-number">${index + 1}</span>${q.question}`;
 
           let input;
           if (q.type === "select") {
@@ -347,7 +567,10 @@
         quizTitle.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i> Quiz Loading Error`;
         const errorAlert = document.createElement("div");
         errorAlert.classList.add("alert", "alert-danger", "mt-3");
-        errorAlert.textContent = `Failed to load quiz: ${err.message}`;
+        errorAlert.innerHTML = `
+          <i class="fas fa-exclamation-circle me-2"></i>
+          <strong>Error:</strong> Failed to load quiz: ${err.message}
+        `;
         form.appendChild(errorAlert);
       }
     }
@@ -364,6 +587,11 @@
           
           if (progressBar) {
             progressBar.style.width = `${percentage}%`;
+            
+            // Change color when time is running out
+            if (percentage < 30) {
+              progressBar.style.background = "linear-gradient(90deg, #ff6b6b, #dc3545)";
+            }
           }
           
           if (remaining <= 0) {
@@ -372,6 +600,7 @@
             if (questionElement) {
               questionElement.style.opacity = '0.6';
               questionElement.style.pointerEvents = 'none';
+              questionElement.style.borderLeft = '4px solid #dc3545';
               
               // Set timeout value if input is empty
               const input = questionElement.querySelector('input, select');
@@ -430,7 +659,12 @@
       if (!isValid) {
         const errorAlert = document.createElement("div");
         errorAlert.classList.add("alert", "alert-warning", "mt-3");
-        errorAlert.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i> Please answer all required questions`;
+        errorAlert.innerHTML = `
+          <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-circle me-3" style="font-size: 1.5rem;"></i>
+            <div>Please answer all required questions before submitting.</div>
+          </div>
+        `;
         errorAlert.id = "formError";
         
         // Remove previous error if exists
@@ -438,6 +672,15 @@
         if (existingError) existingError.remove();
         
         form.appendChild(errorAlert);
+        
+        // Scroll to first error
+        const firstInvalid = form.querySelector('.is-invalid');
+        if (firstInvalid) {
+          firstInvalid.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
         return;
       }
 
