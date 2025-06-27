@@ -2,95 +2,197 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Dynamic Quiz App</title>
+  <title>Interactive Quiz Platform</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Google Outfit Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <!-- AOS CSS -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
   <style>
     :root {
       --primary-color: #4e73df;
+      --primary-dark: #2e59d9;
+      --primary-light: #e6eaf5;
       --secondary-color: #f8f9fc;
-      --accent-color: #2e59d9;
       --correct-color: #28a745;
       --incorrect-color: #dc3545;
+      --warning-color: #ffc107;
+      --text-color: #2d3748;
+      --text-light: #718096;
+      --border-radius: 12px;
+      --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
     body {
       background-color: #f8f9fa;
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Outfit', 'Roboto', sans-serif;
+      color: var(--text-color);
+      line-height: 1.6;
     }
     
     .quiz-container {
       max-width: 800px;
       margin: 2rem auto;
-      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-      border-radius: 0.75rem;
+      box-shadow: var(--box-shadow);
+      border-radius: var(--border-radius);
       overflow: hidden;
-    }
-    
-    .quiz-header {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 1.75rem;
+      background: white;
       position: relative;
     }
     
+    .quiz-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .quiz-header::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path fill="rgba(255,255,255,0.05)" d="M0,0 L100,0 L100,100 L0,100 Z"></path></svg>');
+      opacity: 0.1;
+      pointer-events: none;
+    }
+    
     .quiz-header h2 {
-      font-weight: 600;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .quiz-description {
+      font-size: 0.95rem;
+      opacity: 0.9;
       margin-bottom: 0;
+      position: relative;
+      z-index: 1;
     }
     
     .quiz-body {
       padding: 2rem;
       background-color: white;
+      position: relative;
     }
     
     .question-card {
       margin-bottom: 1.5rem;
       border-left: 4px solid var(--primary-color);
-      transition: all 0.3s ease;
+      transition: var(--transition);
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
     
     .question-card:hover {
-      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .question-card-header {
+      background-color: var(--primary-light);
+      padding: 1rem 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+    
+    .question-number {
+      background-color: var(--primary-color);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+    
+    .question-card-body {
+      padding: 1.25rem;
     }
     
     .form-label {
       font-weight: 500;
-      color: #495057;
+      color: var(--text-color);
+      margin-bottom: 0.75rem;
     }
     
     .btn-submit {
       background-color: var(--primary-color);
       border: none;
-      padding: 0.75rem 2rem;
-      font-weight: 500;
+      padding: 0.85rem 2.5rem;
+      font-weight: 600;
       letter-spacing: 0.5px;
-      transition: all 0.3s ease;
+      transition: var(--transition);
+      border-radius: 50px;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 6px rgba(78, 115, 223, 0.3);
     }
     
     .btn-submit:hover {
-      background-color: var(--accent-color);
+      background-color: var(--primary-dark);
       transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(78, 115, 223, 0.4);
+    }
+    
+    .btn-submit:active {
+      transform: translateY(0);
     }
     
     .progress-container {
-      height: 8px;
+      height: 10px;
       background-color: #e9ecef;
-      border-radius: 4px;
+      border-radius: 5px;
       margin-bottom: 2rem;
       overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
     }
     
     .progress-bar {
-      background-color: var(--primary-color);
+      background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
       transition: width 0.6s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      animation: shimmer 2s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
     
     .quiz-icon {
@@ -99,7 +201,9 @@
     
     .form-control, .form-select {
       padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #ced4da;
+      transition: var(--transition);
     }
     
     .form-control:focus, .form-select:focus {
@@ -109,12 +213,13 @@
     
     .loading-spinner {
       display: none;
-      width: 2rem;
-      height: 2rem;
+      width: 1.5rem;
+      height: 1.5rem;
       border: 0.25em solid rgba(255, 255, 255, 0.3);
       border-top-color: white;
       border-radius: 50%;
       animation: spin 1s linear infinite;
+      margin-left: 10px;
     }
     
     @keyframes spin {
@@ -122,20 +227,250 @@
     }
     
     .result-modal .modal-header {
-      background-color: var(--primary-color);
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
       color: white;
+      border-bottom: none;
+      padding: 1.5rem;
+    }
+    
+    .result-modal .modal-content {
+      border: none;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--box-shadow);
     }
     
     .result-badge {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      margin: 0.5rem 0;
+      display: inline-block;
+    }
+    
+    .result-icon {
+      font-size: 5rem !important;
+      margin-bottom: 1rem;
+      animation: bounceIn 0.75s;
+    }
+    
+    .timer-container {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 50px;
       padding: 0.5rem 1rem;
+      display: inline-flex;
+      align-items: center;
+      margin-left: auto;
+    }
+    
+    .timer-icon {
+      margin-right: 0.5rem;
+    }
+    
+    .quiz-footer {
+      padding: 1rem 2rem;
+      background-color: var(--secondary-color);
+      border-top: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .quiz-stats {
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+    
+    /* Custom radio and checkbox */
+    .form-check-input:checked {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .quiz-container {
+        margin: 1rem;
+        border-radius: 12px;
+      }
+      
+      .quiz-body {
+        padding: 1.5rem;
+      }
+      
+      .question-card-header {
+        padding: 0.75rem 1rem;
+      }
+      
+      .question-card-body {
+        padding: 1rem;
+      }
+    }
+    
+    /* Floating action button */
+    .fab {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      z-index: 1000;
+      transition: var(--transition);
+    }
+    
+    .fab:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+      background-color: var(--primary-dark);
+    }
+    
+    /* Custom animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .fade-in-up {
+      animation: fadeInUp 0.5s ease forwards;
+    }
+    
+    /* Tooltip styles */
+    .tooltip-inner {
+      background-color: var(--primary-color);
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+    }
+    
+    .bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before,
+    .bs-tooltip-top .tooltip-arrow::before {
+      border-top-color: var(--primary-color);
+    }
+    
+    /* Confetti canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+    
+    /* Answer feedback */
+    .answer-feedback {
+      font-size: 0.85rem;
+      padding: 0.75rem;
+      border-radius: 6px;
+      margin-top: 0.75rem;
+      display: none;
+    }
+    
+    .correct-feedback {
+      background-color: rgba(40, 167, 69, 0.1);
+      color: var(--correct-color);
+      border-left: 3px solid var(--correct-color);
+    }
+    
+    .incorrect-feedback {
+      background-color: rgba(220, 53, 69, 0.1);
+      color: var(--incorrect-color);
+      border-left: 3px solid var(--incorrect-color);
+    }
+    
+    /* Character counter */
+    .char-counter {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      text-align: right;
+      margin-top: 0.25rem;
+    }
+    
+    /* Dark mode toggle */
+    .dark-mode-toggle {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10;
+    }
+    
+    /* Dark mode styles */
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+    
+    body.dark-mode .quiz-container,
+    body.dark-mode .quiz-body,
+    body.dark-mode .question-card {
+      background-color: #1e1e1e;
+      color: #e0e0e0;
+    }
+    
+    body.dark-mode .form-control,
+    body.dark-mode .form-select,
+    body.dark-mode .question-card-header {
+      background-color: #2d2d2d;
+      border-color: #3d3d3d;
+      color: #e0e0e0;
+    }
+    
+    body.dark-mode .form-label {
+      color: #e0e0e0;
+    }
+    
+    body.dark-mode .quiz-footer {
+      background-color: #252525;
+      border-color: #3d3d3d;
+    }
+    
+    body.dark-mode .quiz-stats {
+      color: #a0a0a0;
+    }
+    
+    body.dark-mode .form-control:focus,
+    body.dark-mode .form-select:focus {
+      background-color: #2d2d2d;
+      color: #e0e0e0;
     }
   </style>
 </head>
 <body>
+  <!-- Dark mode toggle -->
+  <div class="dark-mode-toggle">
+    <button id="darkModeToggle" class="btn btn-sm btn-outline-secondary">
+      <i class="fas fa-moon"></i>
+    </button>
+  </div>
+  
+  <!-- Confetti canvas -->
+  <canvas id="confetti-canvas"></canvas>
+  
+  <!-- Quiz container -->
   <div class="quiz-container" data-aos="fade-up" data-aos-duration="800">
     <div class="quiz-header">
-      <h2><i class="fas fa-pencil-alt quiz-icon"></i> <span id="quizTitle">Quiz</span></h2>
+      <h2><i class="fas fa-pencil-alt quiz-icon"></i> <span id="quizTitle">Interactive Quiz</span></h2>
+      <p class="quiz-description" id="quizDescription">Test your knowledge with this interactive assessment</p>
+      <div class="timer-container" id="timerContainer">
+        <i class="fas fa-clock timer-icon"></i>
+        <span id="quizTimer">00:00</span>
+      </div>
     </div>
     
     <div class="quiz-body">
@@ -152,10 +487,54 @@
         </button>
       </div>
     </div>
+    
+    <div class="quiz-footer">
+      <div class="quiz-stats">
+        <span id="questionsCount">0</span> Questions • Estimated time: <span id="estimatedTime">5 min</span>
+      </div>
+      <div class="quiz-stats">
+        <i class="fas fa-info-circle me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Your progress is automatically saved"></i>
+        Auto-save enabled
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating action button -->
+  <div class="fab animate__animated animate__bounceIn" id="helpFab" data-bs-toggle="modal" data-bs-target="#helpModal">
+    <i class="fas fa-question"></i>
+  </div>
+
+  <!-- Help Modal -->
+  <div class="modal fade" id="helpModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Quiz Help</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <h6><i class="fas fa-info-circle me-2 text-primary"></i> About This Quiz</h6>
+            <p>This interactive quiz is designed to test your knowledge on various topics. Answer all questions to the best of your ability.</p>
+          </div>
+          <div class="mb-3">
+            <h6><i class="fas fa-clock me-2 text-primary"></i> Timer</h6>
+            <p>The quiz has a timer to track your progress. Don't worry, it's just for reference and won't affect your score.</p>
+          </div>
+          <div>
+            <h6><i class="fas fa-save me-2 text-primary"></i> Auto-save</h6>
+            <p>Your progress is automatically saved as you go. You can leave and come back later to continue where you left off.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it!</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Result Modal -->
-  <div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade result-modal" id="resultModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -164,15 +543,23 @@
         </div>
         <div class="modal-body text-center">
           <div class="mb-4">
-            <i class="fas fa-check-circle text-success" id="resultIcon" style="font-size: 4rem;"></i>
+            <i class="fas fa-check-circle text-success result-icon" id="resultIcon"></i>
             <h3 class="mt-3" id="resultTitle">Quiz Submitted!</h3>
             <div class="badge bg-primary result-badge mt-2" id="resultScore">Score: 0/0</div>
+            <div class="mt-2" id="resultTime">Time taken: 00:00</div>
           </div>
-          <p id="resultMessage" class="text-muted">Thank you for completing the quiz!</p>
+          <div class="progress mb-3" style="height: 8px;">
+            <div class="progress-bar bg-success" id="scoreProgress" role="progressbar" style="width: 0%"></div>
+          </div>
+          <p id="resultMessage" class="text-muted mb-4">Thank you for completing the quiz!</p>
+          <div id="performanceChart" style="height: 200px;"></div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-outline-secondary me-2" data-bs-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary" id="retryBtn">Try Again</button>
+          <button type="button" class="btn btn-success ms-2" id="shareBtn">
+            <i class="fas fa-share-alt me-1"></i> Share
+          </button>
         </div>
       </div>
     </div>
@@ -182,15 +569,54 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <!-- AOS JS -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Confetti.js -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   
   <script>
     // Initialize AOS
-    AOS.init();
+    AOS.init({
+      duration: 800,
+      easing: 'ease-out-quad',
+      once: true
+    });
+    
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Dark mode toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const body = document.body;
+    
+    // Check for saved dark mode preference
+    if (localStorage.getItem('darkMode') === 'enabled') {
+      body.classList.add('dark-mode');
+      darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+    
+    darkModeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      const isDarkMode = body.classList.contains('dark-mode');
+      
+      if (isDarkMode) {
+        localStorage.setItem('darkMode', 'enabled');
+        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+      } else {
+        localStorage.setItem('darkMode', 'disabled');
+        darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+      }
+    });
     
     const API_URL = "https://script.google.com/macros/s/AKfycbz8l6aBUe2mehN41TEnoDiotNVTnmoTKrp24GNJRht0edjV-0w1ipSfaCAdbry-Lv4W/exec";
 
+    // DOM elements
     const form = document.getElementById("quizForm");
     const quizTitle = document.getElementById("quizTitle");
+    const quizDescription = document.getElementById("quizDescription");
     const submitBtn = document.getElementById("submitBtn");
     const submitText = document.getElementById("submitText");
     const submitSpinner = document.getElementById("submitSpinner");
@@ -201,98 +627,430 @@
     const resultMessage = document.getElementById("resultMessage");
     const resultIcon = document.getElementById("resultIcon");
     const retryBtn = document.getElementById("retryBtn");
-
+    const shareBtn = document.getElementById("shareBtn");
+    const questionsCount = document.getElementById("questionsCount");
+    const estimatedTime = document.getElementById("estimatedTime");
+    const quizTimer = document.getElementById("quizTimer");
+    const timerContainer = document.getElementById("timerContainer");
+    const resultTime = document.getElementById("resultTime");
+    const scoreProgress = document.getElementById("scoreProgress");
+    const helpFab = document.getElementById("helpFab");
+    const performanceChart = document.getElementById("performanceChart");
+    
+    // Quiz state
+    let quizState = {
+      startTime: null,
+      timeElapsed: 0,
+      timerInterval: null,
+      questions: [],
+      userAnswers: {},
+      quizName: '',
+      quizData: null
+    };
+    
+    // Get query parameters
     const queryParams = new URLSearchParams(window.location.search);
-    const quizName = queryParams.get('quiz') || 'Maths';
-    quizTitle.innerText += ` – ${quizName}`;
-
+    quizState.quizName = queryParams.get('quiz') || 'General Knowledge';
+    
+    // Initialize quiz
+    async function initQuiz() {
+      try {
+        // Load quiz data
+        await loadQuiz();
+        
+        // Start timer
+        startTimer();
+        
+        // Load saved progress if available
+        loadProgress();
+        
+        // Update question count
+        questionsCount.textContent = quizState.questions.length;
+        
+        // Calculate estimated time (30 seconds per question)
+        const estimatedMinutes = Math.ceil(quizState.questions.length * 0.5);
+        estimatedTime.textContent = `${estimatedMinutes} min`;
+        
+        // Update progress bar
+        quizProgress.style.width = "100%";
+        
+        // Show help FAB after delay
+        setTimeout(() => {
+          helpFab.classList.add('animate__bounce');
+          setTimeout(() => helpFab.classList.remove('animate__bounce'), 1000);
+        }, 5000);
+        
+      } catch (err) {
+        console.error("❌ Quiz initialization failed:", err);
+        showError("Failed to initialize quiz", err.message);
+      }
+    }
+    
+    // Load quiz data from API
     async function loadQuiz() {
       try {
-        console.log("🔄 Fetching quiz:", quizName);
-        const res = await fetch(`${API_URL}?quiz=${quizName}`);
-        const questions = await res.json();
-        if (questions.error) throw new Error(questions.error);
-
+        console.log("🔄 Fetching quiz:", quizState.quizName);
+        showLoading(true);
+        
+        const res = await fetch(`${API_URL}?quiz=${quizState.quizName}`);
+        const data = await res.json();
+        
+        if (data.error) throw new Error(data.error);
+        
+        quizState.quizData = data;
+        quizTitle.textContent = data.title || `Quiz – ${quizState.quizName}`;
+        quizDescription.textContent = data.description || "Test your knowledge with this interactive assessment";
+        
         // Add email field if not present
-        if (!document.getElementById("emailField")) {
+        if (!document.getElementById("emailField") && data.requireEmail !== false) {
           const emailWrapper = document.createElement("div");
           emailWrapper.classList.add("mb-4");
           emailWrapper.id = "emailField";
           emailWrapper.innerHTML = `
-            <label class="form-label">Email (optional)</label>
-            <input type="email" name="Email" class="form-control" placeholder="Enter email to receive results">
+            <label class="form-label">Email ${data.requireEmail ? '(required)' : '(optional)'}</label>
+            <input type="email" name="Email" class="form-control" placeholder="Enter your email" ${data.requireEmail ? 'required' : ''}>
+            <div class="char-counter"><span id="emailCounter">0</span>/100</div>
           `;
           form.appendChild(emailWrapper);
+          
+          // Add character counter for email
+          const emailInput = emailWrapper.querySelector('input');
+          const emailCounter = emailWrapper.querySelector('#emailCounter');
+          
+          emailInput.addEventListener('input', () => {
+            emailCounter.textContent = emailInput.value.length;
+          });
         }
-
+        
         // Create question cards
-        questions.forEach((q, index) => {
+        quizState.questions = data.questions || [];
+        quizState.questions.forEach((q, index) => {
           const wrapper = document.createElement("div");
-          wrapper.classList.add("question-card", "p-3", "bg-light", "rounded", "mb-3");
+          wrapper.classList.add("question-card", "mb-4");
           wrapper.dataset.aos = "fade-up";
           wrapper.dataset.aosDelay = index * 100;
-
-          const label = document.createElement("label");
-          label.textContent = `${index + 1}. ${q.question}`;
-          label.classList.add("form-label", "mb-2", "d-block");
-
+          wrapper.id = `question-${q.name}`;
+          
+          const header = document.createElement("div");
+          header.classList.add("question-card-header");
+          header.innerHTML = `
+            <span class="question-number">${index + 1}</span>
+            ${q.question}
+          `;
+          
+          const body = document.createElement("div");
+          body.classList.add("question-card-body");
+          
           let input;
           if (q.type === "select") {
             input = document.createElement("select");
             input.classList.add("form-select");
-            // Add empty default option
-            const defaultOption = document.createElement("option");
-            defaultOption.value = "";
-            defaultOption.textContent = "Select an option";
-            defaultOption.selected = true;
-            defaultOption.disabled = true;
-            input.appendChild(defaultOption);
+            input.name = q.name;
+            input.required = q.required !== false;
+            
+            // Add empty default option if not required
+            if (q.required !== false) {
+              const defaultOption = document.createElement("option");
+              defaultOption.value = "";
+              defaultOption.textContent = "Select an option";
+              defaultOption.selected = true;
+              defaultOption.disabled = true;
+              input.appendChild(defaultOption);
+            }
             
             q.options.forEach(opt => {
               const option = document.createElement("option");
-              option.value = opt.trim();
-              option.textContent = opt.trim();
+              option.value = opt.value || opt.trim();
+              option.textContent = opt.text || opt.trim();
               input.appendChild(option);
             });
+            
+          } else if (q.type === "radio" || q.type === "checkbox") {
+            // For radio/checkbox groups
+            q.options.forEach((opt, optIndex) => {
+              const optionId = `opt-${q.name}-${optIndex}`;
+              const optionWrapper = document.createElement("div");
+              optionWrapper.classList.add("form-check", "mb-2");
+              
+              const optionInput = document.createElement("input");
+              optionInput.classList.add("form-check-input");
+              optionInput.type = q.type;
+              optionInput.name = q.name;
+              optionInput.value = opt.value || opt.trim();
+              optionInput.id = optionId;
+              optionInput.required = q.required !== false && q.type === "radio" && optIndex === 0;
+              
+              const optionLabel = document.createElement("label");
+              optionLabel.classList.add("form-check-label");
+              optionLabel.htmlFor = optionId;
+              optionLabel.textContent = opt.text || opt.trim();
+              
+              optionWrapper.appendChild(optionInput);
+              optionWrapper.appendChild(optionLabel);
+              body.appendChild(optionWrapper);
+            });
+            
           } else {
-            input = document.createElement("input");
+            // Default to text input
+            input = document.createElement(q.type === "textarea" ? "textarea" : "input");
             input.type = q.type || "text";
             input.classList.add("form-control");
-            input.placeholder = "Type your answer here...";
+            input.name = q.name;
+            input.placeholder = q.placeholder || "Type your answer here...";
+            input.required = q.required !== false;
+            
+            if (q.maxLength) {
+              input.maxLength = q.maxLength;
+              const counter = document.createElement("div");
+              counter.classList.add("char-counter");
+              counter.innerHTML = `<span id="counter-${q.name}">0</span>/${q.maxLength}`;
+              
+              input.addEventListener('input', () => {
+                document.getElementById(`counter-${q.name}`).textContent = input.value.length;
+              });
+              
+              body.appendChild(input);
+              body.appendChild(counter);
+            } else {
+              body.appendChild(input);
+            }
           }
-
-          input.name = q.name;
-          input.required = true;
-          wrapper.appendChild(label);
-          wrapper.appendChild(input);
+          
+          // Add hint if available
+          if (q.hint) {
+            const hint = document.createElement("small");
+            hint.classList.add("text-muted", "d-block", "mt-2");
+            hint.innerHTML = `<i class="fas fa-lightbulb me-1"></i> ${q.hint}`;
+            body.appendChild(hint);
+          }
+          
+          // Add feedback placeholder (for results)
+          const feedback = document.createElement("div");
+          feedback.classList.add("answer-feedback");
+          body.appendChild(feedback);
+          
+          wrapper.appendChild(header);
+          wrapper.appendChild(body);
           form.appendChild(wrapper);
         });
-
-        // Update progress bar
-        quizProgress.style.width = "100%";
-        console.log("✅ Quiz loaded");
-
+        
+        console.log("✅ Quiz loaded successfully");
+        showLoading(false);
+        
       } catch (err) {
         console.error("❌ Failed to load quiz:", err);
-        quizTitle.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i> Quiz Loading Error`;
-        const errorAlert = document.createElement("div");
-        errorAlert.classList.add("alert", "alert-danger", "mt-3");
-        errorAlert.textContent = `Failed to load quiz: ${err.message}`;
-        form.appendChild(errorAlert);
+        showError("Quiz Loading Error", err.message);
+        showLoading(false);
       }
     }
-
-    submitBtn.addEventListener("click", async (e) => {
-      e.preventDefault();
+    
+    // Start quiz timer
+    function startTimer() {
+      quizState.startTime = new Date();
+      quizState.timerInterval = setInterval(updateTimer, 1000);
+      timerContainer.style.display = 'flex';
+    }
+    
+    // Update timer display
+    function updateTimer() {
+      const now = new Date();
+      quizState.timeElapsed = Math.floor((now - quizState.startTime) / 1000);
       
+      const minutes = Math.floor(quizState.timeElapsed / 60).toString().padStart(2, '0');
+      const seconds = (quizState.timeElapsed % 60).toString().padStart(2, '0');
+      quizTimer.textContent = `${minutes}:${seconds}`;
+    }
+    
+    // Format time as MM:SS
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+      const secs = (seconds % 60).toString().padStart(2, '0');
+      return `${mins}:${secs}`;
+    }
+    
+    // Save progress to localStorage
+    function saveProgress() {
+      const formData = new FormData(form);
+      quizState.userAnswers = {};
+      
+      formData.forEach((value, key) => {
+        quizState.userAnswers[key] = value;
+      });
+      
+      const progress = {
+        answers: quizState.userAnswers,
+        timeElapsed: quizState.timeElapsed,
+        timestamp: new Date().toISOString()
+      };
+      
+      localStorage.setItem(`quizProgress_${quizState.quizName}`, JSON.stringify(progress));
+      console.log("💾 Progress saved");
+    }
+    
+    // Load progress from localStorage
+    function loadProgress() {
+      const savedProgress = localStorage.getItem(`quizProgress_${quizState.quizName}`);
+      if (!savedProgress) return;
+      
+      try {
+        const progress = JSON.parse(savedProgress);
+        quizState.userAnswers = progress.answers || {};
+        quizState.timeElapsed = progress.timeElapsed || 0;
+        
+        // Update form fields
+        Object.entries(quizState.userAnswers).forEach(([name, value]) => {
+          const input = form.querySelector(`[name="${name}"]`);
+          if (!input) return;
+          
+          if (input.type === 'radio' || input.type === 'checkbox') {
+            const matchingInput = form.querySelector(`[name="${name}"][value="${value}"]`);
+            if (matchingInput) matchingInput.checked = true;
+          } else {
+            input.value = value;
+            
+            // Update character counters
+            const counter = form.querySelector(`#counter-${name}`);
+            if (counter) {
+              counter.textContent = value.length;
+            }
+          }
+        });
+        
+        // Update timer
+        if (progress.timeElapsed) {
+          quizState.startTime = new Date(Date.now() - (progress.timeElapsed * 1000));
+          updateTimer();
+        }
+        
+        console.log("🔍 Loaded saved progress");
+        
+      } catch (err) {
+        console.error("❌ Failed to load progress:", err);
+      }
+    }
+    
+    // Clear saved progress
+    function clearProgress() {
+      localStorage.removeItem(`quizProgress_${quizState.quizName}`);
+      console.log("🧹 Cleared saved progress");
+    }
+    
+    // Show loading state
+    function showLoading(isLoading) {
+      if (isLoading) {
+        quizTitle.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i> Loading Quiz...`;
+        form.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></div>';
+      }
+    }
+    
+    // Show error message
+    function showError(title, message) {
+      quizTitle.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i> ${title}`;
+      form.innerHTML = `
+        <div class="alert alert-danger">
+          <i class="fas fa-times-circle me-2"></i>
+          <strong>Error:</strong> ${message}
+        </div>
+        <button class="btn btn-primary" onclick="window.location.reload()">
+          <i class="fas fa-sync-alt me-2"></i> Reload Quiz
+        </button>
+      `;
+    }
+    
+    // Submit quiz form
+    async function submitQuiz() {
       // Validate form
-      const inputs = form.querySelectorAll('input, select');
+      if (!validateForm()) return;
+      
+      // Stop timer
+      clearInterval(quizState.timerInterval);
+      
+      // Show loading state
+      submitText.textContent = "Submitting...";
+      submitSpinner.style.display = "inline-block";
+      submitBtn.disabled = true;
+      
+      // Prepare form data
+      const formData = new FormData(form);
+      const data = {
+        quiz: quizState.quizName,
+        timeTaken: quizState.timeElapsed,
+        timestamp: new Date().toISOString()
+      };
+      
+      formData.forEach((v, k) => data[k] = v);
+      
+      console.log("📤 Form data prepared:", data);
+      
+      try {
+        // Submit to API
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify(data)
+        });
+        
+        console.log("📥 Server responded to POST");
+        const result = await res.json();
+        console.log("✅ Parsed result:", result);
+        
+        // Hide loading state
+        submitText.textContent = "Submit Answers";
+        submitSpinner.style.display = "none";
+        submitBtn.disabled = false;
+        
+        if (result.success) {
+          // Show results
+          showResults(result);
+          
+          // Clear saved progress
+          clearProgress();
+          
+          // Show confetti if score is good
+          if (result.scorePercentage >= 80) {
+            triggerConfetti();
+          }
+        } else {
+          // Show error
+          showResultError(result.error || "Submission failed. Please try again.");
+        }
+        
+      } catch (err) {
+        console.error("❌ Network error:", err);
+        
+        // Hide loading state
+        submitText.textContent = "Submit Answers";
+        submitSpinner.style.display = "none";
+        submitBtn.disabled = false;
+        
+        // Show error
+        showResultError("Network error. Please check your connection and try again.");
+      }
+    }
+    
+    // Validate form before submission
+    function validateForm() {
+      const inputs = form.querySelectorAll('input, select, textarea');
       let isValid = true;
       
       inputs.forEach(input => {
         if (input.required && !input.value.trim()) {
           input.classList.add('is-invalid');
           isValid = false;
+          
+          // Scroll to first invalid input
+          if (isValid === false) {
+            input.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+            
+            // Add slight animation to highlight
+            input.classList.add('animate__animated', 'animate__headShake');
+            setTimeout(() => {
+              input.classList.remove('animate__animated', 'animate__headShake');
+            }, 1000);
+          }
         } else {
           input.classList.remove('is-invalid');
         }
@@ -301,84 +1059,177 @@
       if (!isValid) {
         const errorAlert = document.createElement("div");
         errorAlert.classList.add("alert", "alert-warning", "mt-3");
-        errorAlert.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i> Please answer all required questions`;
+        errorAlert.innerHTML = `
+          <i class="fas fa-exclamation-circle me-2"></i>
+          Please answer all required questions
+        `;
         errorAlert.id = "formError";
         
         // Remove previous error if exists
         const existingError = document.getElementById("formError");
         if (existingError) existingError.remove();
         
-        form.appendChild(errorAlert);
-        return;
-      }
-
-      // Show loading state
-      submitText.textContent = "Submitting...";
-      submitSpinner.style.display = "inline-block";
-      submitBtn.disabled = true;
-
-      const formData = new FormData(form);
-      const data = {};
-      formData.forEach((v, k) => data[k] = v);
-      data.quiz = quizName;
-
-      console.log("📤 Form data prepared:", data);
-
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain" },
-          body: JSON.stringify(data)
-        });
-
-        console.log("📥 Server responded to POST");
-        const result = await res.json();
-        console.log("✅ Parsed result:", result);
-
-        // Hide loading state
-        submitText.textContent = "Submit Answers";
-        submitSpinner.style.display = "none";
-        submitBtn.disabled = false;
-
-        if (result.success) {
-          // Show success modal
-          resultScore.textContent = `Score: ${result.score}`;
-          resultTitle.textContent = "Quiz Submitted!";
-          resultMessage.textContent = "Thank you for completing the quiz!";
-          resultIcon.className = "fas fa-check-circle text-success";
-          resultIcon.style.fontSize = "4rem";
-          resultModal.show();
-        } else {
-          // Show error modal
-          resultScore.textContent = "";
-          resultTitle.textContent = "Submission Failed";
-          resultMessage.textContent = result.error || "An unknown error occurred";
-          resultIcon.className = "fas fa-times-circle text-danger";
-          resultIcon.style.fontSize = "4rem";
-          resultModal.show();
-        }
-
-      } catch (err) {
-        console.error("❌ Network error:", err);
-        // Show error modal
-        resultScore.textContent = "";
-        resultTitle.textContent = "Network Error";
-        resultMessage.textContent = "Failed to submit quiz. Please check your connection and try again.";
-        resultIcon.className = "fas fa-exclamation-triangle text-warning";
-        resultIcon.style.fontSize = "4rem";
-        resultModal.show();
+        form.prepend(errorAlert);
         
-        // Hide loading state
-        submitText.textContent = "Submit Answers";
-        submitSpinner.style.display = "none";
-        submitBtn.disabled = false;
+        // Scroll to error
+        errorAlert.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
       }
+      
+      return isValid;
+    }
+    
+    // Show quiz results
+    function showResults(result) {
+      // Update result display
+      resultScore.textContent = `Score: ${result.score || '0'}/${quizState.questions.length}`;
+      resultTitle.textContent = result.passed ? "Quiz Passed!" : "Quiz Completed";
+      resultMessage.textContent = result.message || "Thank you for completing the quiz!";
+      resultTime.textContent = `Time taken: ${formatTime(quizState.timeElapsed)}`;
+      
+      // Update icon based on pass/fail
+      if (result.passed) {
+        resultIcon.className = "fas fa-check-circle text-success result-icon";
+      } else {
+        resultIcon.className = "fas fa-times-circle text-danger result-icon";
+      }
+      
+      // Calculate score percentage
+      const scorePercentage = result.scorePercentage || 
+        (parseInt(result.score) / quizState.questions.length * 100);
+      scoreProgress.style.width = `${scorePercentage}%`;
+      
+      // Show feedback for each question if available
+      if (result.feedback) {
+        Object.entries(result.feedback).forEach(([name, feedback]) => {
+          const questionEl = document.getElementById(`question-${name}`);
+          if (!questionEl) return;
+          
+          const feedbackEl = questionEl.querySelector('.answer-feedback');
+          if (!feedbackEl) return;
+          
+          feedbackEl.style.display = 'block';
+          feedbackEl.textContent = feedback.message;
+          
+          if (feedback.correct) {
+            feedbackEl.classList.add('correct-feedback');
+            feedbackEl.classList.remove('incorrect-feedback');
+          } else {
+            feedbackEl.classList.add('incorrect-feedback');
+            feedbackEl.classList.remove('correct-feedback');
+          }
+        });
+      }
+      
+      // Create performance chart
+      createPerformanceChart(scorePercentage);
+      
+      // Show modal
+      resultModal.show();
+    }
+    
+    // Show submission error
+    function showResultError(message) {
+      resultScore.textContent = "";
+      resultTitle.textContent = "Submission Failed";
+      resultMessage.textContent = message;
+      resultIcon.className = "fas fa-times-circle text-danger result-icon";
+      resultModal.show();
+    }
+    
+    // Create performance chart
+    function createPerformanceChart(scorePercentage) {
+      // Simple donut chart showing score
+      const ctx = document.createElement('canvas');
+      performanceChart.innerHTML = '';
+      performanceChart.appendChild(ctx);
+      
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Correct', 'Incorrect'],
+          datasets: [{
+            data: [scorePercentage, 100 - scorePercentage],
+            backgroundColor: [
+              'rgba(40, 167, 69, 0.8)',
+              'rgba(220, 53, 69, 0.8)'
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          cutout: '70%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                boxWidth: 12,
+                padding: 20,
+                font: {
+                  family: 'Outfit, Roboto, sans-serif',
+                  size: 12
+                }
+              }
+            },
+            tooltip: {
+              enabled: false
+            }
+          },
+          animation: {
+            animateScale: true,
+            animateRotate: true
+          }
+        }
+      });
+    }
+    
+    // Trigger confetti animation
+    function triggerConfetti() {
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#4e73df', '#2e59d9', '#1cc88a', '#36b9cc', '#f6c23e']
+      });
+      
+      setTimeout(() => {
+        confetti({
+          particleCount: 100,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: ['#4e73df', '#2e59d9', '#1cc88a', '#36b9cc', '#f6c23e']
+        });
+      }, 250);
+      
+      setTimeout(() => {
+        confetti({
+          particleCount: 100,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: ['#4e73df', '#2e59d9', '#1cc88a', '#36b9cc', '#f6c23e']
+        });
+      }, 400);
+    }
+    
+    // Event listeners
+    submitBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      submitQuiz();
     });
-
-    // Retry button handler
+    
     retryBtn.addEventListener("click", () => {
       resultModal.hide();
       form.reset();
+      clearProgress();
+      
+      // Reset timer
+      quizState.startTime = new Date();
+      quizState.timeElapsed = 0;
+      quizState.timerInterval = setInterval(updateTimer, 1000);
       
       // Scroll to top
       window.scrollTo({
@@ -386,9 +1237,49 @@
         behavior: 'smooth'
       });
     });
-
-    // Load the quiz when page loads
-    document.addEventListener('DOMContentLoaded', loadQuiz);
+    
+    shareBtn.addEventListener("click", () => {
+      if (navigator.share) {
+        navigator.share({
+          title: `I scored ${resultScore.textContent} on ${quizTitle.textContent}`,
+          text: `Check out this quiz: ${quizTitle.textContent}`,
+          url: window.location.href
+        }).catch(err => {
+          console.log('Error sharing:', err);
+          copyToClipboard(window.location.href);
+        });
+      } else {
+        copyToClipboard(window.location.href);
+      }
+    });
+    
+    // Helper to copy to clipboard
+    function copyToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      
+      // Show tooltip
+      const originalText = shareBtn.innerHTML;
+      shareBtn.innerHTML = '<i class="fas fa-check me-1"></i> Copied!';
+      setTimeout(() => {
+        shareBtn.innerHTML = originalText;
+      }, 2000);
+    }
+    
+    // Auto-save progress every 30 seconds
+    setInterval(saveProgress, 30000);
+    
+    // Save progress when leaving page
+    window.addEventListener('beforeunload', (e) => {
+      saveProgress();
+    });
+    
+    // Initialize quiz when page loads
+    document.addEventListener('DOMContentLoaded', initQuiz);
   </script>
 </body>
 </html>
