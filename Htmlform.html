@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Quiz Portal</title>
+  <title>Dynamic Quiz</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -18,7 +18,7 @@
   <script>
     const queryParams = new URLSearchParams(window.location.search);
     const quizName = queryParams.get('quiz') || 'Maths';
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwzuKE3zJjNVyf4Js8xI0y-zWzO7joyTyIGvUllBV3WUILXc23-9OxXQTRZXElK9COThg/exec'; // Replace this
+    const API_URL = "https://script.google.com/macros/s/AKfycbzpsNaUAW2uy7tfLnduYbsZhQbrwYm7JpcMrw47pNozYTqV7moYb6BZnUyY2RkXMTmOGw/exec";
 
     const form = document.getElementById("quizForm");
     const quizTitle = document.getElementById("quizTitle");
@@ -28,6 +28,16 @@
       try {
         const res = await fetch(`${API_URL}?quiz=${quizName}`);
         const questions = await res.json();
+
+        // Add email field
+        const emailWrapper = document.createElement("div");
+        emailWrapper.classList.add("mb-3");
+        emailWrapper.innerHTML = `
+          <label class="form-label">Email</label>
+          <input type="email" name="Email" class="form-control" required>
+        `;
+        form.appendChild(emailWrapper);
+
         questions.forEach(q => {
           const wrapper = document.createElement("div");
           wrapper.classList.add("mb-3");
@@ -57,17 +67,8 @@
           wrapper.appendChild(input);
           form.appendChild(wrapper);
         });
-
-        // Add Email field
-        const emailWrapper = document.createElement("div");
-        emailWrapper.classList.add("mb-3");
-        emailWrapper.innerHTML = `
-          <label class="form-label">Email</label>
-          <input type="email" name="Email" required class="form-control">
-        `;
-        form.prepend(emailWrapper);
       } catch (err) {
-        alert("❌ Failed to load quiz.");
+        alert("❌ Error loading quiz.");
         console.error(err);
       }
     }
@@ -87,14 +88,14 @@
         });
         const result = await res.json();
         if (result.success) {
-          alert(`✅ Submitted! Your score: ${result.score}`);
+          alert(`✅ Submitted! Score: ${result.score}`);
           form.reset();
         } else {
           alert("❌ Submission failed.");
-          console.error(result);
+          console.log(result);
         }
       } catch (err) {
-        alert("❌ Error submitting.");
+        alert("❌ Fetch error.");
         console.error(err);
       }
     });
