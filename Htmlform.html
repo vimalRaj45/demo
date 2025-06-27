@@ -16,32 +16,25 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwMsnaqqCOEF6U1dz-ir-r3oziRkmTl2ok6iYQKLT8FX-DpPwDqWUJajGkn7y7AXLZ0ww/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyy2l7qjFZnTCh6JDcDjyvO2xF4FDEsloE-zutR3KLY4IRXa-XiACZtog4m9o4_29rcvg/exec";
 
     const form = document.getElementById("quizForm");
     const quizTitle = document.getElementById("quizTitle");
 
-    // 🔍 Get quiz name from URL
     const queryParams = new URLSearchParams(window.location.search);
     const quizName = queryParams.get('quiz') || 'Maths';
     quizTitle.innerText += ` – ${quizName}`;
-    console.log(`📌 Quiz Name: ${quizName}`);
 
     async function loadQuiz() {
-      console.log("🔄 Loading quiz data...");
       try {
         const res = await fetch(`${API_URL}?quiz=${quizName}`);
-        console.log("📥 Fetched raw quiz response");
         const questions = await res.json();
-        console.log("✅ Parsed quiz questions:", questions);
-
         if (questions.error) {
-          console.error("❌ Error in quiz data:", questions.error);
           alert("Error loading quiz: " + questions.error);
           return;
         }
 
-        // ✅ Add email field only once
+        // Email input
         if (!document.getElementById("emailField")) {
           const emailWrapper = document.createElement("div");
           emailWrapper.classList.add("mb-3");
@@ -51,14 +44,10 @@
             <input type="email" name="Email" class="form-control" placeholder="Enter email to receive results">
           `;
           form.appendChild(emailWrapper);
-          console.log("✉️ Email field added");
-        } else {
-          console.log("⚠️ Email field already exists – skipping");
         }
 
-        // 🔁 Render each question
+        // Questions
         questions.forEach(q => {
-          console.log("🔧 Rendering question:", q);
           const wrapper = document.createElement("div");
           wrapper.classList.add("mb-3");
 
@@ -76,7 +65,6 @@
               option.textContent = opt.trim();
               input.appendChild(option);
             });
-            console.log("📌 Select options rendered:", q.options);
           } else {
             input = document.createElement("input");
             input.type = q.type || "text";
@@ -89,25 +77,18 @@
           form.appendChild(wrapper);
         });
 
-        console.log("✅ All questions rendered");
-
       } catch (err) {
-        console.error("❌ Error loading quiz data:", err);
         alert("❌ Error loading quiz.");
+        console.error(err);
       }
     }
 
-    // 📨 Submit form
     document.getElementById("submitBtn").addEventListener("click", async (e) => {
       e.preventDefault();
-      console.log("🚀 Submitting form...");
-
       const formData = new FormData(form);
       const data = {};
       formData.forEach((v, k) => data[k] = v);
       data.quiz = quizName;
-
-      console.log("📤 Prepared form data for submission:", data);
 
       try {
         const res = await fetch(API_URL, {
@@ -116,26 +97,20 @@
           body: JSON.stringify(data)
         });
 
-        console.log("📥 Server response received");
         const result = await res.json();
-        console.log("✅ Parsed server result:", result);
-
         if (result.success) {
           alert(`✅ Submitted! Your Score: ${result.score}`);
-          console.log("🎉 Submission successful");
           form.reset();
         } else {
           alert("❌ Submission failed: " + result.error);
-          console.warn("⚠️ Submission returned failure:", result);
         }
 
       } catch (err) {
-        console.error("❌ Network error:", err);
         alert("❌ Network error. Please try again.");
+        console.error(err);
       }
     });
 
-    // ⏬ Load quiz on page load
     loadQuiz();
   </script>
 </body>
