@@ -16,33 +16,22 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbymtp7Agwb6RYLETlWTk9eh0CSWkCU4sqA8KRwEDnSAQj1Tp9ugbKWWwKBX012GNrp3qA/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyW0MOq9H4Yd119cbuoaqK_If2iWUMZ_Ez0qm0I_dg3bA0OkXaPcCBadAIfqHJ3xgfE/exec";
 
     const form = document.getElementById("quizForm");
     const quizTitle = document.getElementById("quizTitle");
 
-    // Step 1: Get quiz name from URL
     const queryParams = new URLSearchParams(window.location.search);
     const quizName = queryParams.get('quiz') || 'Maths';
     quizTitle.innerText += ` – ${quizName}`;
-    console.log("📌 Quiz Name:", quizName);
 
-    // Step 2: Load quiz
     async function loadQuiz() {
-      console.log("🔄 Loading quiz from API...");
       try {
+        console.log("🔄 Fetching quiz:", quizName);
         const res = await fetch(`${API_URL}?quiz=${quizName}`);
-        console.log("📥 Raw response received");
         const questions = await res.json();
-        console.log("✅ Parsed questions:", questions);
+        if (questions.error) throw new Error(questions.error);
 
-        if (questions.error) {
-          console.error("❌ Error in questions:", questions.error);
-          alert("Error loading quiz: " + questions.error);
-          return;
-        }
-
-        // Step 3: Add email field
         if (!document.getElementById("emailField")) {
           const emailWrapper = document.createElement("div");
           emailWrapper.classList.add("mb-3");
@@ -52,13 +41,9 @@
             <input type="email" name="Email" class="form-control" placeholder="Enter email to receive results">
           `;
           form.appendChild(emailWrapper);
-          console.log("✉️ Email field added.");
         }
 
-        // Step 4: Render each question
-        questions.forEach((q, index) => {
-          console.log(`🔧 Rendering Q${index + 1}:`, q);
-
+        questions.forEach(q => {
           const wrapper = document.createElement("div");
           wrapper.classList.add("mb-3");
 
@@ -76,7 +61,6 @@
               option.textContent = opt.trim();
               input.appendChild(option);
             });
-            console.log(`📌 Select options added: [${q.options.join(", ")}]`);
           } else {
             input = document.createElement("input");
             input.type = q.type || "text";
@@ -89,19 +73,16 @@
           form.appendChild(wrapper);
         });
 
-        console.log("✅ All questions rendered.");
+        console.log("✅ Quiz loaded");
 
       } catch (err) {
-        console.error("❌ Error loading quiz:", err);
-        alert("❌ Error loading quiz.");
+        console.error("❌ Failed to load quiz:", err);
+        alert("Failed to load quiz: " + err.message);
       }
     }
 
-    // Step 5: Submit form
     document.getElementById("submitBtn").addEventListener("click", async (e) => {
       e.preventDefault();
-      console.log("🚀 Submitting form...");
-
       const formData = new FormData(form);
       const data = {};
       formData.forEach((v, k) => data[k] = v);
@@ -122,21 +103,17 @@
 
         if (result.success) {
           alert(`✅ Submitted! Your Score: ${result.score}`);
-          console.log("🎉 Submission successful. Score:", result.score);
           form.reset();
         } else {
           alert("❌ Submission failed: " + result.error);
-          console.warn("⚠️ Submission failed:", result.error);
         }
 
       } catch (err) {
-        alert("❌ Network error. Please try again.");
         console.error("❌ Network error:", err);
+        alert("❌ Network error: " + err.message);
       }
     });
 
-    // Step 0: Initial call
-    console.log("📦 Initializing...");
     loadQuiz();
   </script>
 </body>
