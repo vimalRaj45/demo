@@ -55,6 +55,7 @@
       margin-bottom: 1.5rem;
       border-left: 4px solid var(--primary-color);
       transition: all 0.3s ease;
+      position: relative;
     }
     
     .question-card:hover {
@@ -130,6 +131,33 @@
       font-size: 1.2rem;
       padding: 0.5rem 1rem;
     }
+
+    .timeout-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .timeout-bar {
+      height: 4px;
+      background-color: #e9ecef;
+      margin-top: 0.5rem;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .timeout-progress {
+      height: 100%;
+      background-color: #dc3545;
+      width: 100%;
+      transition: width 1s linear;
+    }
   </style>
 </head>
 <body>
@@ -187,7 +215,7 @@
     // Initialize AOS
     AOS.init();
     
-    const API_URL = "https://script.google.com/macros/s/AKfycbz8l6aBUe2mehN41TEnoDiotNVTnmoTKrp24GNJRht0edjV-0w1ipSfaCAdbry-Lv4W/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwQ7J9GzZ1ir5b02bhhihgAkuLAwglbIxxFegXzX3S66B0vsdMpa-SdEq6qxBkWMwq6Qg/exec";
 
     const form = document.getElementById("quizForm");
     const quizTitle = document.getElementById("quizTitle");
@@ -206,12 +234,20 @@
     const quizName = queryParams.get('quiz') || 'Maths';
     quizTitle.innerText += ` – ${quizName}`;
 
+    let totalTimeout = 0;
+    let questionTimeouts = {};
+    let autoSubmitTimer;
+
     async function loadQuiz() {
       try {
         console.log("🔄 Fetching quiz:", quizName);
         const res = await fetch(`${API_URL}?quiz=${quizName}`);
         const questions = await res.json();
         if (questions.error) throw new Error(questions.error);
+
+        // Calculate total timeout
+        totalTimeout = questions.reduce((sum, q) => sum + (q.timeout || 0), 0);
+        console.log("Total timeout:", totalTimeout);
 
         // Add email field if not present
         if (!document.getElementById("emailField")) {
@@ -231,6 +267,25 @@
           wrapper.classList.add("question-card", "p-3", "bg-light", "rounded", "mb-3");
           wrapper.dataset.aos = "fade-up";
           wrapper.dataset.aosDelay = index * 100;
+          wrapper.id = `question-${q.name}`;
+
+          // Add timeout indicator if timeout is set
+          if (q.timeout) {
+            const timeoutIndicator = document.createElement("div");
+            timeoutIndicator.classList.add("timeout-indicator");
+            timeoutIndicator.innerHTML = `Time: ${q.timeout}s`;
+            
+            const timeoutBar = document.createElement("div");
+            timeoutBar.classList.add("timeout-bar");
+            
+            const timeoutProgress = document.createElement("div");
+            timeoutProgress.classList.add("timeout-progress");
+            timeoutProgress.id = `timeout-${q.name}`;
+            
+            timeoutBar.appendChild(timeoutProgress);
+            wrapper.appendChild(timeoutIndicator);
+            wrapper.appendChild(timeoutBar);
+          }
 
           const label = document.createElement("label");
           label.textContent = `${index + 1}. ${q.question}`;
@@ -266,7 +321,22 @@
           wrapper.appendChild(label);
           wrapper.appendChild(input);
           form.appendChild(wrapper);
+
+          // Set up timeout for this question if specified
+          if (q.timeout) {
+            questionTimeouts[q.name] = {
+              timer: null,
+              elapsed: 0,
+              total: q.timeout * 1000
+            };
+          }
         });
+
+        // Start the timeout countdown if there are timeouts
+        if (totalTimeout > 0) {
+          startTimeoutCountdown();
+          startTotalTimeout();
+        }
 
         // Update progress bar
         quizProgress.style.width = "100%";
@@ -282,8 +352,67 @@
       }
     }
 
+    function startTimeoutCountdown() {
+      Object.keys(questionTimeouts).forEach(qName => {
+        const questionTimeout = questionTimeouts[qName];
+        const progressBar = document.getElementById(`timeout-${qName}`);
+        
+        questionTimeout.timer = setInterval(() => {
+          questionTimeout.elapsed += 100;
+          const remaining = questionTimeout.total - questionTimeout.elapsed;
+          const percentage = (remaining / questionTimeout.total) * 100;
+          
+          if (progressBar) {
+            progressBar.style.width = `${percentage}%`;
+          }
+          
+          if (remaining <= 0) {
+            clearInterval(questionTimeout.timer);
+            const questionElement = document.getElementById(`question-${qName}`);
+            if (questionElement) {
+              questionElement.style.opacity = '0.6';
+              questionElement.style.pointerEvents = 'none';
+              
+              // Set timeout value if input is empty
+              const input = questionElement.querySelector('input, select');
+              if (input && !input.value.trim()) {
+                input.value = "timeout";
+              }
+            }
+          }
+        }, 100);
+      });
+    }
+
+    function startTotalTimeout() {
+      if (totalTimeout <= 0) return;
+      
+      console.log(`Starting total timeout of ${totalTimeout} seconds`);
+      
+      autoSubmitTimer = setTimeout(() => {
+        console.log("Total timeout reached, auto-submitting form");
+        
+        // Fill any unanswered questions with "timeout"
+        const inputs = form.querySelectorAll('input, select');
+        inputs.forEach(input => {
+          if (input.required && !input.value.trim() && input.name !== 'Email') {
+            input.value = "timeout";
+          }
+        });
+        
+        // Submit the form
+        submitBtn.click();
+      }, totalTimeout * 1000);
+    }
+
     submitBtn.addEventListener("click", async (e) => {
       e.preventDefault();
+      
+      // Clear all timeouts
+      clearTimeout(autoSubmitTimer);
+      Object.values(questionTimeouts).forEach(timeout => {
+        clearInterval(timeout.timer);
+      });
       
       // Validate form
       const inputs = form.querySelectorAll('input, select');
@@ -385,6 +514,12 @@
         top: 0,
         behavior: 'smooth'
       });
+      
+      // Reset timeouts if needed
+      if (totalTimeout > 0) {
+        startTimeoutCountdown();
+        startTotalTimeout();
+      }
     });
 
     // Load the quiz when page loads
